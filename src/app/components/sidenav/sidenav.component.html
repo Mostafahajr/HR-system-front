@@ -1,0 +1,37 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav mode="side" opened>
+    <mat-nav-list>
+      <button mat-button (click)="navigate('home')">
+        <mat-icon>home</mat-icon>
+        Home
+      </button>
+      <button mat-button (click)="navigate('groups-and-permissions')">
+        <mat-icon>group</mat-icon>
+        Groups and Permissions
+      </button>
+      <button mat-button (click)="navigate('admins')">
+        <mat-icon>admin_panel_settings</mat-icon>
+        Admins
+      </button>
+      <button mat-button (click)="navigate('employees')">
+        <mat-icon>people</mat-icon>
+        Employees
+      </button>
+      <button mat-button active (click)="navigate('general-rules-settings')">
+        <mat-icon>settings</mat-icon>
+        General Rules Settings
+      </button>
+      <button mat-button (click)="navigate('official-holidays')">
+        <mat-icon>event</mat-icon>
+        Official Holidays
+      </button>
+      <button mat-button (click)="navigate('attendance-reports')">
+        <mat-icon>assignment</mat-icon>
+        Attendance Reports
+      </button>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>

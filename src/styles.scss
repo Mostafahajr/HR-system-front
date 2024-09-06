@@ -1,1 +1,31 @@
-/* You can add global styles to this file, and also import other style files */
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@use "@angular/material" as mat;
+@use "./app/styles/m3-theme.scss" as custom-theme; // Replace with the correct path to your generated theme file
+
+// Include the common styles for Angular Material.
+// This ensures you only load a single CSS file for Angular Material in your app.
+@include mat.core();
+
+// Use the new theme object that you generated in your new theme file
+$FE-HR-SYS-theme: custom-theme.$light-theme; // Replace 'new-theme-file' with the actual name of the theme file
+
+// Apply the theme to your application components
+
+html {
+  @include mat.all-component-themes($FE-HR-SYS-theme);
+}
+// Optional: Include typography and other additional configurations if necessary
+// Uncomment the line below if you want to use the pre-defined typography utility classes.
+// @include mat.typography-hierarchy($FE-HR-SYS-theme);
+
+/* Global styles */
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}

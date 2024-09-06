@@ -1,0 +1,28 @@
+.sidenav-container {
+  height: 90vh;
+  width: 100%;
+}
+
+mat-sidenav {
+  width: 250px;
+  background-color: #f7feff;
+}
+
+mat-sidenav-content {
+  padding: 24px;
+}
+
+.active {
+  font-weight: bold;
+}
+
+mat-nav-list {
+  padding: 16px;
+}
+
+button[mat-button] {
+  width: 100%;
+  justify-content: flex-start;
+  text-align: left;
+  padding: 16px;
+}

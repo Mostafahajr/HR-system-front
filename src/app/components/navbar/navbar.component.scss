@@ -1,0 +1,19 @@
+.spacer {
+  flex: 1 1 auto;
+}
+
+mat-toolbar {
+  z-index: 1000;
+  height: 10vh;
+
+  background-color: #fff; /* Set background color to white */
+}
+.logo-container {
+  width: 140px;
+}
+.logo-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+}
