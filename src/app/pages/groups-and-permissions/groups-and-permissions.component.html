@@ -1,7 +1,12 @@
 <app-breadcrumbs></app-breadcrumbs>
-
-<button mat-button (click)="navigate('groups-and-permissions/add-new-group')">
-  Add New Group
-</button>
-
-<p>Helooo</p>
+<!-- Conditional content rendering -->
+@if(isAddNewGroupRoute()){
+<div>
+  <button mat-button (click)="navigate('groups-and-permissions/add-new-group')">
+    Add New Group
+  </button>
+  <p>Helooo</p>
+</div>
+}
+<!-- Child routes (e.g., Add New Group) will load here -->
+<router-outlet></router-outlet>
