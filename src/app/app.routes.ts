@@ -7,9 +7,11 @@ import { GeneralRulesSettingsComponent } from './pages/general-rules-settings/ge
 import { OfficialHolidaysComponent } from './pages/official-holidays/official-holidays.component';
 import { AttendanceReportsComponent } from './pages/attendance-reports/attendance-reports.component';
 import { AddNewGroupComponent } from './pages/add-new-group/add-new-group.component';
+import { AddNewAdminComponent } from './pages/add-new-admin/add-new-admin.component';
+import { AddNewEmployeeComponent } from './pages/add-new-employee/add-new-employee.component';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent, data: { breadcrumb: 'Home' } }, // Default route should be an empty path
+  { path: '', component: HomeComponent, data: { breadcrumb: 'Home' } },
   {
     path: 'groups-and-permissions',
     component: GroupsAndPermissionsComponent,
@@ -26,11 +28,25 @@ export const routes: Routes = [
     path: 'admins',
     component: AdminsComponent,
     data: { breadcrumb: 'Admins' },
+    children: [
+      {
+        path: 'add-new-admin',
+        component: AddNewAdminComponent,
+        data: { breadcrumb: 'Add New Admin' },
+      },
+    ],
   },
   {
     path: 'employees',
     component: EmployeesComponent,
     data: { breadcrumb: 'Employees' },
+    children: [
+      {
+        path: 'add-new-employee',
+        component: AddNewEmployeeComponent,
+        data: { breadcrumb: 'Add New Employee' },
+      },
+    ],
   },
   {
     path: 'general-rules-settings',
@@ -47,5 +63,13 @@ export const routes: Routes = [
     component: AttendanceReportsComponent,
     data: { breadcrumb: 'Attendance Reports' },
   },
-  { path: '**', redirectTo: '' }, // Wildcard route for a 404 page or redirection
+  { path: '**', redirectTo: '' },
 ];
+// authentication
+// employee
+// admin(users)
+// attendance
+// official_holidays
+// salary_invoices
+// departments??
+// salary_reports
