@@ -1,3 +1,4 @@
+import { GroupsAndPermissionsService } from './../../services/groups-and-permissions/groups-and-permissions.service';
 import { Component } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 
@@ -34,4 +35,38 @@ const ELEMENT_DATA: PeriodicElement[] = [
 export class AddNewGroupComponent {
   displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
   dataSource = ELEMENT_DATA;
+  constructor(private newPermission:GroupsAndPermissionsService){}
+  onAddPermission(permission:any){
+    this.newPermission.addnewpermissions(`{
+    "id": 3,
+    "name": "Clementine Bauch",
+    "username": "Samantha",
+    "email": "Nathan@yesenia.net",
+    "address": {
+      "street": "Douglas Extension",
+      "suite": "Suite 847",
+      "city": "McKenziehaven",
+      "zipcode": "59590-4157",
+      "geo": {
+        "lat": "-68.6102",
+        "lng": "-47.0653"
+      }
+    },
+    "phone": "1-463-123-4447",
+    "website": "ramiro.info",
+    "company": {
+      "name": "Romaguera-Jacobson",
+      "catchPhrase": "Face to face bifurcated interface",
+      "bs": "e-enable strategic applications"
+    }
+  }`).subscribe({
+    next:()=>{
+      console.log("done");
+    },
+    error:(error)=>{
+      console.log(error);
+    }
+
+  })
+  }
 }
