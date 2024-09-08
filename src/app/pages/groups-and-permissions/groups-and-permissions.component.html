@@ -10,3 +10,23 @@
 }
 <!-- Child routes (e.g., Add New Group) will load here -->
 <router-outlet></router-outlet>
+
+
+<div>
+  <button mat-raised-button color="primary" (click)="getAllPermissions()">
+    GET All Users
+  </button>
+  <button mat-raised-button color="primary" (click)="getPermission(3)">
+    GET User with ID 1
+  </button>
+  <button mat-raised-button color="primary" (click)="onCreate()">
+    POST Create User
+  </button>
+  <button mat-raised-button color="primary" (click)="onUpdate(3)">
+    PUT Update User with ID 1
+  </button>
+  <button mat-raised-button color="warn" (click)="ondelete(3)">
+    DELETE User with ID 1
+  </button>
+</div>
+

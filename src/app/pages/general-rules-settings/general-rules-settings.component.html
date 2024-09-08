@@ -1,1 +1,18 @@
 <app-breadcrumbs></app-breadcrumbs>
+<div>
+  <button mat-raised-button color="primary" (click)="getAllRules()">
+    GET All Users
+  </button>
+  <button mat-raised-button color="primary" (click)="getRule(3)">
+    GET User with ID 1
+  </button>
+  <button mat-raised-button color="primary" (click)="onCreate()">
+    POST Create User
+  </button>
+  <button mat-raised-button color="primary" (click)="onUpdate(3)">
+    PUT Update User with ID 1
+  </button>
+  <button mat-raised-button color="warn" (click)="ondelete(3)">
+    DELETE User with ID 1
+  </button>
+</div>
