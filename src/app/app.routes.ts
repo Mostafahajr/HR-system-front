@@ -9,6 +9,7 @@ import { AttendanceReportsComponent } from './pages/attendance-reports/attendanc
 import { AddNewGroupComponent } from './pages/add-new-group/add-new-group.component';
 import { AddNewAdminComponent } from './pages/add-new-admin/add-new-admin.component';
 import { AddNewEmployeeComponent } from './pages/add-new-employee/add-new-employee.component';
+import { SalariesComponent } from './pages/salaries/salaries.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, data: { breadcrumb: 'Home' } },
@@ -62,6 +63,11 @@ export const routes: Routes = [
     path: 'attendance-reports',
     component: AttendanceReportsComponent,
     data: { breadcrumb: 'Attendance Reports' },
+  },
+  {
+    path: 'salaries',
+    component: SalariesComponent,
+    data: { breadcrumb: 'Salaries' },
   },
   { path: '**', redirectTo: '' },
 ];

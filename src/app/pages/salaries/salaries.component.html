@@ -1,0 +1,19 @@
+<app-breadcrumbs></app-breadcrumbs>
+<div>
+  <button mat-raised-button color="primary" (click)="getAllUsers()">
+    GET All Users
+  </button>
+  <button mat-raised-button color="primary" (click)="getUser(1)">
+    GET User with ID 1
+  </button>
+  <button mat-raised-button color="primary" (click)="createUser()">
+    POST Create User
+  </button>
+  <button mat-raised-button color="primary" (click)="updateUser(1)">
+    PUT Update User with ID 1
+  </button>
+  <button mat-raised-button color="warn" (click)="deleteUser(1)">
+    DELETE User with ID 1
+  </button>
+</div>
+<pre>{{ response | json }}</pre>
