@@ -7,10 +7,10 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class GeneralRulesService {
-  rulesApiUrl: any = 'http://localhost:3005/products';
+  rulesApiUrl: any = 'http://localhost:3005/Rules';
   constructor(public http: HttpClient) {}
 
-  getRules(): Observable<IRules[]> {
+  getAllRules(): Observable<IRules[]> {
     return this.http.get<IRules[]>(this.rulesApiUrl);
   }
   addNewRules(rule: any) {

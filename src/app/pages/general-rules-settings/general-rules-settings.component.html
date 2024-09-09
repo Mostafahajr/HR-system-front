@@ -1,18 +1,108 @@
 <app-breadcrumbs></app-breadcrumbs>
-<div>
-  <button mat-raised-button color="primary" (click)="getAllRules()">
-    GET All Users
-  </button>
-  <button mat-raised-button color="primary" (click)="getRule(3)">
-    GET User with ID 1
-  </button>
-  <button mat-raised-button color="primary" (click)="onCreate()">
-    POST Create User
-  </button>
-  <button mat-raised-button color="primary" (click)="onUpdate(3)">
-    PUT Update User with ID 1
-  </button>
-  <button mat-raised-button color="warn" (click)="ondelete(3)">
-    DELETE User with ID 1
-  </button>
+<div class="container">
+  <form (submit)="ruleHandler($event)" [formGroup]="rule">
+    <div class="line"></div>
+    <div class="salary_related my-5 w-75">
+      <h2 class="my-4">
+        Salary Related
+      </h2>
+      <div class="row">
+        <div class="col">
+          <label for="formGroupExampleInput" class="form-label">Overtime</label>
+          <div class="input-group mb-3 w-100">
+            <input type="number" class="form-control" placeholder="2 Hours" formControlName="overtime">
+            <span class="input-group-text" id="basic-addon2">Hours</span>
+          </div>
+          @if(getOvertime.touched ){
+            <ng-container>
+              @if(getOvertime.hasError('required') || getOvertime.value == '0'){
+              <div id="emailHelp" class="form-text text-danger">
+                Overtime is Required
+              </div>
+              }
+            </ng-container>
+            }
+        </div>
+        <div class="col">
+          <label for="formGroupExampleInput" class="form-label">Penalty</label>
+          <div class="input-group mb-3 w-100">
+            <input type="number" class="form-control" placeholder="2 Hours" formControlName="penalty">
+            <span class="input-group-text" id="basic-addon2">Hours</span>
+          </div>
+          @if(getPenalty.touched ){
+            <ng-container>
+              @if(getPenalty.hasError('required') || getPenalty.value == '0'){
+              <div id="emailHelp" class="form-text text-danger">
+                Overtime is Required
+              </div>
+              }
+            </ng-container>
+            }
+        </div>
+      </div>
+
+    </div>
+    <div class="day-offs my-5 w-75">
+
+      <h2 class="my-4">
+        Weekly Day-offs
+      </h2>
+          <div class="row">
+            <div class="col">
+              <label for="formGroupExampleInput" class="form-label">Weekend1</label>
+               <select name="weekend1" id="" class="form-select" formControlName="weekend1">
+                <option value="saturday">Saturday</option>
+                <option value="Sunday">Sunday</option>
+                <option value="Monday">Monday</option>
+                <option value="Tuesday">Tuesday</option>
+                <option value="Wenesday">Wednesday</option>
+                <option value="Thursday">Thursday</option>
+                <option value="Friday">Friday</option>
+               </select>
+               @if(getWeekend1.touched){
+                <ng-container>
+                  @if(getWeekend1.hasError('required')){
+                  <div id="emailHelp" class="form-text text-danger">
+                    Weekend2 is Required
+                  </div>
+                  }
+                </ng-container>
+                }
+            </div>
+            <div class="col">
+              <label for="formGroupExampleInput" class="form-label" >Weekend2</label>
+              <select name="weekend1" id="" class="form-select" formControlName="weekend2">
+                <option value="saturday">Saturday</option>
+                <option value="Sunday">Sunday</option>
+                <option value="Monday">Monday</option>
+                <option value="Tuesday">Tuesday</option>
+                <option value="Wenesday">Wednesday</option>
+                <option value="Thursday">Thursday</option>
+                <option value="Friday">Friday</option>
+               </select>
+               @if(getWeekend2.touched){
+                <ng-container>
+                  @if(getWeekend2.hasError('required')){
+                  <div id="emailHelp" class="form-text text-danger">
+                    Weekend2 is Required
+                  </div>
+                  }
+                </ng-container>
+                }
+            </div>
+          </div>
+
+
+
+
+
+      </div>
+      
+
+      <div class="line"></div>
+
+    <button type="submit" class="btn btn-success">Save</button>
+
+</form>
 </div>
+

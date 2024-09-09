@@ -1,3 +1,54 @@
 table {
-  width: 100%;
+  width: 50%;
+}
+
+.example-form-field {
+  width: 200px;
+}
+.example-full-width{
+  width: 50%;
+  margin-right: 5rem;
+}
+.controllers {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 40px 0;
+}
+.button-style {
+  padding: 20px;
+  margin: 20px;
+  width: 200px;
+  border: 2px solid #222222;
+  background: none;
+  color: rgb(5, 5, 5);
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.button-style:hover {
+  background-color: #f1f4f6;
+  color: #2a2a2a;
+}
+.button-info {
+  background-color: #17a2b8;
+  color: white;
+  border: none;
+  padding: 20px;
+  margin: 20px;
+  width: 200px;
+  cursor: pointer;
+}
+
+.button-info:hover {
+  background-color: #138496;
+}
+
+.groupName{
+  margin: 4rem auto;
+  width: 75%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

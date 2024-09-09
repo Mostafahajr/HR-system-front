@@ -1,31 +1,75 @@
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-  <!--- Note that these columns can be defined in any order.
-          The actual rendered columns are set as a property on the row definition" -->
 
-  <!-- Position Column -->
-  <ng-container matColumnDef="position">
-    <th mat-header-cell *matHeaderCellDef>No.</th>
-    <td mat-cell *matCellDef="let element">{{ element.position }}</td>
-  </ng-container>
+<div class="container-fluid">
+  <div class="controllers w-75  m-auto d-flex justify-content-center align-items-center">
+    <button mat-stroked-button class="button-style p-4 m-4 w-25" (click)="privateCustom()">Private Custom</button>
+    <button mat-stroked-button class="button-info  p-4 m-4 w-25" (click)="allPrivlleges()">All Privillages</button>
+  </div>
+  <form action="" method="post" class="example-form p-4">
 
-  <!-- Name Column -->
-  <ng-container matColumnDef="name">
-    <th mat-header-cell *matHeaderCellDef>Name</th>
-    <td mat-cell *matCellDef="let element">{{ element.name }}</td>
-  </ng-container>
+    <div class=" groupName">
+      <mat-form-field class="example-full-width w-50 me-5">
+        <mat-label>Group Name</mat-label>
+        <input matInput #message maxlength="256" name="group">
+        <mat-hint align="end">{{message.value.length}} / 256</mat-hint>
+      </mat-form-field>
+      <button mat-flat-button class="m-4" type="submit">Save</button>
+    </div>
 
-  <!-- Weight Column -->
-  <ng-container matColumnDef="weight">
-    <th mat-header-cell *matHeaderCellDef>Weight</th>
-    <td mat-cell *matCellDef="let element">{{ element.weight }}</td>
-  </ng-container>
 
-  <!-- Symbol Column -->
-  <ng-container matColumnDef="symbol">
-    <th mat-header-cell *matHeaderCellDef>Symbol</th>
-    <td mat-cell *matCellDef="let element">{{ element.symbol }}</td>
-  </ng-container>
 
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-</table>
+    <div class="mat-elevation-z8">
+      <table mat-table [dataSource]="dataSource">
+
+        <!-- Position Column -->
+        <ng-container matColumnDef="position">
+          <th mat-header-cell *matHeaderCellDef> No. </th>
+          <td mat-cell *matCellDef="let element"> {{element.position}} </td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef> Name </th>
+          <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+        </ng-container>
+
+        <!-- Weight Column -->
+        <ng-container matColumnDef="add">
+          <th mat-header-cell *matHeaderCellDef> Add </th>
+          <td mat-cell *matCellDef="let element"><input type="checkbox" [disabled]="custom" [(ngModel)]="element.add" name="add" id=""></td>
+        </ng-container>
+
+        <!-- Symbol Column -->
+        <ng-container matColumnDef="edit">
+          <th mat-header-cell *matHeaderCellDef> Edit </th>
+          <td mat-cell *matCellDef="let element"> <input type="checkbox" [disabled]="custom" [(ngModel)]="element.edit" name="edit" id=""> </td>
+        </ng-container>
+
+        <ng-container matColumnDef="delete">
+          <th mat-header-cell *matHeaderCellDef> Delete </th>
+          <td mat-cell *matCellDef="let element"> <input type="checkbox" [disabled]="custom" [(ngModel)]="element.delete" name="delete" id=""> </td>
+        </ng-container>
+
+        <ng-container matColumnDef="show">
+          <th mat-header-cell *matHeaderCellDef> Show </th>
+          <td mat-cell *matCellDef="let element"> <input type="checkbox" [disabled]="custom" [(ngModel)]="element.show" name="show" id=""> </td>
+        </ng-container>
+
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      </table>
+
+      <mat-paginator [pageSizeOptions]="[3, 6, 12]"
+                     showFirstLastButtons
+                     aria-label="Select page of periodic elements">
+      </mat-paginator>
+    </div>
+
+
+  </form>
+
+</div>
+
+
+
