@@ -1,7 +1,7 @@
 <app-breadcrumbs></app-breadcrumbs>
-<div class="container">
+<!-- <div class="container">
   <form (submit)="ruleHandler($event)" [formGroup]="rule">
-    <div class="line"></div>
+
     <div class="salary_related my-5 w-75">
       <h2 class="my-4">
         Salary Related
@@ -97,12 +97,150 @@
 
 
       </div>
-      
+
 
       <div class="line"></div>
 
     <button type="submit" class="btn btn-success">Save</button>
 
 </form>
+</div> -->
+
+
+<div class="line"></div>
+<div class="container">
+
+  <form (submit)="ruleHandler($event)" [formGroup]="rule">
+    <div >
+      <h2 class="my-4">
+        Salary Related
+      </h2>
+      <div class="salary_related">
+
+
+        <div>
+          <mat-form-field class="example-full-width">
+            <mat-label>Overtime</mat-label>
+            <input matInput #message type="number" maxlength="256" formControlName="overtime">
+
+            <mat-hint align="end">{{message.value.length}} / 256</mat-hint>
+
+          </mat-form-field>
+          @if(getOvertime.touched ){
+            <ng-container>
+              @if(getOvertime.hasError('required') || getOvertime.value == '0'){
+              <div id="emailHelp" class="form-text text-danger">
+                Overtime is Required
+              </div>
+              }
+              @else if(getOvertime.hasError('min')){
+                <div id="emailHelp" class="form-text text-danger">
+                  Overtime must be more than 0
+                </div>
+                <mat-error>Email is <strong>required</strong></mat-error>
+                }
+            </ng-container>
+            }
+        </div>
+
+
+
+
+
+          <div>
+            <mat-form-field class="example-full-width">
+              <mat-label>Penalty</mat-label>
+              <input matInput #message type="number" maxlength="256" formControlName="penalty">
+              <mat-hint align="end">{{message.value.length}} / 256</mat-hint>
+
+            </mat-form-field>
+            @if(getPenalty.touched ){
+
+              @if(getPenalty.hasError('required')){
+              <div id="emailHelp" class="form-text text-danger">
+                Penalty is Required
+              </div>
+
+              }
+              @else if(getPenalty.hasError('min')){
+                <div id="emailHelp" class="form-text text-danger">
+                  Penaltymust be more than 0
+                </div>
+
+                }
+
+            }
+          </div>
+
+
+
+
+
+
+
+
+      </div>
+
+    </div>
+    <div >
+      <h2 class="my-4">
+        Weekly Day-offs
+      </h2>
+      <div class="day-offs">
+        <div>
+
+          <mat-form-field class="selectInput">
+            <mat-label>Weekend 1</mat-label>
+            <mat-select formControlName="weekend1"  required>
+              <mat-option>--</mat-option>
+              @for (day of days; track day) {
+                <mat-option [value]="day">{{day}}</mat-option>
+              }
+            </mat-select>
+
+
+          </mat-form-field>
+          @if(getWeekend2.touched){
+            <ng-container>
+              @if(getWeekend2.hasError('required')){
+              <div id="emailHelp" class="form-text text-danger">
+                Weekend1 is Required
+              </div>
+              }
+            </ng-container>
+            }
+        </div>
+        <div>
+          <mat-form-field class="selectInput">
+            <mat-label>Weekend2</mat-label>
+            <mat-select formControlName="weekend2" required>
+              <mat-option>--</mat-option>
+              @for (day of days; track day) {
+                <mat-option [value]="day">{{day}}</mat-option>
+              }
+            </mat-select>
+
+          </mat-form-field>
+
+
+
+          @if(getWeekend2.touched){
+            <ng-container>
+              @if(getWeekend2.hasError('required')){
+              <div id="emailHelp" class="form-text text-danger">
+                Weekend2 is Required
+              </div>
+              }
+            </ng-container>
+            }
+        </div>
+
+      </div>
+
+    </div>
+    {{rule.value | json }}
+    <div class="line"></div>
+    <button type="submit" class="btn btn-success">Save</button>
+  </form>
 </div>
 

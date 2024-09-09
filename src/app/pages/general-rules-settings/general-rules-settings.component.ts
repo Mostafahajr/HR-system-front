@@ -1,6 +1,10 @@
 import { GeneralRulesService } from './../../services/general-rules/general-rules.service';
 import { Component, OnInit } from '@angular/core';
 import { BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
+import {MatInputModule} from '@angular/material/input';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {FormsModule} from '@angular/forms';
+import {MatSelectModule} from '@angular/material/select';
 import {
   FormControl,
   FormGroup,
@@ -12,11 +16,12 @@ import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-general-rules-settings',
   standalone: true,
-  imports: [BreadcrumbsComponent,ReactiveFormsModule,CommonModule],
+  imports: [BreadcrumbsComponent,ReactiveFormsModule,CommonModule,MatInputModule,MatFormFieldModule,FormsModule,MatSelectModule],
   templateUrl: './general-rules-settings.component.html',
   styleUrl: './general-rules-settings.component.scss',
 })
 export class GeneralRulesSettingsComponent implements OnInit{
+  days:any[] = ['Saturday','Sunday','Monday','Tuesday','Wednesday','Thursday','Friday']
   rulesContainer:any;
   constructor(private rulesService:GeneralRulesService){
     console.log("done");
@@ -26,8 +31,8 @@ export class GeneralRulesSettingsComponent implements OnInit{
   }
 
   rule = new FormGroup({
-    overtime:new FormControl('0',Validators.required),
-    penalty:new FormControl('0',Validators.required),
+    overtime:new FormControl('0',[Validators.required,Validators.min(1)]),
+    penalty:new FormControl('0',[Validators.required,Validators.min(1)]),
     weekend1:new FormControl('',Validators.required),
     weekend2:new FormControl('',Validators.required)
   })
@@ -129,3 +134,5 @@ export class GeneralRulesSettingsComponent implements OnInit{
   }
 
 }
+
+
