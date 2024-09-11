@@ -28,7 +28,8 @@ import {MatFormFieldModule} from '@angular/material/form-field';
     MatButtonModule,
      MatIconModule,
      MatTableModule,
-      MatPaginatorModule
+      MatPaginatorModule,
+      ReactiveFormsModule
   ],
 })
 export class AddNewGroupComponent implements AfterViewInit {
@@ -38,15 +39,17 @@ export class AddNewGroupComponent implements AfterViewInit {
   showAll:boolean=false;
   custom:boolean=true;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  groupForm = new FormGroup({
-    name:new FormControl(''),
-    privlleges:new FormControl(ELEMENT_DATA)
-  })
+
 
   constructor(private newPermission:GroupsAndPermissionsService){}
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
   }
+  group =new FormGroup({
+    groupName:new FormControl('',[Validators.required])
+})
+
+
   allPrivlleges() {
     this.showAll=!this.showAll;
     ELEMENT_DATA.forEach(item => (
@@ -61,7 +64,9 @@ export class AddNewGroupComponent implements AfterViewInit {
     this.custom = !this.custom;
   }
 
-
+  get getGroupName(){
+    return this.group.controls["groupName"];
+  }
   // onAddPermission(permission:any){
   //   this.newPermission.addnewpermissions(`{
   //   "id": 3,
@@ -122,7 +127,7 @@ export interface groupStru {
 }
 
 const group:groupStru[] = [
-  
+
 ]
 
 

@@ -33,7 +33,7 @@ export class GeneralRulesSettingsComponent implements OnInit{
   rule = new FormGroup({
     overtime:new FormControl('0',[Validators.required,Validators.min(1)]),
     penalty:new FormControl('0',[Validators.required,Validators.min(1)]),
-    weekend1:new FormControl('',Validators.required),
+    weekend1:new FormControl('',[Validators.required]),
     weekend2:new FormControl('',Validators.required)
   })
 
@@ -123,7 +123,7 @@ export class GeneralRulesSettingsComponent implements OnInit{
     if (this.rule.status == "VALID") {
       this.rulesService.addNewRules(this.rule.value).subscribe({
         next:(response)=>{
-          console.log("response");
+          console.log(response);
         },
         error:(error)=>{
           console.log(error);

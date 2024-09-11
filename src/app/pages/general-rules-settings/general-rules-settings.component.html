@@ -200,13 +200,18 @@
 
 
           </mat-form-field>
-          @if(getWeekend2.touched){
+          @if(getWeekend1.touched){
             <ng-container>
-              @if(getWeekend2.hasError('required')){
+              @if(getWeekend1.hasError('required')){
               <div id="emailHelp" class="form-text text-danger">
                 Weekend1 is Required
               </div>
               }
+              @if(getWeekend2.value == getWeekend1.value && getWeekend1.touched){
+                <div id="emailHelp" class="form-text text-danger">
+                  Weekend is already taken
+                </div>
+                }
             </ng-container>
             }
         </div>
@@ -231,6 +236,11 @@
                 Weekend2 is Required
               </div>
               }
+              @if(getWeekend2.value == getWeekend1.value && getWeekend2.touched){
+                <div id="emailHelp" class="form-text text-danger">
+                  Weekend is already taken
+                </div>
+                }
             </ng-container>
             }
         </div>
@@ -238,7 +248,7 @@
       </div>
 
     </div>
-    {{rule.value | json }}
+
     <div class="line"></div>
     <button type="submit" class="btn btn-success">Save</button>
   </form>

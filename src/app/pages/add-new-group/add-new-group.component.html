@@ -4,15 +4,30 @@
     <button mat-stroked-button class="button-style p-4 m-4 w-25" (click)="privateCustom()">Private Custom</button>
     <button mat-stroked-button class="button-info  p-4 m-4 w-25" (click)="allPrivlleges()">All Privillages</button>
   </div>
-  <form action="" method="post" class="example-form p-4">
+  <form action="" method="post" class="example-form p-4" [formGroup]="group">
 
     <div class=" groupName">
-      <mat-form-field class="example-full-width w-50 me-5">
-        <mat-label>Group Name</mat-label>
-        <input matInput #message maxlength="256" name="group">
-        <mat-hint align="end">{{message.value.length}} / 256</mat-hint>
-      </mat-form-field>
+      <div>
+        <mat-form-field class="example-full-width w-50 me-5">
+          <mat-label>Group Name</mat-label>
+          <input matInput #message maxlength="256" name="group" formControlName="groupName">
+          <mat-hint align="end">{{message.value.length}} / 256</mat-hint>
+        </mat-form-field>
+
+        @if(getGroupName.touched ){
+          <ng-container>
+            @if(getGroupName.hasError('required')){
+            <div id="emailHelp" class="form-text text-danger">
+              Group Name is Required
+            </div>
+            }
+
+          </ng-container>
+          }
+      </div>
+
       <button mat-flat-button class="m-4" type="submit">Save</button>
+
     </div>
 
 

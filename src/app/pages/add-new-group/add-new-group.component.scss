@@ -7,8 +7,7 @@ table {
   width: 200px;
 }
 .example-full-width{
-  width: 50%;
-  margin-right: 5rem;
+  width: 75%;
 }
 .controllers {
   display: flex;
@@ -52,4 +51,17 @@ table {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.groupName div{
+  width: 50%;
+
+}
+
+.form-text {
+  font-size: 0.875rem;
+  margin-top: 5px;
+}
+
+.text-danger {
+  color: #ff4d4d;
 }
