@@ -17,3 +17,42 @@
   </button>
 </div>
 <pre>{{ response | json }}</pre>
+
+<!-- CODING OF INVOICES -->
+
+<div>
+  <!-- list -->
+  <h2>Invoices Sectoin</h2>
+  <h3>Show all</h3>
+  <button (click)="getAllInvoices()">Show All Invoices</button>
+  @for (invoice of invoices; track $index) {
+  <div>
+    <span>ID: {{invoice.id}}</span>
+    <span> NAME: {{invoice.name}}</span>
+    <span> DESCRIPTION: {{invoice.description}}</span>
+    <button (click)="deleteInvoice(invoice.id)">Delete</button>
+  </div>
+  }
+  <!-- list one -->
+  <h3>Show Invoice</h3>
+  <input [(ngModel)]="showId" placeholder="ID">
+  <button (click)="getInvoiceById(showId)">Show Invoice</button>
+  <div>
+    <span>ID: {{oneInvoice.id}}</span>
+    <span> NAME: {{oneInvoice.name}}</span>
+    <span> DESCRIPTION: {{oneInvoice.description}}</span>
+  </div>
+  <!-- add -->
+  <h3>Add New Invoice</h3>
+  <input [(ngModel)]="newInvoice.id" placeholder="ID">
+  <input [(ngModel)]="newInvoice.name" placeholder="Name">
+  <input [(ngModel)]="newInvoice.description" placeholder="Description">
+  <button (click)="addInvoice()">Add Invoice</button>
+  <!-- edit -->
+  <h3>Edit Invoice</h3>
+  <input [(ngModel)]="editedInvoice.id" placeholder="Invoice ID to Edit">
+  <input [(ngModel)]="editedInvoice.name" placeholder="New Name">
+  <input [(ngModel)]="editedInvoice.description" placeholder="New Description">
+  <button (click)="updateInvoice(editedInvoice.id)">Update Invoice</button>
+  <pre>{{ response2 | json }}</pre><br>
+</div>

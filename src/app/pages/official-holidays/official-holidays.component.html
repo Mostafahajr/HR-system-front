@@ -1,2 +1,38 @@
 <app-breadcrumbs></app-breadcrumbs>
-<p>this is official day</p>
+<div class="container">
+
+    <!-- list -->
+    <h2>All Holidays</h2>
+    <h3>Show all</h3>
+    <button (click)="getAllHolidays()">Show All Holiday</button>
+    @for (holiday of holidays; track $index) {
+    <div>
+        <span>ID: {{holiday.id}}</span>
+        <span> NAME: {{holiday.name}}</span>
+        <span> DESCRIPTION: {{holiday.description}} </span>
+        <button (click)="deleteHoliday(holiday.id)">Delete</button>
+    </div>
+    }
+    <!-- list one -->
+    <br>
+    <input [(ngModel)]="showId" placeholder="ID">
+    <button (click)="getHolidayById(showId)">Show one Holiday</button>
+    <div>
+        <span>ID: {{oneHoliday.id}}</span>
+        <span> NAME: {{oneHoliday.name}}</span>
+        <span> DESCRIPTION: {{oneHoliday.description}} </span>
+    </div>
+    <!-- add -->
+    <h3>Add New Holiday</h3>
+    <input [(ngModel)]="newHoliday.id" placeholder="ID">
+    <input [(ngModel)]="newHoliday.name" placeholder="Name">
+    <input [(ngModel)]="newHoliday.description" placeholder="Description">
+    <button (click)="addHoliday()">Add Holiday</button>
+    <!-- edit -->
+    <h3>Edit Holiday</h3>
+    <input [(ngModel)]="editedHoliday.id" placeholder="Old Holiday ID">
+    <input [(ngModel)]="editedHoliday.name" placeholder="new Name">
+    <input [(ngModel)]="editedHoliday.description" placeholder="new Description">
+    <button (click)="updateHoliday(editedHoliday.id)">Add Holiday</button>
+    <pre>{{ response | json }}</pre><br>
+</div>
