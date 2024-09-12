@@ -1,16 +1,19 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-
+interface EmployeeResponse {
+  data: any[];
+}
 @Injectable({
   providedIn: 'root'
 })
 export class EmployeesService {
-  baseUrl:string ="http://localhost:3005/empolyees"
-  constructor(public http:HttpClient) { }
-  
-  getAllEmployees(){
-    return this.http.get(this.baseUrl)
+  baseUrl: string = "http://pioneer-back.test/api/employees";
+
+  constructor(private http: HttpClient) {}
+
+  getAllEmployees(): Observable<EmployeeResponse> {
+    return this.http.get<EmployeeResponse>(this.baseUrl);
   }
   getEmployeeById(employeeId:any){
     return this.http.get(`${this.baseUrl}/${employeeId}`)
@@ -18,8 +21,8 @@ export class EmployeesService {
   deleteEmployee(employeeId:any){
     return this.http.delete(`${this.baseUrl}/${employeeId}`)
   }
-  addNewEmployee(employee:any){
-    return this.http.post(this.baseUrl,employee);
+  addNewEmployee(employee: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/employees`, employee);
   }
   editEmployee(employeeId:any,employee:any){
     return this.http.put(`${this.baseUrl}/${employeeId}`,employee);
