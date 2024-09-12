@@ -45,8 +45,9 @@ export class AddNewGroupComponent implements AfterViewInit {
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
   }
-  group =new FormGroup({
-    groupName:new FormControl('',[Validators.required])
+  groupForm =new FormGroup({
+    groupName:new FormControl('',[Validators.required]),
+
 })
 
 
@@ -65,7 +66,7 @@ export class AddNewGroupComponent implements AfterViewInit {
   }
 
   get getGroupName(){
-    return this.group.controls["groupName"];
+    return this.groupForm.controls["groupName"];
   }
   // onAddPermission(permission:any){
   //   this.newPermission.addnewpermissions(`{
