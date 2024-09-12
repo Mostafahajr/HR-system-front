@@ -1,0 +1,36 @@
+mat-form-field
+{
+    width: 500px;
+    margin: auto;
+    margin-left: 30px;
+    margin-bottom: 10px;
+    padding: auto;
+}
+.saveButton{
+    margin-left: 30px;
+    width: 110px;
+}
+.editButton ,.deleteButton
+{
+    width: 110px;
+    margin-left: 20px;
+}
+.editButton:hover
+{
+    background-color: rgb(88, 144, 88);
+    color: aliceblue;
+    
+}
+.deleteButton:hover
+{
+    color: aliceblue;
+    background-color: rgb(121, 45, 45);
+}
+mat-error
+{
+    margin-left: 30px;
+    margin-top: -60px;
+}
+.mdc-text-field:not(.mdc-text-field--disabled) {
+    background-color: var(--mdc-text-field-container-color, var(--mat-app-surface-variant));
+}

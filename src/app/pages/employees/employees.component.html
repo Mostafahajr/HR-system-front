@@ -1,19 +1,67 @@
 <app-breadcrumbs></app-breadcrumbs>
-<!-- <form [formGroup]="employeeForm" (submit)="employee($event)">
-        <div class="mb-3">
-        <label for="exampleInputEmail1"  class="form-label">Name</label>
-        <input type="text" class="form-control" formControlName="name" id="exampleInputEmail1" aria-describedby="emailHelp"> -->
-        <!-- <div id="emailHelp" class="form-text">Enter Your Name.</div> -->
-        <!-- </div> -->
-        <!-- <div class="mb-3">
-        <label for="exampleInputPassword1" class="form-label">salary</label>
-        <input type="number" class="form-control"formControlName="salary" id="exampleInputPassword1">
+<div *ngIf="!showForm">
+    <button mat-button (click)="navigate('employees/add-new-employee')">
+        Add New Employee
+    </button>
+
+    </div>
+    <div *ngIf="showForm">
+        <router-outlet></router-outlet>
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form> -->
-    <!-- @for(employee of employees;track employee.id){ -->
-        <!-- <ul>
-            <li>{{ employee.name}} ,{{ employee.Salary}}</li>
-            <button (click)="deleteHandler(employee.id)">delete</button>
-        </ul> -->
-        
+<div *ngIf="!showForm">
+<table mat-table [dataSource]="dataSource">
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef> Name </th>
+      <td mat-cell *matCellDef="let employee"> {{employee.name}} </td>
+    </ng-container>
+
+    <!-- Address Column -->
+    <ng-container matColumnDef="address">
+      <th mat-header-cell *matHeaderCellDef> Address </th>
+      <td mat-cell *matCellDef="let employee"> {{employee.address}} </td>
+    </ng-container>
+
+    <!-- Phone Number Column -->
+    <ng-container matColumnDef="phone_number">
+      <th mat-header-cell *matHeaderCellDef> Phone Number </th>
+      <td mat-cell *matCellDef="let employee"> {{employee.phone_number}} </td>
+    </ng-container>
+    <!-- Gender Column -->
+    <ng-container matColumnDef="gender">
+      <th mat-header-cell *matHeaderCellDef> Gender </th>
+      <td mat-cell *matCellDef="let employee"> {{employee.gender}} </td>
+    </ng-container>
+    <ng-container matColumnDef="DOB">
+        <th mat-header-cell *matHeaderCellDef> DOB </th>
+        <td mat-cell *matCellDef="let employee"> {{employee.DOB}} </td>
+    </ng-container>
+    <ng-container matColumnDef="nationality">
+        <th mat-header-cell *matHeaderCellDef> Nationality </th>
+        <td mat-cell *matCellDef="let employee"> {{employee.nationality}} </td>
+    </ng-container>
+    <ng-container matColumnDef="salary">
+        <th mat-header-cell *matHeaderCellDef> Salary </th>
+        <td mat-cell *matCellDef="let employee"> {{employee.salary}} </td>
+    </ng-container>
+    
+    <ng-container matColumnDef="date_of_contract">
+        <th mat-header-cell *matHeaderCellDef> date_of_contract </th>
+        <td mat-cell *matCellDef="let employee"> {{employee.date_of_contract}} </td>
+    </ng-container>
+    <ng-container matColumnDef="department">
+      <th mat-header-cell *matHeaderCellDef> Department </th>
+      <!-- -->
+      <!-- {{employee.departmentName}} -->
+      <td mat-cell *matCellDef="let employee"> {{employee.department_name}} </td> <!-- Use departmentName -->
+    </ng-container>    
+    <!-- Table Header and Row Definitions -->
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+</table>
+<mat-paginator [length]="100"
+                [pageSize]="10"
+                [pageSizeOptions]="[5, 10, 25, 100]"
+                aria-label="Select page">
+</mat-paginator>
+</div>

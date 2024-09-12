@@ -1,1 +1,66 @@
-<p>This is a form for adding a new admin</p>
+<div style="margin-top: 50px;" class="container">
+    <form class="example-form" [formGroup]="addNewAdminForm" (ngSubmit)="admin($event)">
+        <table class="example-full-width" cellspacing="0"><tr>
+            <td><mat-form-field class="example-full-width" appearance="outline">
+                <mat-label>fullName</mat-label>
+                <input matInput type="text" formControlName="fullName">
+            <mat-icon matSuffix>person</mat-icon>
+                </mat-form-field>
+                <mat-error *ngIf="addNewAdminForm.get('fullName')?.errors&& addNewAdminForm.get('fullName')?.touched">
+                    <p *ngIf="addNewAdminForm.get('fullName')?.getError('required')">FullName is Required</p>
+                    <p *ngIf="addNewAdminForm.get('fullName')?.getError('minlength')">MinLength is 3</p>
+                </mat-error>
+            </td>
+        <td><mat-form-field class="example-full-width" appearance="outline">
+            <mat-label>userName</mat-label>
+            <input matInput type="text" formControlName="userName">
+            <mat-icon matSuffix>person</mat-icon>
+        </mat-form-field>
+        <mat-error *ngIf="addNewAdminForm.get('userName')?.errors&& addNewAdminForm.get('userName')?.touched">
+            <p *ngIf="addNewAdminForm.get('userName')?.getError('required')">UserName is Required</p>
+        </mat-error>
+    </td>
+        </tr>
+        <tr>
+        <td><mat-form-field class="example-full-width" appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="email">
+            <mat-icon matSuffix> email</mat-icon>
+        </mat-form-field>
+        <mat-error *ngIf="addNewAdminForm.get('email')?.errors && addNewAdminForm.get('email')?.touched">
+            <p *ngIf="addNewAdminForm.get('email')?.getError('required')">email is Required</p>
+            <p *ngIf="addNewAdminForm.get('email')?.getError('email')">Enter correct email</p>
+            </mat-error>
+    </td>
+    <td>
+        <mat-form-field appearance="outline">
+            <mat-label>Enter your password</mat-label>
+            <input matInput [type]="hide ? 'password' : 'text'" formControlName="password"/>
+        </mat-form-field>
+        <mat-error *ngIf="addNewAdminForm.get('password')?.errors && addNewAdminForm.get('password')?.touched">
+            <p *ngIf="addNewAdminForm.get('password')?.getError('required')">password is Required</p>
+            <p *ngIf="addNewAdminForm.get('password')?.getError('pattern')">password must At least 8 characters and one word uppercase and special characters</p>
+        </mat-error>
+    </td>
+    </tr>
+    <tr>
+        <td><mat-form-field class="custom-mat-form-field" appearance="outline">
+            <mat-label>Permissions</mat-label>
+            <mat-select matNativeControl required formControlName="permession" class="custom-mat-select">
+            <mat-option value="SuperAdmin">SuperAdmin</mat-option>
+            <mat-option value="HR">HR</mat-option>
+            </mat-select>
+            </mat-form-field>
+            <mat-error *ngIf="addNewAdminForm.get('permession')?.errors && addNewAdminForm.get('permession')?.touched">
+                <p *ngIf="addNewAdminForm.get('permession')?.getError('required')">permission is Required</p>
+            </mat-error>
+        </td>
+    </tr>
+
+        </table>
+            <button mat-raised-button class="saveButton" type="submit">Save</button>
+            <button mat-raised-button class="editButton"><mat-icon matPrefix>mode_edit</mat-icon>Edit</button>
+            <button mat-raised-button class="deleteButton"><mat-icon matPrefix>clear</mat-icon>Delete</button>
+    </form>
+    </div>
+    
