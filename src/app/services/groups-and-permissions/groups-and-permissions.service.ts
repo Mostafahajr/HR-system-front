@@ -10,7 +10,7 @@ export class GroupsAndPermissionsService {
   permissionsApiUrl:any='http://localhost:3005/products';
   constructor(public http:HttpClient) { }
 
-  getpermissions(){
+  getAllpermissions(){
     return this.http.get(this.permissionsApiUrl);
   }
   getpermission(permissionId:number){

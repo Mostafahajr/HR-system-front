@@ -16,7 +16,7 @@ export class GroupsAndPermissionsComponent implements OnInit {
   permissionsContainer:any;
   constructor(private router: Router,private permissions:GroupsAndPermissionsService) {}
    ngOnInit(): void {
-    this.permissions.getpermissions().subscribe({
+    this.permissions.getAllpermissions().subscribe({
       next:(response)=>{
         console.log(response);
         this.permissionsContainer = response;
@@ -29,7 +29,7 @@ export class GroupsAndPermissionsComponent implements OnInit {
   }
 
 
-  getAllPermissions(){
+  getApiPermissions(){
     console.log(this.permissionsContainer)
 
   }
