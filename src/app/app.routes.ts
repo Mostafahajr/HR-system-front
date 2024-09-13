@@ -1,4 +1,6 @@
-import { Routes } from '@angular/router';
+
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
 import { GroupsAndPermissionsComponent } from './pages/groups-and-permissions/groups-and-permissions.component';
 import { AdminsComponent } from './pages/admins/admins.component';
@@ -10,6 +12,7 @@ import { AddNewGroupComponent } from './pages/add-new-group/add-new-group.compon
 import { AddNewAdminComponent } from './pages/add-new-admin/add-new-admin.component';
 import { AddNewEmployeeComponent } from './pages/add-new-employee/add-new-employee.component';
 import { SalariesComponent } from './pages/salaries/salaries.component';
+import { LoginComponent } from './pages/login/login.component';  // Import LoginComponent
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, data: { breadcrumb: 'Home' } },
@@ -69,8 +72,17 @@ export const routes: Routes = [
     component: SalariesComponent,
     data: { breadcrumb: 'Salaries' },
   },
-  { path: '**', redirectTo: '' },
+  // Add the login route
+  { path: 'login', component: LoginComponent, data: { breadcrumb: 'Login' } },
+
 ];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }
+
 // authentication
 // employee
 // admin(users)
