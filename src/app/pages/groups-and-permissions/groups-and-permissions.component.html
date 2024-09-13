@@ -1,15 +1,61 @@
 <app-breadcrumbs></app-breadcrumbs>
+
 <!-- Conditional content rendering -->
-@if(isAddNewGroupRoute()){
-<div>
-  <button mat-button (click)="navigate('groups-and-permissions/add-new-group')">
+<div *ngIf="isAddNewGroupRoute()">
+    <button mat-button (click)="navigate('groups-and-permissions/add-new-group')">
     Add New Group
   </button>
-  <p>Helooo</p>
 </div>
-}
+
+<!-- Table to display permissions with pagination -->
+<div>
+    <table mat-table [dataSource]="dataSource" matSort class="full-width-table mat-elevation-z8">
+        <!-- ID Column -->
+        <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
+            <td mat-cell *matCellDef="let element" class="id-cell"> {{element.id}} </td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+            <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef> Actions </th>
+            <td mat-cell *matCellDef="let element" class="actions-cell">
+                <div class="button-container">
+                    <button mat-icon-button class="custom-icon-button view-button" (click)="openViewModal(element)">
+            <mat-icon>visibility</mat-icon>
+          </button>
+                    <button mat-icon-button class="custom-icon-button edit-button" (click)="editRow(element.id)">
+            <mat-icon>edit</mat-icon>
+          </button>
+                    <button mat-icon-button class="custom-icon-button delete-button" (click)="deleteRow(element.id)">
+            <mat-icon>delete</mat-icon>
+          </button>
+                </div>
+            </td>
+        </ng-container>
+
+        <!-- Header and Row Definitions -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+
+
+
+
+
+    <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+</div>
+
 <!-- Child routes (e.g., Add New Group) will load here -->
 <router-outlet></router-outlet>
+
 
 
 <!-- <div>
@@ -29,4 +75,3 @@
     DELETE User with ID 1
   </button>
 </div> -->
-

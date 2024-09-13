@@ -1,0 +1,75 @@
+/* Container styles */
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90vh;
+    background-color: #f5f5f5;
+}
+
+
+/* Card styles */
+
+.login-card {
+    padding: 40px;
+    width: 400px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    background-color: #ffffff;
+    /* Card background */
+    border-radius: 8px;
+    /* Rounded corners */
+}
+
+
+/* Logo styles */
+
+.login-logo img {
+    width: 150px;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+
+/* Full-width styling for form fields */
+
+.full-width {
+    width: 100%;
+}
+
+
+/* Button styling */
+
+.login-button {
+    width: 100%;
+    margin-top: 20px;
+    background-color: #006699;
+    color: white;
+    font-weight: bold;
+    /* Optional: makes button text bold */
+}
+
+
+/* Error message styling */
+
+.mat-form-field {
+    margin-bottom: 16px;
+}
+
+.mat-error {
+    color: #fff;
+    /* White text color for contrast */
+    background-color: #d32f2f;
+    /* Red background color */
+    padding: 10px;
+    /* Padding inside the error field */
+    border-radius: 4px;
+    /* Rounded corners for the error field */
+    font-size: 0.875rem;
+    /* Slightly smaller font size */
+    margin-top: 8px;
+    /* Space above the error message */
+    display: block;
+    /* Ensures the error message is displayed as a block element */
+}
