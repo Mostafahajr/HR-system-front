@@ -5,7 +5,6 @@ import { HomeComponent } from './pages/home/home.component';
 import { GroupsAndPermissionsComponent } from './pages/groups-and-permissions/groups-and-permissions.component';
 import { AdminsComponent } from './pages/admins/admins.component';
 import { EmployeesComponent } from './pages/employees/employees.component';
-import { GeneralRulesSettingsComponent } from './pages/general-rules-settings/general-rules-settings.component';
 import { OfficialHolidaysComponent } from './pages/official-holidays/official-holidays.component';
 import { AttendanceReportsComponent } from './pages/attendance-reports/attendance-reports.component';
 import { AddNewGroupComponent } from './pages/add-new-group/add-new-group.component';
@@ -13,6 +12,8 @@ import { AddNewAdminComponent } from './pages/add-new-admin/add-new-admin.compon
 import { AddNewEmployeeComponent } from './pages/add-new-employee/add-new-employee.component';
 import { SalariesComponent } from './pages/salaries/salaries.component';
 import { LoginComponent } from './pages/login/login.component';  // Import LoginComponent
+import { SalaryRelatedSettingsComponent } from './pages/salary-related-settings/salary-related-settings.component';
+import { WeekendSettingsComponent } from './pages/weekend-settings/weekend-settings.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, data: { breadcrumb: 'Home' } },
@@ -53,9 +54,14 @@ export const routes: Routes = [
     ],
   },
   {
-    path: 'general-rules-settings',
-    component: GeneralRulesSettingsComponent,
-    data: { breadcrumb: 'General Rules Settings' },
+    path: 'salary-related-settings',
+    component: SalaryRelatedSettingsComponent,
+    data: { breadcrumb: 'Salary Related Settings' },
+  },
+  {
+    path: 'weekend-settings',
+    component: WeekendSettingsComponent,
+    data: { breadcrumb: 'Weekend Settings' },
   },
   {
     path: 'official-holidays',

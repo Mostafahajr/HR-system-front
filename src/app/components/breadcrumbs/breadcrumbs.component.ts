@@ -5,11 +5,12 @@ import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { RouterLink } from '@angular/router';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'app-breadcrumbs',
   standalone: true,
-  imports: [CommonModule, RouterLink, MatIcon],
+  imports: [CommonModule, RouterLink, MatIcon,MatButton],
   templateUrl: './breadcrumbs.component.html',
   styleUrls: ['./breadcrumbs.component.scss'],
 })
@@ -44,5 +45,10 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy {
   updateBreadcrumbs(): void {
     // Update the breadcrumbs based on the current route
     this.breadcrumbs = this.breadcrumbService.breadcrumbs;
+  }
+  
+  // for navigation of any button next to breadcrmb
+  navigate(route: string): void {
+    this.router.navigate([route]);
   }
 }

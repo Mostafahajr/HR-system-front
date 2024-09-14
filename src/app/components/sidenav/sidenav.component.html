@@ -1,41 +1,45 @@
 <mat-sidenav-container class="sidenav-container">
-    <mat-sidenav *ngIf="showSidenav" mode="side" opened>
-        <mat-nav-list>
-            <button mat-button (click)="navigate('home')">
+  <mat-sidenav *ngIf="showSidenav" mode="side" opened>
+    <mat-nav-list>
+      <button mat-button (click)="navigate('home')">
         <mat-icon>home</mat-icon>
         Home
       </button>
-            <button mat-button (click)="navigate('groups-and-permissions')">
+      <button mat-button (click)="navigate('groups-and-permissions')">
         <mat-icon>group</mat-icon>
         Groups and Permissions
       </button>
-            <button mat-button (click)="navigate('admins')">
+      <button mat-button (click)="navigate('admins')">
         <mat-icon>admin_panel_settings</mat-icon>
         Admins
       </button>
-            <button mat-button (click)="navigate('employees')">
+      <button mat-button (click)="navigate('employees')">
         <mat-icon>people</mat-icon>
         Employees
       </button>
-            <button mat-button (click)="navigate('general-rules-settings')">
+      <button mat-button (click)="navigate('salary-related-settings')">
         <mat-icon>settings</mat-icon>
-        General Rules Settings
+        Salary Related Settings
       </button>
-            <button mat-button (click)="navigate('official-holidays')">
+      <button mat-button (click)="navigate('weekend-settings')">
+        <mat-icon>settings</mat-icon>
+        Weekend Settings
+      </button>
+      <button mat-button (click)="navigate('official-holidays')">
         <mat-icon>event</mat-icon>
         Official Holidays
       </button>
-            <button mat-button (click)="navigate('attendance-reports')">
+      <button mat-button (click)="navigate('attendance-reports')">
         <mat-icon>assignment</mat-icon>
         Attendance Reports
       </button>
-            <button mat-button (click)="navigate('salaries')">
+      <button mat-button (click)="navigate('salaries')">
         <mat-icon>assignment</mat-icon>
         Salaries
       </button>
-        </mat-nav-list>
-    </mat-sidenav>
-    <mat-sidenav-content>
-        <router-outlet></router-outlet>
-    </mat-sidenav-content>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
 </mat-sidenav-container>
