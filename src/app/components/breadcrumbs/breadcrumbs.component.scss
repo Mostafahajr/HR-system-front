@@ -3,17 +3,29 @@
   gap: 5px;
   align-items: center;
 }
+
 h1 {
   margin-top: 0;
   margin-bottom: 8px;
 }
+
 nav a {
-  color: #00587f; /* Inherit color from parent element */
-  text-decoration: none; /* Remove underline */
+  color: #00587f;
+  /* Inherit color from parent element */
+  text-decoration: none;
+  /* Remove underline */
 }
 
 /* Optional: Add hover effect for better user experience */
 nav a:hover {
-  text-decoration: underline; /* Optional underline on hover */
-  color: #5497c3; /* Optional color change on hover */
+  text-decoration: underline;
+  /* Optional underline on hover */
+  color: #5497c3;
+  /* Optional color change on hover */
+}
+
+.main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }

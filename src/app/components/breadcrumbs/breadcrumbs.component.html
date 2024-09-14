@@ -1,22 +1,50 @@
-<h1>{{ breadcrumbs[breadcrumbs.length - 1].label }}</h1>
-<nav class="breadcrumb">
-  <mat-icon
-    aria-hidden="false"
-    aria-label="Example home icon"
-    fontIcon="home"
-  ></mat-icon>
-  <ng-container *ngFor="let breadcrumb of breadcrumbs; let last = last">
-    <ng-container *ngIf="!last">
-      <mat-icon aria-hidden="false" aria-label="Example home icon">
-        chevron_right
-      </mat-icon>
-      <a [routerLink]="breadcrumb.url">{{ breadcrumb.label }}</a>
-    </ng-container>
-    <ng-container *ngIf="last">
-      <mat-icon aria-hidden="false" aria-label="Example home icon">
-        chevron_right
-      </mat-icon>
-      {{ breadcrumb.label }}
-    </ng-container>
-  </ng-container>
-</nav>
+<div class="main">
+  <div>
+    <h1>{{ breadcrumbs[breadcrumbs.length - 1].label }}</h1>
+    <nav class="breadcrumb">
+      <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="home"></mat-icon>
+      <ng-container *ngFor="let breadcrumb of breadcrumbs; let last = last">
+        <ng-container *ngIf="!last">
+          <mat-icon aria-hidden="false" aria-label="Example home icon">
+            chevron_right
+          </mat-icon>
+          <a [routerLink]="breadcrumb.url">{{ breadcrumb.label }}</a>
+        </ng-container>
+        <ng-container *ngIf="last">
+          <mat-icon aria-hidden="false" aria-label="Example home icon">
+            chevron_right
+          </mat-icon>
+          {{ breadcrumb.label }}
+        </ng-container>
+      </ng-container>
+    </nav>
+  </div>
+  @switch (breadcrumbs[breadcrumbs.length - 1].label) {
+  @case("Groups and Permissions"){
+  <button mat-button (click)="navigate('groups-and-permissions/add-new-group')">
+    Add New Group
+  </button>
+  }
+  @case("Admins"){
+  <button mat-button (click)="navigate('admins/add-new-admin')">
+    Add New Admin
+  </button>
+  }
+  @case("Employees"){
+  <button mat-button (click)="navigate('employees/add-new-employee')">
+    Add New Employee
+  </button>
+  }
+  @case ("Attendance Reports") {
+  <div>
+    <button mat-button>
+      Add Attendance
+    </button>
+    <button mat-button>
+      Import Excel Sheet
+    </button>
+  </div>}
+  }
+
+
+</div>

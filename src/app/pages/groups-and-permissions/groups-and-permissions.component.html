@@ -1,14 +1,14 @@
 <app-breadcrumbs></app-breadcrumbs>
 
-<!-- Conditional content rendering -->
-<div *ngIf="isAddNewGroupRoute()">
+<!-- Conditional content rendering
+<div *ngIf="isGroupRoute()">
     <button mat-button (click)="navigate('groups-and-permissions/add-new-group')">
     Add New Group
-  </button>
-</div>
+  </button> 
+</div> -->
 
 <!-- Table to display permissions with pagination -->
-<div>
+<div *ngIf="isGroupRoute()">
     <table mat-table [dataSource]="dataSource" matSort class="full-width-table mat-elevation-z8">
         <!-- ID Column -->
         <ng-container matColumnDef="id">

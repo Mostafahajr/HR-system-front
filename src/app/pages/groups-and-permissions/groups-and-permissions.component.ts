@@ -60,7 +60,7 @@ export class GroupsAndPermissionsComponent implements OnInit, AfterViewInit {
     this.router.navigate([route]);
   }
 
-  isAddNewGroupRoute(): boolean {
+  isGroupRoute(): boolean {
     return this.router.url === '/groups-and-permissions';
   }
 
