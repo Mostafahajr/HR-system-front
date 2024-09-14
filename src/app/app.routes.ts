@@ -8,11 +8,13 @@ import { EmployeesComponent } from './pages/employees/employees.component';
 import { GeneralRulesSettingsComponent } from './pages/general-rules-settings/general-rules-settings.component';
 import { OfficialHolidaysComponent } from './pages/official-holidays/official-holidays.component';
 import { AttendanceReportsComponent } from './pages/attendance-reports/attendance-reports.component';
+
 import { AddNewGroupComponent } from './pages/add-new-group/add-new-group.component';
 import { AddNewAdminComponent } from './pages/add-new-admin/add-new-admin.component';
 import { AddNewEmployeeComponent } from './pages/add-new-employee/add-new-employee.component';
 import { SalariesComponent } from './pages/salaries/salaries.component';
 import { LoginComponent } from './pages/login/login.component';  // Import LoginComponent
+import { AddAttendanceComponent } from './pages/add-attendance/add-attendance.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, data: { breadcrumb: 'Home' } },
@@ -66,7 +68,15 @@ export const routes: Routes = [
     path: 'attendance-reports',
     component: AttendanceReportsComponent,
     data: { breadcrumb: 'Attendance Reports' },
+    children:[
+      {
+        path: 'add-attendance',
+        component: AddAttendanceComponent,
+        data: { breadcrumb: 'Add Attendance' },
+      },
+    ]
   },
+
   {
     path: 'salaries',
     component: SalariesComponent,
