@@ -1,0 +1,99 @@
+<div class="container">
+  <ng-container class="w-50">
+
+    <mat-form-field appearance="outline" class="w-50">
+      <mat-label>Filter</mat-label>
+      <input matInput (change)="applyFilter($event)" placeholder="Ex. Mia" #input  >
+    </mat-form-field>
+
+</ng-container>
+
+<form [formGroup]="employeeForm" method="post">
+
+  <table class="content-table">
+    <thead>
+      <tr>
+        <th>id</th>
+        <th>department</th>
+        <th>name</th>
+        <th>Arrival</th>
+        <th>Leave</th>
+        <th>Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody [formGroup]="employeeForm">
+
+      <ng-container formArrayName="tableRows">
+        @for (row of pagedItems; track $index) {
+          <tr formGroupName="{{$index}}">
+            <td><input type="text" formControlName="id" value="{{row.id}}" readonly class="read"></td>
+            <td><input type="text" formControlName="department" value="{{row.department}}" readonly class="read"></td>
+            <td><input type="text" formControlName="name" value="{{row.name}}" readonly class="read"></td>
+            <td><input type="time" formControlName="arrival" value="{{row.arrival}}" ></td>
+            <td><input type="time" formControlName="leave" value="{{row.leave}}" class="change"  placeholder="enter Leave"></td>
+            <td><input type="text" formControlName="date" value="{{row.date}}" readonly class="read"></td>
+
+            <td>
+
+            <button mat-icon-button class="custom-icon-button delete-button" (click)="deleteUser(row.id)">
+              <mat-icon>delete</mat-icon>
+            </button>
+            </td>
+          </tr>
+        }
+      </ng-container>
+      <ng-container>
+        <tr>
+          @if (filteredEmployees.length == 0) {
+            <td colspan="6" >
+              <h2 class="text-danger text-center">
+                Please Enter a Department
+             </h2>
+            </td>
+
+           }
+        </tr>
+
+      </ng-container>
+      <ng-container>
+        <tr >
+          <td colspan="6" >
+              @if (employeeForm.invalid) {
+                <p class="text-danger">
+                  all data is required
+                </p>
+              }
+
+
+            <div class="controllers">
+              <button  class="example-button-row btn" type="submit" [disabled]="employeeForm.invalid"   (click)="onSubmit($event)">
+                save
+              </button>
+              <!-- <div>
+                <button (click)="goToPreviousPage()" [disabled]="currentPage === 0" class="btn">Previous</button>
+                <span>Page {{ currentPage + 1 }} of {{ totalPages }}</span>
+                <button (click)="goToNextPage()" [disabled]="currentPage === totalPages - 1" class="btn">Next</button>
+              </div> -->
+              <mat-paginator [length]="100"
+                [pageSize]="10"
+                [pageSizeOptions]="[5, 10, 25, 100]"
+                aria-label="Select page">
+              </mat-paginator>
+            </div>
+
+          </td>
+
+        </tr>
+
+      </ng-container>
+    </tbody>
+</table>
+
+</form>
+
+</div>
+
+
+
