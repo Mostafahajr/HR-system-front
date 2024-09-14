@@ -1,58 +1,123 @@
 <app-breadcrumbs></app-breadcrumbs>
-<div>
-  <button mat-raised-button color="primary" (click)="getAllUsers()">
-    GET All Users
-  </button>
-  <button mat-raised-button color="primary" (click)="getUser(1)">
-    GET User with ID 1
-  </button>
-  <button mat-raised-button color="primary" (click)="createUser()">
-    POST Create User
-  </button>
-  <button mat-raised-button color="primary" (click)="updateUser(1)">
-    PUT Update User with ID 1
-  </button>
-  <button mat-raised-button color="warn" (click)="deleteUser(1)">
-    DELETE User with ID 1
-  </button>
+
+<div class="filter-container">
+    <div class="search-input">
+        <input type="text" placeholder="Search Employee by Name" (input)="onSearch($event, 'name')">
+
+        <i class="fa fa-search search-icon"></i>
+    </div>
+
+    <div class="filter-fields">
+        <!-- Month Select -->
+        <mat-form-field appearance="outline">
+            <mat-label>Month</mat-label>
+            <mat-select id="month-select" (selectionChange)="onSelectionChange($event)" [(ngModel)]="selectedMonth">
+                <mat-option *ngFor="let month of months" [value]="month">
+                    {{ month }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Year</mat-label>
+            <mat-select id="year-select" (selectionChange)="onSelectionChange($event)" [(ngModel)]="selectedYear">
+                <mat-option *ngFor="let year of years" [value]="year">
+                    {{ year }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <!-- Add similar structure for department select if needed -->
+        <mat-form-field appearance="outline">
+            <mat-label>Department</mat-label>
+            <mat-select id="department-select" (selectionChange)="onSelectionChange($event)" [(ngModel)]="selectedDepartment">
+                <mat-option *ngFor="let department of departments" [value]="department">
+                    {{ department }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+    </div>
+
+    <button mat-raised-button color="primary" class="search-button" (click)="applyFilter()">Search</button>
 </div>
-<pre>{{ response | json }}</pre>
 
-<!-- CODING OF INVOICES -->
+<div class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 full-width-table">
+        <!-- Column Definitions -->
+        <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef> Name </th>
+            <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+        </ng-container>
 
-<div>
-  <!-- list -->
-  <h2>Invoices Sectoin</h2>
-  <h3>Show all</h3>
-  <button (click)="getAllInvoices()">Show All Invoices</button>
-  @for (invoice of invoices; track $index) {
-  <div>
-    <span>ID: {{invoice.id}}</span>
-    <span> NAME: {{invoice.name}}</span>
-    <span> DESCRIPTION: {{invoice.description}}</span>
-    <button (click)="deleteInvoice(invoice.id)">Delete</button>
-  </div>
-  }
-  <!-- list one -->
-  <h3>Show Invoice</h3>
-  <input [(ngModel)]="showId" placeholder="ID">
-  <button (click)="getInvoiceById(showId)">Show Invoice</button>
-  <div>
-    <span>ID: {{oneInvoice.id}}</span>
-    <span> NAME: {{oneInvoice.name}}</span>
-    <span> DESCRIPTION: {{oneInvoice.description}}</span>
-  </div>
-  <!-- add -->
-  <h3>Add New Invoice</h3>
-  <input [(ngModel)]="newInvoice.id" placeholder="ID">
-  <input [(ngModel)]="newInvoice.name" placeholder="Name">
-  <input [(ngModel)]="newInvoice.description" placeholder="Description">
-  <button (click)="addInvoice()">Add Invoice</button>
-  <!-- edit -->
-  <h3>Edit Invoice</h3>
-  <input [(ngModel)]="editedInvoice.id" placeholder="Invoice ID to Edit">
-  <input [(ngModel)]="editedInvoice.name" placeholder="New Name">
-  <input [(ngModel)]="editedInvoice.description" placeholder="New Description">
-  <button (click)="updateInvoice(editedInvoice.id)">Update Invoice</button>
-  <pre>{{ response2 | json }}</pre><br>
+        <ng-container matColumnDef="department">
+            <th mat-header-cell *matHeaderCellDef> Department </th>
+            <td mat-cell *matCellDef="let element"> {{element.department}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="salary">
+            <th mat-header-cell *matHeaderCellDef> Salary </th>
+            <td mat-cell *matCellDef="let element"> {{element.salary}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="attended">
+            <th mat-header-cell *matHeaderCellDef> Attended </th>
+            <td mat-cell *matCellDef="let element"> {{element.attended}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="absent">
+            <th mat-header-cell *matHeaderCellDef> Absent </th>
+            <td mat-cell *matCellDef="let element"> {{element.absent}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="overtime">
+            <th mat-header-cell *matHeaderCellDef> Overtime </th>
+            <td mat-cell *matCellDef="let element"> {{element.overtime}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="deductions">
+            <th mat-header-cell *matHeaderCellDef> Deductions </th>
+            <td mat-cell *matCellDef="let element"> {{element.deductions}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="totalSurplus">
+            <th mat-header-cell *matHeaderCellDef> Total Surplus </th>
+            <td mat-cell *matCellDef="let element"> {{element.totalSurplus}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="totalDeductions">
+            <th mat-header-cell *matHeaderCellDef> Total Deductions </th>
+            <td mat-cell *matCellDef="let element"> {{element.totalDeductions}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="net">
+            <th mat-header-cell *matHeaderCellDef> Net </th>
+            <td mat-cell *matCellDef="let element"> {{element.net}} </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef> Actions </th>
+            <td mat-cell *matCellDef="let element">
+                <div class="button-container">
+                    <button mat-icon-button class="custom-icon-button view-button" (click)="viewDetails(element)">
+            <mat-icon>visibility</mat-icon>
+          </button>
+                    <button mat-icon-button class="custom-icon-button edit-button" (click)="editUser(element)">
+            <mat-icon>edit</mat-icon>
+          </button>
+                    <button mat-icon-button class="custom-icon-button delete-button" (click)="deleteUser(element)">
+            <mat-icon>delete</mat-icon>
+          </button>
+                </div>
+            </td>
+        </ng-container>
+
+        <!-- Header and Row Definitions -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <!-- Paginator -->
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
 </div>

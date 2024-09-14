@@ -6,11 +6,13 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatListModule } from '@angular/material/list';
 import { RouterOutlet } from '@angular/router';
+import { CommonModule } from '@angular/common'; // Import CommonModule
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
   imports: [
+    CommonModule,       // Add CommonModule here
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
@@ -23,5 +25,6 @@ import { RouterOutlet } from '@angular/router';
   styleUrls: ['./navbar.component.scss'],
 })
 export class NavbarComponent {
-  // Your component logic goes here
+  // Define showSidebar property
+  showSidebar: boolean = true; // or any logic to toggle this value
 }

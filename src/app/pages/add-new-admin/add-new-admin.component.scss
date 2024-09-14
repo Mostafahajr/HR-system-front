@@ -19,7 +19,7 @@ mat-form-field
 {
     background-color: rgb(88, 144, 88);
     color: aliceblue;
-    
+
 }
 .deleteButton:hover
 {
@@ -34,3 +34,5 @@ mat-error
 .mdc-text-field:not(.mdc-text-field--disabled) {
     background-color: var(--mdc-text-field-container-color, var(--mat-app-surface-variant));
 }
+
+
