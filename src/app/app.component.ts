@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormFieldComponent } from './components/form-field/form-field.component';
-import { NavbarComponent } from './components/navbar/navbar.component';
 import { SidenavComponent } from './components/sidenav/sidenav.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
 
 @Component({
   selector: 'app-root',

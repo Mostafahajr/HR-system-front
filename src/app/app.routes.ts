@@ -1,4 +1,3 @@
-
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
@@ -12,101 +11,155 @@ import { AddNewGroupComponent } from './pages/add-new-group/add-new-group.compon
 import { AddNewAdminComponent } from './pages/add-new-admin/add-new-admin.component';
 import { AddNewEmployeeComponent } from './pages/add-new-employee/add-new-employee.component';
 import { SalariesComponent } from './pages/salaries/salaries.component';
-import { LoginComponent } from './pages/login/login.component';  // Import LoginComponent
+import { LoginComponent } from './pages/login/login.component';
 
 import { SalaryRelatedSettingsComponent } from './pages/salary-related-settings/salary-related-settings.component';
 import { WeekendSettingsComponent } from './pages/weekend-settings/weekend-settings.component';
 
 import { AddAttendanceComponent } from './pages/add-attendance/add-attendance.component';
-
+import { authGuard } from './gaurds/auth.guard';
+import { NotFoundComponent } from './pages/not-found/not-found.component';
+import { UnauthorizedComponent } from './pages/unauthorized/unauthorized.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, data: { breadcrumb: 'Home' } },
   {
     path: 'groups-and-permissions',
     component: GroupsAndPermissionsComponent,
-    data: { breadcrumb: 'Groups and Permissions' },
+    canActivate: [authGuard],
+    data: {
+      breadcrumb: 'Groups and Permissions',
+      pageName: 'Groups_and_Permissions',
+      operation: 'read',
+    },
     children: [
       {
         path: 'add-new-group',
         component: AddNewGroupComponent,
-        data: { breadcrumb: 'Add New Group' },
+        canActivate: [authGuard],
+        data: {
+          breadcrumb: 'Add New Group',
+          pageName: 'Groups_and_Permissions',
+          operation: 'create',
+        },
       },
     ],
   },
   {
     path: 'admins',
     component: AdminsComponent,
-    data: { breadcrumb: 'Admins' },
+    canActivate: [authGuard],
+    data: {
+      breadcrumb: 'Admins',
+      pageName: 'Admins',
+      operation: 'read',
+    },
     children: [
       {
         path: 'add-new-admin',
         component: AddNewAdminComponent,
-        data: { breadcrumb: 'Add New Admin' },
+        canActivate: [authGuard],
+        data: {
+          breadcrumb: 'Add New Admin',
+          pageName: 'Admins',
+          operation: 'create',
+        },
       },
     ],
   },
   {
     path: 'employees',
     component: EmployeesComponent,
-    data: { breadcrumb: 'Employees' },
+    canActivate: [authGuard],
+    data: {
+      breadcrumb: 'Employees',
+      pageName: 'Employees',
+      operation: 'read',
+    },
     children: [
       {
         path: 'add-new-employee',
         component: AddNewEmployeeComponent,
-        data: { breadcrumb: 'Add New Employee' },
+        canActivate: [authGuard],
+        data: {
+          breadcrumb: 'Add New Employee',
+          pageName: 'Employeees',
+          operation: 'create',
+        },
       },
     ],
   },
   {
     path: 'salary-related-settings',
     component: SalaryRelatedSettingsComponent,
-    data: { breadcrumb: 'Salary Related Settings' },
+    canActivate: [authGuard],
+    data: {
+      breadcrumb: 'Salary Related Settings',
+      pageName: 'Salary_Related_Settings',
+      operation: 'read',
+    },
   },
   {
     path: 'weekend-settings',
     component: WeekendSettingsComponent,
-    data: { breadcrumb: 'Weekend Settings' },
+    canActivate: [authGuard],
+    data: {
+      breadcrumb: 'Weekend Settings',
+      pageName: 'Weekend_Settings',
+      operation: 'read',
+    },
   },
   {
     path: 'official-holidays',
     component: OfficialHolidaysComponent,
-    data: { breadcrumb: 'Official Holidays' },
+    canActivate: [authGuard],
+    data: {
+      breadcrumb: 'Official Holidays',
+      pageName: 'Official_Holidays',
+      operation: 'read',
+    },
   },
   {
     path: 'attendance-reports',
     component: AttendanceReportsComponent,
-    data: { breadcrumb: 'Attendance Reports' },
-    children:[
+    canActivate: [authGuard],
+    data: {
+      breadcrumb: 'Attendance Reports',
+      pageName: 'Attendance_Reports',
+      operation: 'read',
+    },
+    children: [
       {
         path: 'add-attendance',
         component: AddAttendanceComponent,
-        data: { breadcrumb: 'Add Attendance' },
+        canActivate: [authGuard],
+        data: {
+          breadcrumb: 'Add Attendance',
+          pageName: 'Attendance_Reports',
+          operation: 'create',
+        },
       },
-    ]
+    ],
   },
 
   {
     path: 'salaries',
     component: SalariesComponent,
-    data: { breadcrumb: 'Salaries' },
+    canActivate: [authGuard],
+    data: {
+      breadcrumb: 'Salaries',
+      pageName: 'Salaries',
+      operation: 'read',
+    },
   },
   // Add the login route
   { path: 'login', component: LoginComponent, data: { breadcrumb: 'Login' } },
-
+  { path: 'unauthorized', component: UnauthorizedComponent },
+  { path: '**', component: NotFoundComponent },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
-
-// authentication
-// employee
-// admin(users)
-// attendance
-// official_holidays
-// salary_invoices
-// departments??
-// salary_reports
+export class AppRoutingModule {}

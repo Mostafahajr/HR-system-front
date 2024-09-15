@@ -1,134 +1,158 @@
-import { GroupsAndPermissionsService } from './../../services/groups-and-permissions/groups-and-permissions.service';
-import {AfterViewInit, Component, ViewChild} from '@angular/core';
-import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
-import {MatTableDataSource, MatTableModule} from '@angular/material/table';
-import { FormControl,Validators,FormGroup,ReactiveFormsModule } from '@angular/forms';
-import {MatButton} from '@angular/material/button';
-import {MatTooltip} from '@angular/material/tooltip';
-import {MatIconModule} from '@angular/material/icon';
-import {MatButtonModule} from '@angular/material/button';
-import {FormsModule} from '@angular/forms';
-import {MatInputModule} from '@angular/material/input';
-import {MatFormFieldModule} from '@angular/material/form-field';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  FormArray,
+  Validators,
+  AbstractControl,
+  ReactiveFormsModule,
+  FormControl,
+} from '@angular/forms';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { PrivilegeService } from '../../services/privilege/privilege-service.service';
+import { Privilege } from '../../models/iPrivilege';
+import { CommonModule } from '@angular/common';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { RouterOutlet } from '@angular/router';
 
-/**
- * @title Basic use of `<table mat-table>`
- */
 @Component({
-  selector: 'form-add-new-group',
-  styleUrls: ['add-new-group.component.scss'],
-  templateUrl: 'add-new-group.component.html',
+  selector: 'app-add-new-group',
   standalone: true,
-  imports: [MatTableModule,
-    MatButton,
-    MatTooltip,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    FormsModule,
     MatButtonModule,
-     MatIconModule,
-     MatTableModule,
-      MatPaginatorModule,
-      ReactiveFormsModule
+    MatCheckboxModule,
+    MatTableModule,
+    MatPaginatorModule,
+    RouterOutlet,
+    ReactiveFormsModule,
   ],
+  templateUrl: './add-new-group.component.html',
+  styleUrls: ['./add-new-group.component.scss'],
 })
-export class AddNewGroupComponent implements AfterViewInit {
+export class AddNewGroupComponent implements OnInit {
+  displayedColumns: string[] = [
+    'select',
+    'page',
+    'create',
+    'read',
+    'update',
+    'delete',
+  ];
+  dataSource = new MatTableDataSource<any>();
+  privilegeForm: FormGroup;
+  response: any;
 
-  displayedColumns: string[] = ['position', 'name', 'add', 'edit','delete','show'];
-  dataSource = new MatTableDataSource<PeriodicElement>(ELEMENT_DATA);
-  showAll:boolean=false;
-  custom:boolean=true;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-
-  constructor(private newPermission:GroupsAndPermissionsService){}
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-  }
-  groupForm =new FormGroup({
-    groupName:new FormControl('',[Validators.required]),
-
-})
-
-
-  allPrivlleges() {
-    this.showAll=!this.showAll;
-    ELEMENT_DATA.forEach(item => (
-      item.add = this.showAll,
-      item.edit = this.showAll,
-      item.delete = this.showAll,
-      item.show = this.showAll
-
-    ));
-  }
-  privateCustom(){
-    this.custom = !this.custom;
+  constructor(
+    private privilegeService: PrivilegeService,
+    private fb: FormBuilder
+  ) {
+    this.privilegeForm = this.fb.group({
+      groupName: ['', Validators.required],
+      privileges: this.fb.array([]),
+    });
   }
 
-  get getGroupName(){
-    return this.groupForm.controls["groupName"];
+  ngOnInit(): void {
+    this.getAllPrivileges();
   }
-  // onAddPermission(permission:any){
-  //   this.newPermission.addnewpermissions(`{
-  //   "id": 3,
-  //   "name": "Clementine Bauch",
-  //   "username": "Samantha",
-  //   "email": "Nathan@yesenia.net",
-  //   "address": {
-  //     "street": "Douglas Extension",
-  //     "suite": "Suite 847",
-  //     "city": "McKenziehaven",
-  //     "zipcode": "59590-4157",
-  //     "geo": {
-  //       "lat": "-68.6102",
-  //       "lng": "-47.0653"
-  //     }
-  //   },
-  //   "phone": "1-463-123-4447",
-  //   "website": "ramiro.info",
-  //   "company": {
-  //     "name": "Romaguera-Jacobson",
-  //     "catchPhrase": "Face to face bifurcated interface",
-  //     "bs": "e-enable strategic applications"
-  //   }
-  // }`).subscribe({
-  //   next:()=>{
-  //     console.log("done");
-  //   },
-  //   error:(error)=>{
-  //     console.log(error);
-  //   }
 
-  // })
-  // }
+  getAllPrivileges() {
+    this.privilegeService
+      .getAllpriliveges()
+      .subscribe((response: { data: Privilege[] }) => {
+        this.response = this.groupPrivilegesByPage(response.data);
+        this.dataSource.data = this.response;
+        this.initFormArray();
+      });
+  }
+
+  groupPrivilegesByPage(privileges: Privilege[]) {
+    return privileges.reduce((acc: any, privilege: Privilege) => {
+      const page = acc.find((p: any) => p.page_name === privilege.page_name);
+      if (page) {
+        page.operations.push(privilege);
+      } else {
+        acc.push({ page_name: privilege.page_name, operations: [privilege] });
+      }
+      return acc;
+    }, []);
+  }
+
+  initFormArray() {
+    const privilegeArray = this.privilegeForm.get('privileges') as FormArray;
+    this.response.forEach((page: any) => {
+      const pageGroup = this.fb.group({
+        page_name: [page.page_name],
+        operations: this.fb.group({
+          create: [false],
+          read: [false],
+          update: [false],
+          delete: [false],
+        }),
+      });
+      privilegeArray.push(pageGroup);
+    });
+  }
+
+  toggleAllRows(event: any) {
+    const checked = event.checked;
+    const privilegeArray = this.privilegeForm.get('privileges') as FormArray;
+    privilegeArray.controls.forEach((group: AbstractControl) => {
+      const operationsGroup = group.get('operations') as FormGroup;
+      Object.keys(operationsGroup.controls).forEach((key) => {
+        operationsGroup.get(key)?.setValue(checked);
+      });
+    });
+  }
+
+  isAllChecked(): boolean {
+    const privilegeArray = this.privilegeForm.get('privileges') as FormArray;
+    return privilegeArray.controls.every((group: AbstractControl) => {
+      const operationsGroup = group.get('operations') as FormGroup;
+      return Object.keys(operationsGroup.controls).every(
+        (key) => operationsGroup.get(key)?.value
+      );
+    });
+  }
+
+  toggleRow(event: any, rowIndex: number) {
+    const checked = event.checked;
+    const rowGroup = (this.privilegeForm.get('privileges') as FormArray).at(
+      rowIndex
+    ) as FormGroup;
+    const operationsGroup = rowGroup.get('operations') as FormGroup;
+    Object.keys(operationsGroup.controls).forEach((key) => {
+      operationsGroup.get(key)?.setValue(checked);
+    });
+  }
+
+  isRowChecked(rowIndex: number): boolean {
+    const rowGroup = (this.privilegeForm.get('privileges') as FormArray).at(
+      rowIndex
+    ) as FormGroup;
+    const operationsGroup = rowGroup.get('operations') as FormGroup;
+    return Object.keys(operationsGroup.controls).some(
+      (key) => operationsGroup.get(key)?.value
+    );
+  }
+
+  submit() {}
+
+  getPrivilegeControl(pageIndex: number, operation: string): FormControl {
+    const pageGroup = (this.privilegeForm.get('privileges') as FormArray).at(
+      pageIndex
+    ) as FormGroup;
+    const operationsGroup = pageGroup.get('operations') as FormGroup;
+    return operationsGroup.get(operation) as FormControl;
+  }
 }
-
-
-
-export interface PeriodicElement {
-  name: string;
-  position: number;
-  add: boolean;
-  edit: boolean;
-  delete:boolean;
-  show:any
-}
-
-const ELEMENT_DATA: PeriodicElement[] = [
-  {position: 1, name: 'Hydrogen', add: false, edit: false,delete: false, show: false},
-  {position: 2, name: 'Hy', add: false, edit: false,delete: false, show: false},
-  {position: 3, name: 'drogen', add: false, edit: false,delete: false, show: false},
-
-
-];
-export interface groupStru {
-  id:number,
-  name:string,
-  privalges:PeriodicElement[]
-}
-
-const group:groupStru[] = [
-
-]
-
-

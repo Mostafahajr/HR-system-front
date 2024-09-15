@@ -1,39 +1,11 @@
-<!-- Header/Navbar -->
 <mat-toolbar>
-    <!-- Application logo or title -->
-    <div class="logo-container">
-        <img src="./images/logo.png" alt="Logo" loading="lazy" />
-    </div>
+  <!-- Application logo or title -->
+  <div class="logo-container">
+    <img src="./images/logo.png" alt="Logo" loading="lazy" />
+  </div>
 
-    <!-- Spacer to push the following items to the right -->
-    <span class="spacer"></span>
-
-    <button mat-button>Ahmed</button>
-    <button mat-button>Logout</button>
+  <!-- Spacer to push the following items to the right -->
+  <span class="spacer"></span>
+  <!-- Show the Logout button based on the showLogoutButton flag -->
+  <button mat-button *ngIf="showLogoutButton" (click)="logout()">Logout</button>
 </mat-toolbar>
-
-<!-- Conditionally display the sidebar and content -->
-<mat-sidenav-container *ngIf="showSidebar">
-    <mat-sidenav mode="side" opened="true">
-        <!-- Sidebar content -->
-        <mat-nav-list>
-            <mat-list-item>Home</mat-list-item>
-            <mat-list-item>About</mat-list-item>
-            <!-- Add more items here -->
-        </mat-nav-list>
-    </mat-sidenav>
-
-    <!-- Main content area -->
-    <mat-sidenav-content>
-        <ng-content></ng-content>
-    </mat-sidenav-content>
-</mat-sidenav-container>
-
-<!-- Display only header if on the login page -->
-<ng-container *ngIf="!showSidebar">
-    <mat-toolbar>
-        <div class="logo-container">
-            <img src="./images/logo.png" alt="Logo" loading="lazy" />
-        </div>
-    </mat-toolbar>
-</ng-container>
