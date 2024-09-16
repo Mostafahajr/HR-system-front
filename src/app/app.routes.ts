@@ -20,6 +20,8 @@ import { AddAttendanceComponent } from './pages/add-attendance/add-attendance.co
 import { authGuard } from './gaurds/auth.guard';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { UnauthorizedComponent } from './pages/unauthorized/unauthorized.component';
+import { EditEmployeeComponent } from './pages/edit-employee/edit-employee.component';
+import { ShowComponent } from './pages/show/show.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, data: { breadcrumb: 'Home' } },
@@ -87,6 +89,24 @@ export const routes: Routes = [
           operation: 'create',
         },
       },
+      {
+        path: 'edit/:id',
+        component: EditEmployeeComponent,
+        canActivate: [authGuard],
+        data: { breadcrumb: 'Edit Employee' , 
+          pageName: 'Employeees',
+          // operation: 'edit',
+        },
+      },
+      {
+        path: 'show/:id',
+        component: ShowComponent,
+        canActivate: [authGuard],
+        data: { breadcrumb: 'show Employee',
+          pageName: 'Employeees',
+          // operation: 'read', },
+      }
+    },
     ],
   },
   {
@@ -96,7 +116,7 @@ export const routes: Routes = [
     data: {
       breadcrumb: 'Salary Related Settings',
       pageName: 'Salary_Related_Settings',
-      operation: 'read',
+      // operation: 'read',
     },
   },
   {

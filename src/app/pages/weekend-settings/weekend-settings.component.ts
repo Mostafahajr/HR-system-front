@@ -5,11 +5,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
 import { GeneralRulesService } from './../../services/general-rules/general-rules.service';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'app-weekend-settings',
   standalone: true,
-  imports: [BreadcrumbsComponent,ReactiveFormsModule, CommonModule, MatFormFieldModule, MatSelectModule],
+  imports: [BreadcrumbsComponent,ReactiveFormsModule, CommonModule, MatFormFieldModule, MatSelectModule,MatButton],
   templateUrl: './weekend-settings.component.html',
   styleUrls: ['./weekend-settings.component.scss']
 })
