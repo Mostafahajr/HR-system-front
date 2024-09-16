@@ -47,7 +47,7 @@ const EMPLOYEES=[
     name:"mostafa",
     department:"marketing",
   },
- 
+
 ]
 
 
@@ -76,7 +76,7 @@ export class AddAttendanceComponent implements AfterViewInit,OnInit{
 
 
   pagedItems: any[] = []; // Array to store paginated data
-  pageSize = 20;          // Number of items per page
+  pageSize = 2;          // Number of items per page
   currentPage = 0;        // Current page index
   totalPages: number = 0; // Total number of pages
 
@@ -207,8 +207,11 @@ export class AddAttendanceComponent implements AfterViewInit,OnInit{
 
   getPagedItems(): void {
     const start = this.currentPage * this.pageSize;
+    console.log(start);
     const end = start + this.pageSize;
     this.pagedItems = this.filteredEmployees.slice(start, end);
+    // console.log(this.pagedItems.length);
+
   }
 
   goToNextPage(): void {
