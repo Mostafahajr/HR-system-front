@@ -1,4 +1,3 @@
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import {
   FormBuilder,
@@ -17,11 +16,12 @@ import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { Router, RouterOutlet } from '@angular/router';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
-  selector: 'app-add-new-group',
+  selector: 'app-edit-group',
   standalone: true,
   imports: [
     CommonModule,
@@ -32,13 +32,11 @@ import { Subject, takeUntil } from 'rxjs';
     MatCheckboxModule,
     MatTableModule,
     MatPaginatorModule,
-    RouterOutlet,
-    ReactiveFormsModule,
   ],
-  templateUrl: './add-new-group.component.html',
-  styleUrls: ['./add-new-group.component.scss'],
+  templateUrl: './edit-group.component.html',
+  styleUrls: ['./edit-group.component.scss'],
 })
-export class AddNewGroupComponent implements OnInit {
+export class EditGroupComponent implements OnInit {
   displayedColumns: string[] = [
     'select',
     'page',
@@ -56,7 +54,8 @@ export class AddNewGroupComponent implements OnInit {
   constructor(
     private privilegeService: PrivilegeService,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     this.privilegeForm = this.fb.group({
       groupName: ['', Validators.required],
@@ -65,29 +64,24 @@ export class AddNewGroupComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getAllPrivileges();
+    const groupId = this.route.snapshot.params['id'];
+    this.loadGroup(groupId);
   }
 
-  getAllPrivileges() {
-    this.privilegeService
-      .getAllpriliveges()
-      .subscribe((response: { data: Privilege[] }) => {
-        this.response = this.groupPrivilegesByPage(response.data);
-        this.dataSource.data = this.response;
-        this.initFormArray();
-      });
+  loadGroup(groupId: number) {
+    this.privilegeService.getGroup(groupId).subscribe((response: any) => {
+      this.privilegeForm.patchValue({ groupName: response.group.group_name });
+      this.response = this.formatPrivilegesData(response.privileges);
+      this.dataSource.data = this.response;
+      this.initFormArray();
+    });
   }
 
-  groupPrivilegesByPage(privileges: Privilege[]) {
-    return privileges.reduce((acc: any, privilege: Privilege) => {
-      const page = acc.find((p: any) => p.page_name === privilege.page_name);
-      if (page) {
-        page.operations.push(privilege);
-      } else {
-        acc.push({ page_name: privilege.page_name, operations: [privilege] });
-      }
-      return acc;
-    }, []);
+  formatPrivilegesData(privileges: any) {
+    return Object.keys(privileges).map((pageName) => ({
+      page_name: pageName,
+      operations: privileges[pageName],
+    }));
   }
 
   initFormArray() {
@@ -96,14 +90,20 @@ export class AddNewGroupComponent implements OnInit {
       const pageGroup = this.fb.group({
         page_name: [page.page_name],
         operations: this.fb.group({
-          create: [false],
-          read: [false],
-          update: [false],
-          delete: [false],
+          create: [this.isOperationSelected(page.operations, 'create')],
+          read: [this.isOperationSelected(page.operations, 'read')],
+          update: [this.isOperationSelected(page.operations, 'update')],
+          delete: [this.isOperationSelected(page.operations, 'delete')],
         }),
       });
       privilegeArray.push(pageGroup);
     });
+  }
+
+  isOperationSelected(operations: any[], operationName: string): boolean {
+    return operations.some(
+      (op) => op.operation === operationName && op.is_selected
+    );
   }
 
   toggleAllRows(event: any) {
@@ -161,21 +161,18 @@ export class AddNewGroupComponent implements OnInit {
         privileges: selectedPrivileges,
       };
 
+      const groupId = this.route.snapshot.params['id'];
       this.privilegeService
-        .postPrivileges(requestData)
+        .updateGroup(groupId, requestData)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
-            console.log('Group created successfully', response);
+            console.log('Group updated successfully', response);
             this.router.navigate(['groups-and-permissions']);
           },
           error: (error) => {
-            console.error('Error creating group', error);
+            console.error('Error updating group', error);
             // Handle error (e.g., show error message)
-          },
-          complete: () => {
-            // Optional: Handle completion if necessary
-            console.log('Request completed');
           },
         });
     }
