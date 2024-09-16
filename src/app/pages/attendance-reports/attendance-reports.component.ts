@@ -16,6 +16,7 @@ import { MatIconModule } from '@angular/material/icon';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { CommonModule, DatePipe } from '@angular/common';
+import { AttendanceService } from '../../services/attendance/attendance.service';
 
 
 export interface UserData {
@@ -76,8 +77,7 @@ export class AttendanceReportsComponent {
   ) {}
 
   ngOnInit() {
-    this.dataSource = new MatTableDataSource<EmployeeAttendance>([]);
-    this.loadAttendances();
+    // this.dataSource = new MatTableDataSource<EmployeeAttendance>([]);
   }
 
   isAddNewAttendancesRoute(): boolean {

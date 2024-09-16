@@ -59,12 +59,10 @@
 
 .delete-button:hover {
   background-color: rgb(121, 45, 45);
-  ;
   /* Dark red color on hover */
   color: #ffffff;
   /* Change icon color on hover */
   border-color: rgb(121, 45, 45);
-  ;
   /* Border color on hover */
 }
 
@@ -72,30 +70,36 @@
   outline: none;
 }
 
-.w-50{
+.w-50 {
   width: 30%;
   margin: 1rem 2rem;
 }
-.m-3{
+.m-3 {
   margin: 1rem 2rem;
 }
-.d-flex{
+.d-flex {
   display: flex;
   justify-content: start;
   align-items: center;
 }
 
-.btn{
+.btn {
   width: 10%;
   padding: 10px;
   border-radius: 10px;
   background-color: #0560de;
   color: #ffffff;
   border: 1px solid #ddd;
-  transition: .5s ease;
+  transition: 0.5s ease;
 }
 
-.btn:hover{
+.btn:hover {
   background-color: #2a7cf0;
   color: #ddd;
+}
+
+.wrapper {
+  scroll-behavior: inherit;
+  overflow: auto;
+  height: 65vh;
 }

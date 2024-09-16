@@ -26,7 +26,6 @@ import { AttendanceReportsComponent } from './pages/attendance-reports/attendanc
 import { EditEmployeeComponent } from './pages/edit-employee/edit-employee.component';
 import { ShowComponent } from './pages/show/show.component';
 
-
 export const routes: Routes = [
   { path: '', component: HomeComponent, data: { breadcrumb: 'Home' } },
   {
@@ -107,7 +106,8 @@ export const routes: Routes = [
         path: 'edit/:id',
         component: EditEmployeeComponent,
         canActivate: [authGuard],
-        data: { breadcrumb: 'Edit Employee' , 
+        data: {
+          breadcrumb: 'Edit Employee',
           pageName: 'Employeees',
           operation: 'edit',
         },
@@ -116,11 +116,12 @@ export const routes: Routes = [
         path: 'show/:id',
         component: ShowComponent,
         canActivate: [authGuard],
-        data: { breadcrumb: 'show Employee',
+        data: {
+          breadcrumb: 'show Employee',
           pageName: 'Employeees',
-          operation: 'read', },
-      }
-    },
+          operation: 'read',
+        },
+      },
     ],
   },
   {
