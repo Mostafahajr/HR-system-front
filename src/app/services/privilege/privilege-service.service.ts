@@ -6,13 +6,19 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class PrivilegeService {
-  prilivegesApiUrl: any = 'http://pioneer-back.test/api/privileges';
+  privilegesApiUrl: any = 'http://pioneer-back.test/api/privileges';
   constructor(public http: HttpClient) {}
 
   getAllpriliveges(): Observable<any> {
-    return this.http.get(this.prilivegesApiUrl);
+    return this.http.get(this.privilegesApiUrl);
   }
   postPrivileges(payload: any): Observable<any> {
-    return this.http.post(`${this.prilivegesApiUrl}`, payload);
+    return this.http.post(`${this.privilegesApiUrl}`, payload);
+  }
+  getGroup(id: number): Observable<any> {
+    return this.http.get(`${this.privilegesApiUrl}/${id}`);
+  }
+  updateGroup(id: number, payload: any): Observable<any> {
+    return this.http.put(`${this.privilegesApiUrl}/${id}`, payload);
   }
 }

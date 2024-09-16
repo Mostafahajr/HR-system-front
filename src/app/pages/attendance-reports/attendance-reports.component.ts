@@ -1,3 +1,4 @@
+
 import { ChangeDetectionStrategy, Component, signal, ViewChild } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
@@ -69,21 +70,18 @@ export class AttendanceReportsComponent {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
+  constructor(
+    private router: Router,
+    private attendanceService: AttendanceService
+  ) {}
 
-
-
-
-
-
-  constructor(private router: Router,private datePipe: DatePipe) {
-    // Create 100 users
-
-
-    // Assign the data to the data source for the table to render
-
+  ngOnInit() {
+    this.dataSource = new MatTableDataSource<EmployeeAttendance>([]);
+    this.loadAttendances();
   }
 
   isAddNewAttendancesRoute(): boolean {
+
     return this.router.url === '/attendance-reports';
   }
 

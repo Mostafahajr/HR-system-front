@@ -1,12 +1,12 @@
 table {
   width: 50%;
-  margin:0 0 30px 0;
+  margin: 0 0 30px 0;
 }
 
 .example-form-field {
   width: 200px;
 }
-.example-full-width{
+.example-full-width {
   width: 75%;
 }
 .controllers {
@@ -45,16 +45,15 @@ table {
   background-color: #138496;
 }
 
-.groupName{
+.groupName {
   margin: 1rem auto;
   width: 75%;
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.groupName div{
+.groupName div {
   width: 50%;
-
 }
 
 .form-text {
@@ -64,4 +63,9 @@ table {
 
 .text-danger {
   color: #ff4d4d;
+}
+
+.top_bar {
+  display: flex;
+  justify-content: space-between;
 }
