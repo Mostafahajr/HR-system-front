@@ -1,0 +1,68 @@
+.button-container {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.custom-icon-button {
+  background-color: transparent;
+  color: #006699;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  padding: 8px;
+  min-width: 44px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+.view-button:hover {
+  background-color: #0560de;
+  color: #ffffff;
+  background-color: #0560de;
+}
+
+.edit-button:hover {
+  background-color: rgb(88, 144, 88);
+
+  color: #ffffff;
+
+  border-color: rgb(88, 144, 88);
+}
+
+.delete-button:hover {
+  background-color: rgb(121, 45, 45);
+  color: #ffffff;
+  border-color: rgb(121, 45, 45);
+}
+
+.custom-icon-button:focus {
+  outline: none;
+}
+.full-width-table {
+  width: 100%;
+  table-layout: fixed; /* Ensures columns have equal width */
+}
+
+/* Center the Actions heading */
+.actions-header {
+  text-align: center;
+}
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px; /* Space between buttons */
+}
+mat-paginator {
+  padding-top: 20px;
+  padding-bottom: 40px;
+}
+
+.wrapper {
+  scroll-behavior: inherit;
+  overflow: auto;
+  height: 65vh;
+}

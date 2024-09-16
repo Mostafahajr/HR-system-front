@@ -5,11 +5,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { CommonModule, NgIf } from '@angular/common';
 import { GeneralRulesService } from './../../services/general-rules/general-rules.service';
 import { BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'app-salary-related-settings',
   standalone: true,
-  imports: [BreadcrumbsComponent, ReactiveFormsModule, CommonModule, MatInputModule, MatFormFieldModule, NgIf],
+  imports: [BreadcrumbsComponent, ReactiveFormsModule, CommonModule, MatInputModule, MatFormFieldModule, NgIf,MatButton],
   templateUrl: './salary-related-settings.component.html',
   styleUrls: ['./salary-related-settings.component.scss']
 })

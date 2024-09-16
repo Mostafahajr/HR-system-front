@@ -29,6 +29,7 @@
   /* Container */
   .container {
     width: 100%;
+    margin-top: 50px;
   }
   
   /* Button styling */
@@ -93,5 +94,13 @@
       width: 100%;
       padding: 0 15px;
     }
+  }
+  .mat-form-field {
+    width: 100%;
+  }
+  
+  .mat-error {
+    color: #f44336; /* Red color for error text */
+    font-size: 12px; /* Adjust font size as needed */
   }
   

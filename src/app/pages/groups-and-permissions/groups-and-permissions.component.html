@@ -14,10 +14,10 @@
         {{ element.id }}
       </td>
     </ng-container>
-    <!-- Name Column -->
-    <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
-      <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+    <!-- Group Name Column -->
+    <ng-container matColumnDef="group_name">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Group Name</th>
+      <td mat-cell *matCellDef="let element">{{ element.group_name }}</td>
     </ng-container>
     <!-- Actions Column -->
     <ng-container matColumnDef="actions">
@@ -26,22 +26,15 @@
         <div class="button-container">
           <button
             mat-icon-button
-            class="custom-icon-button view-button"
-            (click)="openViewModal(element)"
-          >
-            <mat-icon>visibility</mat-icon>
-          </button>
-          <button
-            mat-icon-button
             class="custom-icon-button edit-button"
-            (click)="editRow(element.id)"
+            (click)="editGroup(element.id)"
           >
             <mat-icon>edit</mat-icon>
           </button>
           <button
             mat-icon-button
             class="custom-icon-button delete-button"
-            (click)="deleteRow(element.id)"
+            (click)="deleteGroup(element.id)"
           >
             <mat-icon>delete</mat-icon>
           </button>

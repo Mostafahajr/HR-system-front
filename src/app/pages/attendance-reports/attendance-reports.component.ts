@@ -101,7 +101,7 @@ export class AttendanceReportsComponent  {
 
 
   getAttendanceApi(){
-    this.attendanceService.getAttendanceRecords().subscribe({
+    this.attendanceService.getAttendances().subscribe({
       next:(response)=>{
         console.log(response);
 
@@ -117,6 +117,7 @@ export class AttendanceReportsComponent  {
 
         this.dataSource.data = formattedData;
         this.filteredDataSource.data = formattedData;
+        console.log(this.filteredDataSource);
 
 
 
@@ -141,6 +142,7 @@ export class AttendanceReportsComponent  {
   }
 
   isAddNewAttendancesRoute(): boolean {
+
     return this.router.url === '/attendance-reports';
   }
 
@@ -202,6 +204,15 @@ export class AttendanceReportsComponent  {
         leave_time:this.updateLeave,
         date:date
       }
+      this.attendanceService.updateAttendance(id,updateAttendance).subscribe({
+        next:(response)=>{
+          console.log(response);
+        },
+        error:(error)=>{
+          console.log(error);
+        }
+      })
+
 
       this.dataSource.data = this.dataSource.data.filter(emp=>emp.id != id);
 

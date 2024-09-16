@@ -63,12 +63,10 @@ table{
 
 .delete-button:hover {
   background-color: rgb(121, 45, 45);
-  ;
   /* Dark red color on hover */
   color: #ffffff;
   /* Change icon color on hover */
   border-color: rgb(121, 45, 45);
-  ;
   /* Border color on hover */
 }
 
@@ -76,14 +74,14 @@ table{
   outline: none;
 }
 
-.w-50{
+.w-50 {
   width: 30%;
   margin: 1rem 2rem;
 }
-.m-3{
+.m-3 {
   margin: 1rem 2rem;
 }
-.d-flex{
+.d-flex {
   display: flex;
   justify-content: space-between;
   align-items: center;
