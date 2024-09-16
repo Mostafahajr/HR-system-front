@@ -63,6 +63,7 @@ const EMPLOYEES = [
   },
 ];
 
+
 @Component({
   selector: 'app-add-attendance',
   standalone: true,
@@ -90,8 +91,10 @@ export class AddAttendanceComponent implements AfterViewInit, OnInit {
   currentTimeString: string = '';
 
   pagedItems: any[] = []; // Array to store paginated data
+
   pageSize = 20; // Number of items per page
   currentPage = 0; // Current page index
+
   totalPages: number = 0; // Total number of pages
 
   isSubmited: boolean = true;
@@ -188,8 +191,11 @@ export class AddAttendanceComponent implements AfterViewInit, OnInit {
 
   getPagedItems(): void {
     const start = this.currentPage * this.pageSize;
+    console.log(start);
     const end = start + this.pageSize;
     this.pagedItems = this.filteredEmployees.slice(start, end);
+    // console.log(this.pagedItems.length);
+
   }
 
   goToNextPage(): void {

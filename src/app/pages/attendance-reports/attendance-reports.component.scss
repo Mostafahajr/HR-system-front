@@ -1,11 +1,101 @@
-table {
+.full-width-table {
   width: 100%;
 }
-.mat-mdc-row .mat-mdc-cell {
-  border-bottom: 1px solid transparent;
-  border-top: 1px solid transparent;
-  cursor: pointer;
+
+.mat-elevation-z8 {
+  margin-top: 20px;
 }
-.mat-mdc-row:hover .mat-mdc-cell {
-  border-color: currentColor;
+
+.mat-elevation-z8 {
+  box-shadow: none !important;
+}
+
+.button-container {
+  display: flex;
+  gap: 8px;
+  /* Adjust space between buttons */
+  align-items: center;
+  /* Vertically center the buttons */
+}
+
+.custom-icon-button {
+  background-color: transparent;
+  /* Transparent background */
+  color: #006699;
+  /* Default icon color */
+  border: 2px solid transparent;
+  /* Transparent border to maintain button shape */
+  border-radius: 4px;
+  padding: 8px;
+  min-width: 44px;
+  /* Ensure the button has a consistent width */
+  height: 40px;
+  /* Ensure the button has a consistent height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  /* Adjust font size for icon */
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+.view-button:hover {
+  background-color: #0560de;
+  /* Change to desired color on hover */
+  color: #ffffff;
+  /* Change icon color on hover */
+  background-color: #0560de;
+  /* Border color on hover */
+}
+
+.edit-button:hover {
+  background-color: rgb(88, 144, 88);
+  /* Green color on hover */
+  color: #ffffff;
+  /* Change icon color on hover */
+  border-color: rgb(88, 144, 88);
+  /* Border color on hover */
+}
+
+.delete-button:hover {
+  background-color: rgb(121, 45, 45);
+  ;
+  /* Dark red color on hover */
+  color: #ffffff;
+  /* Change icon color on hover */
+  border-color: rgb(121, 45, 45);
+  ;
+  /* Border color on hover */
+}
+
+.custom-icon-button:focus {
+  outline: none;
+}
+
+.w-50{
+  width: 30%;
+  margin: 1rem 2rem;
+}
+.m-3{
+  margin: 1rem 2rem;
+}
+.d-flex{
+  display: flex;
+  justify-content: start;
+  align-items: center;
+}
+
+.btn{
+  width: 10%;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #0560de;
+  color: #ffffff;
+  border: 1px solid #ddd;
+  transition: .5s ease;
+}
+
+.btn:hover{
+  background-color: #2a7cf0;
+  color: #ddd;
 }

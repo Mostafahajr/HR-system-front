@@ -71,16 +71,16 @@
               <button  class="example-button-row btn" type="submit" [disabled]="employeeForm.invalid"   (click)="onSubmit($event)">
                 save
               </button>
-              <!-- <div>
+              <div>
                 <button (click)="goToPreviousPage()" [disabled]="currentPage === 0" class="btn">Previous</button>
                 <span>Page {{ currentPage + 1 }} of {{ totalPages }}</span>
                 <button (click)="goToNextPage()" [disabled]="currentPage === totalPages - 1" class="btn">Next</button>
-              </div> -->
-              <mat-paginator [length]="100"
+              </div>
+              <!-- <mat-paginator [length]="100"
                 [pageSize]="10"
                 [pageSizeOptions]="[5, 10, 25, 100]"
                 aria-label="Select page">
-              </mat-paginator>
+              </mat-paginator> -->
             </div>
 
           </td>
