@@ -1,13 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
-import { GroupsAndPermissionsComponent } from './pages/groups-and-permissions/groups-and-permissions.component';
 import { AdminsComponent } from './pages/admins/admins.component';
 import { EmployeesComponent } from './pages/employees/employees.component';
 import { OfficialHolidaysComponent } from './pages/official-holidays/official-holidays.component';
-import { AttendanceReportsComponent } from './pages/attendance-reports/attendance-reports.component';
 
-import { AddNewGroupComponent } from './pages/add-new-group/add-new-group.component';
 import { AddNewAdminComponent } from './pages/add-new-admin/add-new-admin.component';
 import { AddNewEmployeeComponent } from './pages/add-new-employee/add-new-employee.component';
 import { SalariesComponent } from './pages/salaries/salaries.component';
@@ -20,8 +17,15 @@ import { AddAttendanceComponent } from './pages/add-attendance/add-attendance.co
 import { authGuard } from './gaurds/auth.guard';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { UnauthorizedComponent } from './pages/unauthorized/unauthorized.component';
+
+import { AddNewGroupComponent } from './pages/add-new-group/add-new-group.component';
+import { GroupsAndPermissionsComponent } from './pages/groups-and-permissions/groups-and-permissions.component';
+import { EditGroupComponent } from './pages/edit-group-component/edit-group.component';
+import { AttendanceReportsComponent } from './pages/attendance-reports/attendance-reports.component';
+
 import { EditEmployeeComponent } from './pages/edit-employee/edit-employee.component';
 import { ShowComponent } from './pages/show/show.component';
+
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, data: { breadcrumb: 'Home' } },
@@ -43,6 +47,16 @@ export const routes: Routes = [
           breadcrumb: 'Add New Group',
           pageName: 'Groups_and_Permissions',
           operation: 'create',
+        },
+      },
+      {
+        path: 'edit-group/:id',
+        component: EditGroupComponent,
+        canActivate: [authGuard],
+        data: {
+          breadcrumb: 'Edit Group',
+          pageName: 'Groups_and_Permissions',
+          operation: 'update',
         },
       },
     ],
@@ -95,7 +109,7 @@ export const routes: Routes = [
         canActivate: [authGuard],
         data: { breadcrumb: 'Edit Employee' , 
           pageName: 'Employeees',
-          // operation: 'edit',
+          operation: 'edit',
         },
       },
       {
@@ -104,7 +118,7 @@ export const routes: Routes = [
         canActivate: [authGuard],
         data: { breadcrumb: 'show Employee',
           pageName: 'Employeees',
-          // operation: 'read', },
+          operation: 'read', },
       }
     },
     ],
@@ -116,7 +130,7 @@ export const routes: Routes = [
     data: {
       breadcrumb: 'Salary Related Settings',
       pageName: 'Salary_Related_Settings',
-      // operation: 'read',
+      operation: 'read',
     },
   },
   {
