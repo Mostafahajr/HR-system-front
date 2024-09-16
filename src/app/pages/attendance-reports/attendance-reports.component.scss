@@ -8,6 +8,10 @@
 
 .mat-elevation-z8 {
   box-shadow: none !important;
+
+}
+table{
+  max-height: 65vh;
 }
 
 .button-container {
@@ -81,21 +85,47 @@
 }
 .d-flex{
   display: flex;
-  justify-content: start;
+  justify-content: space-between;
   align-items: center;
+  margin-top: 16px;
 }
+.controllers{
+  display: flex;
+  gap: 24px;
+
+}
+th h6{
+
+  text-align: center;
+}
+td{
+  width: 14%;
+  text-align: start;
+}
+
 
 .btn{
-  width: 10%;
-  padding: 10px;
-  border-radius: 10px;
-  background-color: #0560de;
-  color: #ffffff;
-  border: 1px solid #ddd;
-  transition: .5s ease;
+  height:56px;
+  border: 0px;
+  border-radius: 10px; ;
+
+}
+.w-time{
+  width: 70%;
+
+  margin:10px auto;
 }
 
-.btn:hover{
-  background-color: #2a7cf0;
-  color: #ddd;
+
+
+ p {
+
+  width: 100%;
+}
+
+.mat-mdc-form-field{
+  flex-direction: row !important;
+}
+.container{
+  padding-bottom:36px ;
 }
