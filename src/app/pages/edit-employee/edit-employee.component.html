@@ -1,0 +1,95 @@
+<!-- <h2>Edit Employee</h2> -->
+<div style="margin-top: 50px;" class="container">
+    <form class="example-form"[formGroup]="employeeForm" (ngSubmit)="onSubmit()">
+        <table class="example-full-width" cellspacing="0" ><tr>
+            <td><mat-form-field class="example-full-width" appearance="outline">
+                <mat-label>Name</mat-label>
+                <input matInput type="text" formControlName="name" >
+                <mat-icon matSuffix>person</mat-icon>
+                </mat-form-field>
+                <mat-error *ngIf="employeeForm.get('name')?.errors&& employeeForm.get('name')?.touched">
+                    <p *ngIf="employeeForm.get('name')?.hasError('required')">Name is Required</p>
+                    <p *ngIf="employeeForm.get('name')?.hasError('minlength')">MinLength is 3</p>
+                </mat-error>
+            </td>
+        <td><mat-form-field class="example-full-width" appearance="outline">
+            <mat-label>DateOfContract</mat-label>
+            <input matInput type="date" formControlName="date_of_contract">
+            <mat-icon matSuffix>calendar_today</mat-icon>
+        </mat-form-field>
+        <mat-error *ngIf="employeeForm.get('date_of_contract')?.errors && employeeForm.get('date_of_contract')?.touched">
+            <p *ngIf="employeeForm.get('date_of_contract')?.hasError('required')">dateOfContract is Required</p>
+            <p *ngIf="employeeForm.get('date_of_contract')?.hasError('beforeCompanyStartDate')">Contract date cannot be before the company's start date (2008-01-01).</p>
+            </mat-error>
+    </td>
+    <td>
+        <mat-form-field class="example-full-width" appearance="outline">
+            <mat-label>Phone</mat-label>
+            <input type="tel" matInput placeholder="000-000-000-00" formControlName="phone_number">
+            <mat-icon matSuffix> call</mat-icon>
+        </mat-form-field>
+        <mat-error *ngIf="employeeForm.get('phone_number')?.errors && employeeForm.get('phone_number')?.touched">
+            <p *ngIf="employeeForm.get('phone_number')?.hasError('required')">phone is Required</p>
+            <p *ngIf="employeeForm.get('phone_number')?.hasError('pattern')">Phone number must be exactly 10 digits and contain only numbers.</p>
+        </mat-error>
+    </td>
+    </tr>
+        <tr>
+            <td><mat-form-field class="example-full-width" appearance="outline">
+                <mat-label>Department</mat-label>
+                <input matInput type="text" formControlName="department">
+                <mat-icon matSuffix>work</mat-icon>
+                </mat-form-field>
+                <mat-error *ngIf="employeeForm.get('department')?.errors && employeeForm.get('department')?.touched">
+                    <p *ngIf="employeeForm.get('department')?.hasError('required')">Department is Required</p>
+                </mat-error>
+            </td>
+        <td><mat-form-field class="example-full-width" appearance="outline">
+            <mat-label>Leave</mat-label>
+            <input matInput type="datetime-local" formControlName="leave_time" placeholder="HH:MM:SS">
+            <mat-icon matSuffix>access_time</mat-icon>
+            </mat-form-field>
+            <mat-error *ngIf="employeeForm.get('leave_time')?.errors && employeeForm.get('leave_time')?.touched">
+                <p *ngIf="employeeForm.get('leave_time')?.hasError('required')">Leave is Required</p>
+                <p *ngIf="employeeForm.get('leave_time')?.hasError('pattern') && employeeForm.get('leave_time')?.touched">  Leave time must be in the format HH:mm.</p>
+            </mat-error>
+        </td>
+    
+        <td><mat-form-field class="example-full-width" appearance="outline">
+            <mat-label>NationalNumber</mat-label>
+            <input matInput type="text" formControlName="national_id">
+            <mat-icon matSuffix>input</mat-icon>
+            </mat-form-field>
+            <mat-error *ngIf="employeeForm.get('national_id')?.errors && employeeForm.get('national_id')?.touched">
+                <p *ngIf="employeeForm.get('national_id')?.hasError('required')">NationalNumber is Required</p>
+                <p *ngIf="employeeForm.get('national_id')?.hasError('pattern')">NationalNumber must be 9 numbers contain only numbers.</p>
+            </mat-error>
+        </td>
+    </tr>
+        <tr>
+        <td><mat-form-field class="example-full-width" appearance="outline">
+            <mat-label>Attendence</mat-label>
+            <input matInput type="datetime-local" formControlName="arrival_time" placeholder="HH:MM:SS">
+            <mat-icon matSuffix>access_time</mat-icon>
+            </mat-form-field>
+            <mat-error *ngIf="employeeForm.get('arrival_time')?.errors && employeeForm.get('arrival_time')?.touched">
+            <p *ngIf="employeeForm.get('arrival_time')?.hasError('required')">Attendence is Required</p>
+            <p *ngIf="employeeForm.get('arrival_time')?.hasError('pattern') && employeeForm.get('arrival_time')?.touched">  Leave time must be in the format HH:mm.</p>
+        </mat-error>
+        </td>
+        <td>
+            <mat-form-field class="example-full-width" appearance="outline">
+                <mat-label>Salary</mat-label>
+                <input matInput type="text" formControlName="salary">
+                <mat-icon matSuffix>input</mat-icon>
+            </mat-form-field>
+            <mat-error *ngIf="employeeForm.get('salary')?.errors && employeeForm.get('salary')?.touched">
+                <p *ngIf="employeeForm.get('salary')?.hasError('required')">Salary is Required</p>
+                <p *ngIf="employeeForm.get('salary')?.hasError('pattern')">Salary must be contain only numbers.</p>
+            </mat-error>
+        </td>
+    </tr>
+        </table>
+    <button mat-raised-button type="submit" [disabled]="employeeForm.invalid">Save</button>
+</form>
+</div>

@@ -92,10 +92,9 @@ export class SalariesComponent implements AfterViewInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  viewDetails(element: PeriodicElement): void {
-    console.log('Viewing details for:', element);
+  printPage(){
+    console.log('print is ok');
   }
-
   editUser(element: PeriodicElement): void {
     console.log('Editing user:', element);
   }

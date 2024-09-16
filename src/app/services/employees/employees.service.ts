@@ -1,7 +1,25 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-interface EmployeeResponse {
+
+export interface Employee {
+  id: number;
+  name: string;
+  address: string;
+  phone_number: string;
+  DOB: string;
+  nationality: string;
+  national_id: string;
+  arrival_time: string; 
+  leave_time: string; 
+  salary: number;
+  date_of_contract: string;
+  department: {
+    id: number;
+    name: string;
+  };
+}
+export interface EmployeeResponse {
   data: any[];
 }
 @Injectable({
@@ -15,8 +33,8 @@ export class EmployeesService {
   getAllEmployees(): Observable<EmployeeResponse> {
     return this.http.get<EmployeeResponse>(this.baseUrl);
   }
-  getEmployeeById(employeeId:any){
-    return this.http.get(`${this.baseUrl}/${employeeId}`)
+  getEmployeeById(id: number): Observable<Employee> {
+    return this.http.get<Employee>(`${this.baseUrl}/${id}`);
   }
   deleteEmployee(employeeId:any){
     return this.http.delete(`${this.baseUrl}/${employeeId}`)
@@ -24,11 +42,11 @@ export class EmployeesService {
   addNewEmployee(employee: any): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/employees`, employee);
   }
-  editEmployee(employeeId:any,employee:any){
-    return this.http.put(`${this.baseUrl}/${employeeId}`,employee);
+  editEmployee(id:number){
+    return this.http.get(`${this.baseUrl}/${id}`);
 
   }
-  updateEmployee(employeeId: number, employee: any) {
+  updateEmployee(employeeId: any, employee: any) {
     return this.http.put(`${this.baseUrl}/${employeeId}`, employee);
   }
   }
