@@ -91,10 +91,8 @@ export class AddAttendanceComponent implements AfterViewInit, OnInit {
   currentTimeString: string = '';
 
   pagedItems: any[] = []; // Array to store paginated data
-
-  pageSize = 20; // Number of items per page
-  currentPage = 0; // Current page index
-
+  pageSize = 20;          // Number of items per page
+  currentPage = 0;        // Current page index
   totalPages: number = 0; // Total number of pages
 
   isSubmited: boolean = true;
@@ -173,20 +171,26 @@ export class AddAttendanceComponent implements AfterViewInit, OnInit {
   deleteUser(i: number) {
     this.filteredEmployees = this.filteredEmployees.filter((emp) => {
       return emp.id != i;
-    });
-    // this.filteredEmployees.splice(1,i);
+    })
+    this.filteredEmployees.splice(i,1);
     // this.filteredEmployees.forEach((emp)=>{
     //   this.createRows(emp.id,emp.department,emp.name,this.currentDateString);
     // })
 
-    console.log(this.filteredEmployees);
-    let control = this.employeeForm.get('tableRows') as FormArray;
-    control.removeAt(i);
 
+    let control =  this.employeeForm.get("tableRows") as FormArray;
+    control.clear();
+    this.employeeForm.data = this.filteredEmployees;
+    this.filteredEmployees.forEach(emp=>{
+      this.createRows(emp.id,emp.department,emp.name,this.currentDateString);
+    })
     this.getPagedItems();
     this.totalPages = Math.ceil(this.filteredEmployees.length / this.pageSize);
 
-    console.log('deleted successfully');
+
+console.log(this.employeeForm.get("tableRows").value);
+
+    console.log("deleted successfully");
   }
 
   getPagedItems(): void {

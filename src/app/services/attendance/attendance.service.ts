@@ -23,4 +23,12 @@ export class AttendanceService {
   recordAttendance(attendanceData: any): Observable<any> {
     return this.http.post<any>(this.apiUrl, attendanceData);
   }
+
+  updateAttendance(attendanceId: any, attendance: any) {
+    return this.http.put(`${this.apiUrl}/${attendanceId}`, attendance);
+  }
+
+  deleteAttendance(attendanceId: any) {
+    return this.http.delete(`${this.apiUrl}/${attendanceId}`);
+  }
 }
