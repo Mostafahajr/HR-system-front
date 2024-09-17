@@ -1,7 +1,7 @@
 <app-breadcrumbs></app-breadcrumbs>
 
 <div class="form-container">
-    <form [formGroup]="holidayForm" (ngSubmit)="addHoliday()">
+    <form [formGroup]="holidayForm" (ngSubmit)="addOrUpdateHoliday()">
         <div class="input-group">
             <mat-form-field appearance="outline" class="custom-form-field">
                 <mat-label>Name</mat-label>
@@ -67,7 +67,7 @@
         </table>
 
         <!-- Paginator -->
-        <mat-paginator [length]="30" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page">
+        <mat-paginator [length]="30" [pageSize]="3" [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page">
         </mat-paginator>
     </div>
 </div>
