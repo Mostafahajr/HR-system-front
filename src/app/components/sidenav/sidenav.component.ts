@@ -23,27 +23,31 @@ import { filter } from 'rxjs/operators';
 })
 export class SidenavComponent implements OnInit {
   showSidenav = true;
+  activeRoute: string = '';
 
   constructor(private router: Router) {}
 
   ngOnInit() {
-    // Check the current URL on component initialization
     this.checkSidenavVisibility();
 
-    // Subscribe to router events to update sidenav visibility on route change
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe(() => {
+      .subscribe((event: any) => {
+        this.activeRoute = event.urlAfterRedirects; // Capture the active route
         this.checkSidenavVisibility();
       });
   }
-
   checkSidenavVisibility() {
-    // Set showSidenav based on whether the current route is '/login'
-    this.showSidenav = this.router.url !== '/login';
+    const hiddenRoutes = ['/login', '/not-found', '/unauthorized', '/internal-server'];
+    this.showSidenav = !hiddenRoutes.some(route => this.router.url.includes(route));
   }
 
   navigate(route: string): void {
     this.router.navigate([route]);
+    this.activeRoute = route; // Update active route when navigating
+  }
+
+  isActive(route: string): boolean {
+    return this.activeRoute === route;
   }
 }

@@ -25,6 +25,8 @@ import { AttendanceReportsComponent } from './pages/attendance-reports/attendanc
 
 import { EditEmployeeComponent } from './pages/edit-employee/edit-employee.component';
 import { ShowComponent } from './pages/show/show.component';
+import { InternalServerComponent } from './pages/internal-server/internal-server.component';
+import { DepartmentsComponent } from './pages/departments/departments.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, data: { breadcrumb: 'Home' } },
@@ -186,11 +188,22 @@ export const routes: Routes = [
       pageName: 'Salaries',
       operation: 'read',
     },
+
+  },
+  {
+    path: 'departments',
+    component: DepartmentsComponent,
+    canActivate: [authGuard],
+    data: {
+      breadcrumb: 'Departments',
+    },
   },
   // Add the login route
   { path: 'login', component: LoginComponent, data: { breadcrumb: 'Login' } },
+  { path: 'not-found', component: NotFoundComponent },
   { path: 'unauthorized', component: UnauthorizedComponent },
-  { path: '**', component: NotFoundComponent },
+  { path: 'internal-server', component: InternalServerComponent },
+  { path: '**', redirectTo: 'not-found' } 
 ];
 
 @NgModule({
