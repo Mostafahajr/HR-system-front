@@ -1,0 +1,193 @@
+/* Custom styles for the form fields */
+
+.custom-form-field {
+    width: 100%;
+    margin-bottom: 16px;
+    background-color: #f9f9f9;
+    position: relative;
+    .mat-form-field-outline {
+        border-color: #006699;
+    }
+    .mat-form-field-label {
+        color: #006699;
+    }
+    .mat-form-field-infix {
+        background-color: #ffffff;
+    }
+    .mat-input-element {
+        color: #000;
+    }
+    .mat-icon {
+        color: #006699;
+    }
+    .mat-hint {
+        color: #999;
+    }
+    .mat-form-field-appearance-outline .mat-form-field-outline {
+        border-width: 2px;
+    }
+    .error-icon {
+        color: #f44336;
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+    }
+    mat-datepicker-toggle {
+        color: #006699;
+    }
+}
+
+
+/* Flex container for arranging form fields and buttons */
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+}
+
+.input-group {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.custom-form-field {
+    flex: 1;
+    min-width: 200px;
+}
+
+
+/* Styles for the button group */
+
+.button-group {
+    display: flex;
+    justify-content: flex-start;
+}
+
+button {
+    margin-right: 20px;
+}
+
+
+/* Custom submit button styles */
+
+.submit-button {
+    background-color: #1f627e;
+    color: white;
+    padding: 10px 30px;
+    border: none;
+    border-radius: 50px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+    background-color: #174c5b;
+}
+
+
+/* Angular Material button override */
+
+.mat-raised-button {
+    background-color: inherit;
+    color: inherit;
+    border-radius: inherit;
+    padding: inherit;
+    font-size: inherit;
+    cursor: inherit;
+}
+
+
+/* Styles for the table and paginator */
+
+.table-container {
+    margin-top: 20px;
+    .mat-elevation-z8 {
+        box-shadow: none !important;
+    }
+    .mat-header-cell {
+        background-color: #f1f1f1;
+    }
+    .mat-cell {
+        background-color: #ffffff;
+    }
+    .column-name {
+        text-align: center;
+    }
+    .actions-header {
+        text-align: center;
+        width: 150px;
+        /* Adjust width as needed */
+    }
+    .actions-cell {
+        text-align: center;
+        width: 550px;
+    }
+}
+
+
+/* Button container for action buttons */
+
+.button-container {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+
+/* Custom icon button styles */
+
+.custom-icon-button {
+    background-color: transparent;
+    color: #006699;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    padding: 8px;
+    min-width: 44px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+.view-button:hover {
+    background-color: #0560de;
+    color: #ffffff;
+    border-color: #0560de;
+}
+
+.edit-button:hover {
+    background-color: rgb(88, 144, 88);
+    color: #ffffff;
+    border-color: rgb(88, 144, 88);
+}
+
+.delete-button:hover {
+    background-color: rgb(121, 45, 45);
+    color: #ffffff;
+    border-color: rgb(121, 45, 45);
+}
+
+.custom-icon-button:focus {
+    outline: none;
+}
+
+
+/* Responsive adjustments */
+
+@media (max-width: 600px) {
+    .input-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .button-group {
+        margin-top: 10px;
+    }
+}
