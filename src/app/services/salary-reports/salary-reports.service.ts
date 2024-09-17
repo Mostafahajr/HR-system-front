@@ -6,9 +6,14 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class SalaryReportsService {
-  private baseUrl = 'http://localhost:3005/users';
+  private baseUrl = 'http://pioneer-back.test/api/salaries/calculate'; // Update the base URL to match your API
 
-  constructor(public http: HttpClient) {}
+  constructor(public http: HttpClient) { }
+
+  // GET all salaries for all employees
+  getAllSalaries(year: string, month: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}?year=${year}&month=${month}`);
+  }
 
   // GET all reports
   getData(): Observable<any> {
