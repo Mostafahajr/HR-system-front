@@ -2,15 +2,14 @@ import { Component } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 import { Location } from '@angular/common';
-
 @Component({
-  selector: 'app-not-found',
+  selector: 'app-internal-server',
   standalone: true,
   imports: [RouterLink,MatButton],
-  templateUrl: './not-found.component.html',
-  styleUrl: './not-found.component.scss'
+  templateUrl: './internal-server.component.html',
+  styleUrl: './internal-server.component.scss'
 })
-export class NotFoundComponent {
+export class InternalServerComponent {
   constructor(private location: Location) {}
 
   goBack(): void {

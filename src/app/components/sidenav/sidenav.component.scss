@@ -16,14 +16,21 @@ mat-sidenav-content {
 .active {
   font-weight: bold;
 }
-
 mat-nav-list {
   padding: 16px;
 }
-
 button[mat-button] {
   width: 100%;
   justify-content: flex-start;
   text-align: left;
   padding: 16px;
+}
+button.active {
+  background-color: #2a2f4b; /* Highlighted background color */
+  color: white;
+  font-weight: 500; /* Text color */
+}
+
+button.active mat-icon {
+  color: white; /* Icon color */
 }

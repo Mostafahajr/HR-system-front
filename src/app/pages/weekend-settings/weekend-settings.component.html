@@ -1,15 +1,13 @@
 <app-breadcrumbs></app-breadcrumbs>
 
 <div class="container">
-  <form (submit)="weekendHandler($event)" [formGroup]="weekendForm">
-   
-
+<form [formGroup]="weekendForm" (ngSubmit)="updateWeekendDays()">
     <div class="day-offs">
       <!-- Weekend 1 Selection -->
       <div>
         <mat-form-field class="selectInput example-full-width" appearance="outline">
           <mat-label>Weekend 1</mat-label>
-          <mat-select formControlName="weekend1" required>
+          <mat-select formControlName="weekend1" required [disabled]="!isEditable">
             <mat-option value="">--</mat-option>
             <mat-option *ngFor="let day of days" [value]="day">{{ day }}</mat-option>
           </mat-select>
@@ -26,7 +24,7 @@
       <div>
         <mat-form-field class="selectInput example-full-width" appearance="outline">
           <mat-label>Weekend 2</mat-label>
-          <mat-select formControlName="weekend2" required>
+          <mat-select formControlName="weekend2" required [disabled]="!isEditable">
             <mat-option value="">--</mat-option>
             <mat-option *ngFor="let day of days" [value]="day">{{ day }}</mat-option>
           </mat-select>
@@ -41,7 +39,13 @@
     </div>
 
     <div class="line"></div>
-    <button mat-raised-button color="primary" type="submit" class="save-button">
+
+    <!-- Edit and Save buttons -->
+    <button mat-raised-button color="primary" type="button" class="edit-button" (click)="toggleEdit()" *ngIf="!isEditable">
+      Edit
+    </button>
+
+    <button mat-raised-button color="primary" type="submit" class="save-button" *ngIf="isEditable">
       Save Weekend Settings
     </button>
   </form>
