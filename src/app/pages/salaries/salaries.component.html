@@ -1,50 +1,44 @@
 <app-breadcrumbs></app-breadcrumbs>
 
 <div class="filter-container">
-    <div class="search-input">
-        <input type="text" placeholder="Search Employee by Name" (input)="onSearch($event, 'name')">
+  <div class="search-input">
+    <input type="text" placeholder="Search Employee by Name" (input)="onSearch($event)">
+    <i class="fa fa-search search-icon"></i>
+  </div>
 
-        <i class="fa fa-search search-icon"></i>
-    </div>
+  <div class="filter-fields">
+    <mat-form-field appearance="outline">
+      <mat-label>Month</mat-label>
+      <mat-select id="month-select" (selectionChange)="onSelectionChange($event)" [(value)]="selectedMonth">
+        <mat-option *ngFor="let month of months" [value]="month.value">
+          {{ month.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-    <div class="filter-fields">
-        <!-- Month Select -->
-        <mat-form-field appearance="outline">
-            <mat-label>Month</mat-label>
-            <mat-select id="month-select" (selectionChange)="onSelectionChange($event)" [(ngModel)]="selectedMonth">
-                <mat-option *ngFor="let month of months" [value]="month">
-                    {{ month }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Year</mat-label>
+      <mat-select id="year-select" (selectionChange)="onSelectionChange($event)" [(value)]="selectedYear">
+        <mat-option *ngFor="let year of years" [value]="year">
+          {{ year }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-        <mat-form-field appearance="outline">
-            <mat-label>Year</mat-label>
-            <mat-select id="year-select" (selectionChange)="onSelectionChange($event)" [(ngModel)]="selectedYear">
-                <mat-option *ngFor="let year of years" [value]="year">
-                    {{ year }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-
-        <!-- Add similar structure for department select if needed -->
-        <mat-form-field appearance="outline">
-            <mat-label>Department</mat-label>
-            <mat-select id="department-select" (selectionChange)="onSelectionChange($event)" [(ngModel)]="selectedDepartment">
-                <mat-option *ngFor="let department of departments" [value]="department">
-                    {{ department }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-
-    </div>
-
-    <!-- <button mat-raised-button color="primary" class="search-button" (click)="applyFilter()">Search</button> -->
+    <mat-form-field appearance="outline">
+      <mat-label>Department</mat-label>
+      <mat-select id="department-select" (selectionChange)="onSelectionChange($event)" [(value)]="selectedDepartment">
+        <mat-option value="">All Departments</mat-option>
+        <mat-option *ngFor="let department of departments" [value]="department">
+          {{ department }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
 </div>
 
-<div class="mat-elevation-z8">
+<div class="mat-elevation-z8" id="table">
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 full-width-table">
-        <!-- Column Definitions -->
         <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef> Name </th>
             <td mat-cell *matCellDef="let element"> {{element.name}} </td>
@@ -52,7 +46,7 @@
 
         <ng-container matColumnDef="department">
             <th mat-header-cell *matHeaderCellDef> Department </th>
-            <td mat-cell *matCellDef="let element"> {{element.department}} </td>
+            <td mat-cell *matCellDef="let element"> {{element.department.department_name}} </td>
         </ng-container>
 
         <ng-container matColumnDef="salary">
@@ -62,56 +56,54 @@
 
         <ng-container matColumnDef="attended">
             <th mat-header-cell *matHeaderCellDef> Attended </th>
-            <td mat-cell *matCellDef="let element"> {{element.attended}} </td>
+            <td mat-cell *matCellDef="let element"> {{element.attended_days}} </td>
         </ng-container>
 
         <ng-container matColumnDef="absent">
             <th mat-header-cell *matHeaderCellDef> Absent </th>
-            <td mat-cell *matCellDef="let element"> {{element.absent}} </td>
+            <td mat-cell *matCellDef="let element"> {{element.absent_days}} </td>
         </ng-container>
 
         <ng-container matColumnDef="overtime">
             <th mat-header-cell *matHeaderCellDef> Overtime </th>
-            <td mat-cell *matCellDef="let element"> {{element.overtime}} </td>
+            <td mat-cell *matCellDef="let element"> {{roundNumber(element.total_bonus_minutes/60)}} </td>
         </ng-container>
 
         <ng-container matColumnDef="deductions">
             <th mat-header-cell *matHeaderCellDef> Deductions </th>
-            <td mat-cell *matCellDef="let element"> {{element.deductions}} </td>
+            <td mat-cell *matCellDef="let element"> {{roundNumber(element.total_penalty_minutes/60)}} </td>
         </ng-container>
 
         <ng-container matColumnDef="totalSurplus">
             <th mat-header-cell *matHeaderCellDef> Total Surplus </th>
-            <td mat-cell *matCellDef="let element"> {{element.totalSurplus}} </td>
+            <td mat-cell *matCellDef="let element"> {{roundNumber(element.total_bonus_egp)}} </td>
         </ng-container>
-
+        
         <ng-container matColumnDef="totalDeductions">
             <th mat-header-cell *matHeaderCellDef> Total Deductions </th>
-            <td mat-cell *matCellDef="let element"> {{element.totalDeductions}} </td>
+            <td mat-cell *matCellDef="let element"> {{roundNumber(element.total_penalty_egp)}} </td>
         </ng-container>
-
+        
         <ng-container matColumnDef="net">
             <th mat-header-cell *matHeaderCellDef> Net </th>
-            <td mat-cell *matCellDef="let element"> {{element.net}} </td>
+            <td mat-cell *matCellDef="let element"> {{roundNumber(element.net_salary)}} </td>
         </ng-container>
 
-        <!-- Actions Column -->
         <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef> Actions </th>
             <td mat-cell *matCellDef="let element">
                 <div class="button-container">
-                    <button mat-icon-button class="custom-icon-button view-button" (click)="printPage()">
-            <mat-icon>print</mat-icon>
-            </button>
+                    <button mat-icon-button class="custom-icon-button view-button"
+                        (click)="printEmployeeSalaryPDF(element)">
+                        <mat-icon>print</mat-icon>
+                    </button>
                 </div>
             </td>
         </ng-container>
 
-        <!-- Header and Row Definitions -->
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
 
-    <!-- Paginator -->
     <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
 </div>

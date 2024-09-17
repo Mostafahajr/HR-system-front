@@ -1,38 +1,73 @@
 <app-breadcrumbs></app-breadcrumbs>
-<div class="container">
 
-    <!-- list -->
-    <h2>All Holidays</h2>
-    <h3>Show all</h3>
-    <button (click)="getAllHolidays()">Show All Holiday</button>
-    @for (holiday of holidays; track $index) {
-    <div>
-        <span>ID: {{holiday.id}}</span>
-        <span> NAME: {{holiday.name}}</span>
-        <span> DESCRIPTION: {{holiday.description}} </span>
-        <button (click)="deleteHoliday(holiday.id)">Delete</button>
+<div class="form-container">
+    <form [formGroup]="holidayForm" (ngSubmit)="addHoliday()">
+        <div class="input-group">
+            <mat-form-field appearance="outline" class="custom-form-field">
+                <mat-label>Name</mat-label>
+                <input matInput formControlName="name" aria-describedby="name-error">
+                <mat-icon *ngIf="holidayForm.get('name')?.invalid && holidayForm.get('name')?.touched" class="error-icon">
+                    error
+                </mat-icon>
+                <mat-error id="name-error" *ngIf="holidayForm.get('name')?.invalid">
+                    Name is required
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="custom-form-field">
+                <mat-label>Date</mat-label>
+                <input matInput [matDatepicker]="picker" formControlName="date" aria-describedby="date-error">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+                <mat-icon *ngIf="holidayForm.get('date')?.invalid && holidayForm.get('date')?.touched" class="error-icon">
+                    error
+                </mat-icon>
+                <mat-error id="date-error" *ngIf="holidayForm.get('date')?.invalid">
+                    Date is required
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+        <div class="button-group">
+            <button mat-raised-button color="primary" class="submit-button" type="submit">Add Holiday</button>
+        </div>
+    </form>
+
+    <div class="table-container">
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+            <!-- Name Column -->
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef class="centered-header"> Name </th>
+                <td mat-cell *matCellDef="let element" class="centered-cell"> {{element.name}} </td>
+            </ng-container>
+
+            <!-- Date Column -->
+            <ng-container matColumnDef="date">
+                <th mat-header-cell *matHeaderCellDef> Date </th>
+                <td mat-cell *matCellDef="let element"> {{element.date | date}} </td>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef> Actions </th>
+                <td mat-cell *matCellDef="let element">
+                    <div class="button-container">
+                        <button mat-icon-button class="custom-icon-button view-button" (click)="editHoliday(element)">
+              <mat-icon>edit</mat-icon>
+            </button>
+                        <button mat-icon-button class="custom-icon-button delete-button" (click)="deleteHoliday(element.id)">
+              <mat-icon>delete</mat-icon>
+            </button>
+                    </div>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <!-- Paginator -->
+        <mat-paginator [length]="30" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page">
+        </mat-paginator>
     </div>
-    }
-    <!-- list one -->
-    <br>
-    <input [(ngModel)]="showId" placeholder="ID">
-    <button (click)="getHolidayById(showId)">Show one Holiday</button>
-    <div>
-        <span>ID: {{oneHoliday.id}}</span>
-        <span> NAME: {{oneHoliday.name}}</span>
-        <span> DESCRIPTION: {{oneHoliday.description}} </span>
-    </div>
-    <!-- add -->
-    <h3>Add New Holiday</h3>
-    <input [(ngModel)]="newHoliday.id" placeholder="ID">
-    <input [(ngModel)]="newHoliday.name" placeholder="Name">
-    <input [(ngModel)]="newHoliday.description" placeholder="Description">
-    <button (click)="addHoliday()">Add Holiday</button>
-    <!-- edit -->
-    <h3>Edit Holiday</h3>
-    <input [(ngModel)]="editedHoliday.id" placeholder="Old Holiday ID">
-    <input [(ngModel)]="editedHoliday.name" placeholder="new Name">
-    <input [(ngModel)]="editedHoliday.description" placeholder="new Description">
-    <button (click)="updateHoliday(editedHoliday.id)">Add Holiday</button>
-    <pre>{{ response | json }}</pre><br>
 </div>

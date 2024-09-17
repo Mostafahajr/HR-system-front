@@ -1,50 +1,44 @@
 <app-breadcrumbs></app-breadcrumbs>
 
 <div class="container">
-  <form (submit)="ruleHandler($event)" [formGroup]="salaryForm" class="form-container">
+  <form (ngSubmit)="ruleHandler()" [formGroup]="salaryForm" class="form-container">
 
-    <div class="salary_related">
-      <!-- Overtime Input -->
-      <div>
-        <mat-form-field class="example-full-width" appearance="outline">
-          <mat-label>Overtime</mat-label>
-          <input matInput type="number" formControlName="overtime">
-          <mat-hint align="end">{{ salaryForm.get('overtime')?.value?.length || 0 }} / 256</mat-hint>
-          <mat-error *ngIf="salaryForm.get('overtime')?.touched">
-            <ng-container *ngIf="salaryForm.get('overtime')?.hasError('required')">
-              Overtime is required
-            </ng-container>
-            <ng-container *ngIf="salaryForm.get('overtime')?.hasError('min')">
-              Overtime must be more than 0
-            </ng-container>
-          </mat-error>
-        </mat-form-field>
-      </div>
+    <div class="salary-settings">
+      <!-- Overtime Select -->
+      <mat-form-field class="example-full-width" appearance="outline">
+        <mat-label>Overtime</mat-label>
+        <mat-select formControlName="overtime" [disabled]="!isEditable">
+          <mat-option *ngFor="let option of overtimeOptions" [value]="option">
+            {{ option }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="getOvertime.touched && getOvertime.hasError('required')">
+          Overtime is required
+        </mat-error>
+      </mat-form-field>
 
       <!-- Penalty Input -->
-      <div>
-        <mat-form-field class="example-full-width" appearance="outline">
-          <mat-label>Penalty</mat-label>
-          <input matInput type="number" formControlName="penalty">
-          <mat-hint align="end">{{ salaryForm.get('penalty')?.value?.length || 0 }} / 256</mat-hint>
-          <mat-error *ngIf="salaryForm.get('penalty')?.touched">
-            <ng-container *ngIf="salaryForm.get('penalty')?.hasError('required')">
-              Penalty is required
-            </ng-container>
-            <ng-container *ngIf="salaryForm.get('penalty')?.hasError('min')">
-              Penalty must be more than 0
-            </ng-container>
-          </mat-error>
-        </mat-form-field>
-      </div>
+      <mat-form-field class="example-full-width" appearance="outline">
+        <mat-label>Penalty</mat-label>
+        <input matInput formControlName="penalty" [disabled]="!isEditable">
+        <mat-error *ngIf="getPenalty.touched && getPenalty.hasError('required')">
+          Penalty is required
+        </mat-error>
+        <mat-error *ngIf="getPenalty.touched && getPenalty.hasError('min')">
+          Penalty must be at least 1
+        </mat-error>
+      </mat-form-field>
     </div>
 
-    <div class="line"></div>
-    
-    <!-- Button Container -->
     <div class="button-container">
-      <button mat-raised-button color="primary" type="submit" class="mat-custom-button">
-        Save Salary Settings
+      <!-- Edit Button -->
+      <button mat-raised-button color="primary" type="button" (click)="toggleEdit()" *ngIf="!isEditable">
+        Edit
+      </button>
+
+      <!-- Save Changes Button -->
+      <button mat-raised-button color="primary" type="submit" *ngIf="isEditable">
+        Save Changes
       </button>
     </div>
   </form>

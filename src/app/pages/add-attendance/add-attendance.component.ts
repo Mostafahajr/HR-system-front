@@ -124,6 +124,7 @@ export class AddAttendanceComponent implements OnInit {
       });
   }
 
+
   updateTime(
     element: AttendanceRecord,
     field: 'arrival_time' | 'leave_time',
