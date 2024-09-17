@@ -1,218 +1,214 @@
-import { AttendanceService } from './../../services/attendance/attendance.service';
 import {
-  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   OnInit,
-  signal,
-  ViewChild,
 } from '@angular/core';
-import {
-  FormBuilder,
-  FormArray,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-  FormsModule,
-} from '@angular/forms';
-import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatDatepickerInputEvent } from '@angular/material/datepicker';
-import { MatPaginatorModule } from '@angular/material/paginator';
-
-const EMPLOYEES = [
-  {
-    id: 1,
-    name: 'mos',
-    department: 'finance',
-  },
-  {
-    id: 2,
-    name: 'mosta',
-    department: 'marketing',
-  },
-  {
-    id: 3,
-    name: 'mosra',
-    department: 'finance',
-  },
-  {
-    id: 4,
-    name: 'moafa',
-    department: 'marketing',
-  },
-  {
-    id: 5,
-    name: 'ostafa',
-    department: 'finance',
-  },
-  {
-    id: 6,
-    name: 'mstafa',
-    department: 'marketing',
-  },
-  {
-    id: 7,
-    name: 'motafa',
-    department: 'finance',
-  },
-  {
-    id: 8,
-    name: 'mostafa',
-    department: 'marketing',
-  },
-];
-
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTableModule } from '@angular/material/table';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { AddAttendanceService } from '../../services/add-attendance/add-attendance.service';
+import { forkJoin, Observable } from 'rxjs';
+import {
+  NgxMatTimepickerComponent,
+  NgxMatTimepickerModule,
+} from 'ngx-mat-timepicker';
 
 @Component({
   selector: 'app-add-attendance',
   standalone: true,
   imports: [
-    ReactiveFormsModule,
-    MatInputModule,
+    CommonModule,
     MatFormFieldModule,
-    FormsModule,
-    MatIconModule,
-    MatPaginatorModule,
+    MatDatepickerModule,
+    MatInputModule,
+    MatSelectModule,
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatTableModule,
+    NgxMatTimepickerModule,
   ],
   templateUrl: './add-attendance.component.html',
-  styleUrl: './add-attendance.component.scss',
+  styleUrls: ['./add-attendance.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AddAttendanceComponent implements AfterViewInit, OnInit {
-  attendances: any;
-  employees = EMPLOYEES;
-  employeeForm: any;
-  _filterText: string = '';
-  filteredEmployees: any[] = [];
-  events = signal<string[]>([]);
+export class AddAttendanceComponent implements OnInit {
+  filterForm: FormGroup;
+  dataSource: AttendanceRecord[] = [];
+  displayedColumns: string[] = [
+    'id',
+    'department',
+    'employee_name',
+    'arrival_time',
+    'leave_time',
+    'date',
+    'actions',
+  ];
+  departments: string[] = [
+    'Finance',
+    'Human Resource',
+    'Marketing',
+    'Operations',
+    'Sales',
+    'IT Support',
+    'Customer Service',
+    'Research and Development',
+    'Product Management',
+  ];
+  updatedRecords: Map<number, AttendanceRecord> = new Map();
 
-  currentDate: Date = new Date();
-  currentDateString: string = '';
-  currentTimeString: string = '';
-
-  pagedItems: any[] = []; // Array to store paginated data
-  pageSize = 20;          // Number of items per page
-  currentPage = 0;        // Current page index
-  totalPages: number = 0; // Total number of pages
-
-  isSubmited: boolean = true;
   constructor(
     private fb: FormBuilder,
-    private attendanceService: AttendanceService
+    private addAttendanceService: AddAttendanceService,
+    private cdr: ChangeDetectorRef
   ) {
-    // this.filteredEmployees = this.employees;
-  }
-  ngOnInit(): void {
-    this.employeeForm = this.fb.group({
-      tableRows: this.fb.array([]),
+    this.filterForm = this.fb.group({
+      date: [new Date()],
+      department: [''],
     });
-
-    this.currentDateString = this.currentDate.toLocaleDateString(); // Gets the date
-    this.currentTimeString = this.currentDate.toLocaleTimeString(); // Gets the time
-    // this.filteredEmployees.forEach((emp)=>{
-    //   this.createRows(emp.id,emp.department,emp.name,this.currentDateString);
-    // })
   }
 
-  get getAttendance() {
-    const control = this.employeeForm.get('tableRows') as FormArray;
-    return control;
+  ngOnInit() {
+    this.onSearch(); // Load initial data
   }
 
-  ngAfterViewInit() {}
-  applyFilter(e: any) {
-    this.employeeForm.value = [];
-    const filterValue = (e.target as HTMLInputElement).value;
-
-    this.filteredEmployees = EMPLOYEES.filter((employee) => {
-      return employee.department.toLowerCase() == filterValue.toLowerCase();
-    });
-    this.filteredEmployees.forEach((emp) => {
-      this.createRows(emp.id, emp.department, emp.name, this.currentDateString);
-    });
-
-    this.getPagedItems();
-    this.totalPages = Math.ceil(this.filteredEmployees.length / this.pageSize);
-  }
-  createRows(id: any, department: any, name: any, currentDate: string) {
-    this.attendances = this.fb.group({
-      id: [id],
-      department: [department],
-      name: [name],
-      arrival: ['', Validators.required],
-      leave: ['', Validators.required],
-      date: [currentDate],
-    });
-    let control = this.employeeForm.get('tableRows') as FormArray;
-
-    // while (control.length !== 0) {
-    //   control.removeAt(0);
-    // }
-
-    control.push(this.attendances);
+  private formatTimeToPicker(isoTime: string): string {
+    if (!isoTime) return '';
+    const date = new Date(isoTime);
+    let hours = date.getUTCHours();
+    const minutes = date.getUTCMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    const minutesStr = minutes < 10 ? '0' + minutes : minutes;
+    return `${hours}:${minutesStr} ${ampm}`;
   }
 
-  onSubmit(e: any) {
-    e.preventDefault();
-    this.isSubmited = false;
-    const form = this.filteredEmployees;
+  private convertTimeToISO(time: string, date: string): string {
+    const [hoursMinutes, period] = time.split(' ');
+    let [hours, minutes] = hoursMinutes.split(':').map(Number);
 
-    this.attendanceService.recordAttendance(form).subscribe({
-      next: (responce: any) => {
-        console.log(responce);
-      },
-      error: (error: any) => {
-        console.log(error);
-      },
-    });
-    console.log(form);
+    if (period === 'PM' && hours !== 12) hours += 12;
+    if (period === 'AM' && hours === 12) hours = 0;
+
+    const dateObj = new Date(date);
+    dateObj.setUTCHours(hours, minutes, 0, 0);
+    return dateObj.toISOString();
   }
 
-  deleteUser(i: number) {
-    this.filteredEmployees = this.filteredEmployees.filter((emp) => {
-      return emp.id != i;
-    })
-    this.filteredEmployees.splice(i,1);
-    // this.filteredEmployees.forEach((emp)=>{
-    //   this.createRows(emp.id,emp.department,emp.name,this.currentDateString);
-    // })
+  onSearch() {
+    const { date, department } = this.filterForm.value;
+    const formattedDate = this.formatDate(date);
 
-
-    let control =  this.employeeForm.get("tableRows") as FormArray;
-    control.clear();
-    this.employeeForm.data = this.filteredEmployees;
-    this.filteredEmployees.forEach(emp=>{
-      this.createRows(emp.id,emp.department,emp.name,this.currentDateString);
-    })
-    this.getPagedItems();
-    this.totalPages = Math.ceil(this.filteredEmployees.length / this.pageSize);
-
-
-console.log(this.employeeForm.get("tableRows").value);
-
-    console.log("deleted successfully");
+    this.addAttendanceService
+      .getAllAttendance(formattedDate, department)
+      .subscribe({
+        next: (data) => {
+          this.dataSource = data.map((record: any) => ({
+            ...record,
+            arrival_time:
+              this.formatTimeToPicker(record.arrival_time) || '9:00 AM',
+            leave_time: this.formatTimeToPicker(record.leave_time) || '5:00 PM',
+          }));
+          this.updatedRecords.clear();
+          this.cdr.markForCheck(); // Ensure changes are detected
+        },
+        error: (err) => {
+          console.error('Error occurred:', err);
+        },
+      });
   }
 
-  getPagedItems(): void {
-    const start = this.currentPage * this.pageSize;
-    console.log(start);
-    const end = start + this.pageSize;
-    this.pagedItems = this.filteredEmployees.slice(start, end);
-    // console.log(this.pagedItems.length);
 
-  }
+  updateTime(
+    element: AttendanceRecord,
+    field: 'arrival_time' | 'leave_time',
+    event: any
+  ) {
+    console.log('Time changed:', event);
 
-  goToNextPage(): void {
-    if (this.currentPage < this.totalPages - 1) {
-      this.currentPage++;
-      this.getPagedItems();
+    let time: string;
+
+    // Timepicker provides the time in a string format
+    if (event && typeof event === 'string') {
+      time = event;
+    } else if (event && event.format) {
+      time = event.format(); // If using Moment.js or another date library
+    } else {
+      return;
+    }
+
+    if (time) {
+      element[field] = time;
+      this.updatedRecords.set(element.id, { ...element });
+      console.log(this.updatedRecords);
+      this.cdr.markForCheck();
     }
   }
 
-  goToPreviousPage(): void {
-    if (this.currentPage > 0) {
-      this.currentPage--;
-      this.getPagedItems();
+  submitUpdates() {
+    const updateObservables: Observable<any>[] = [];
+
+    this.updatedRecords.forEach((record) => {
+      const updatedArrivalTime = this.convertTimeToISO(
+        record.arrival_time,
+        record.date
+      );
+      const updatedLeaveTime = this.convertTimeToISO(
+        record.leave_time,
+        record.date
+      );
+
+      const observable = this.addAttendanceService.updateAttendance(record.id, {
+        arrival_time: updatedArrivalTime,
+        leave_time: updatedLeaveTime,
+      });
+
+      updateObservables.push(observable);
+    });
+
+    if (updateObservables.length > 0) {
+      forkJoin(updateObservables).subscribe({
+        next: () => {
+          console.log('All updates submitted successfully');
+          this.updatedRecords.clear();
+          this.onSearch(); // Refresh the data
+          alert('attendance updated successfully');
+        },
+        error: (err) => {
+          console.error('Error occurred during update:', err);
+        },
+      });
+    } else {
+      console.log('No updates to submit');
     }
   }
+
+  deleteAttendance(id: number) {
+    this.addAttendanceService.deleteAttendance(id).subscribe(() => {
+      this.dataSource = this.dataSource.filter((record) => record.id !== id);
+      this.updatedRecords.delete(id);
+      this.cdr.detectChanges();
+    });
+  }
+
+  private formatDate(date: Date): string {
+    const d = new Date(date);
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    return d.toISOString().split('T')[0];
+  }
+}
+
+interface AttendanceRecord {
+  id: number;
+  department: string;
+  employee_name: string;
+  arrival_time: string;
+  leave_time: string;
+  date: string;
 }
