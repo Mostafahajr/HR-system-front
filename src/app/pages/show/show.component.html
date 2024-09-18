@@ -19,10 +19,10 @@
           <strong>Phone:</strong> {{ employee.phone_number }}
         </div>
         <div class="employee-detail">
-          <strong>Arrival Time:</strong> {{ employee.arrival_time }}
+          <strong>Arrival Time:</strong> {{ formatTime(employee.arrival_time) }}
         </div>
         <div class="employee-detail">
-          <strong>Leave Time:</strong> {{ employee.leave_time }}
+          <strong>Leave Time:</strong> {{ formatTime(employee.leave_time) }}
         </div>
         <div class="employee-detail">
           <strong>Date of Birth:</strong>
@@ -36,7 +36,7 @@
         </div>
         <div class="employee-detail">
           <strong>Contract Date:</strong>
-          {{ employee.date_of_contract | date : "mediumDate" }}
+          {{ formatDate(employee.date_of_contract) | date : "mediumDate" }}
         </div>
       </div>
     </mat-card-content>
