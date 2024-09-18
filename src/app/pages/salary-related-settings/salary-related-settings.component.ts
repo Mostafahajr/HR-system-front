@@ -8,6 +8,7 @@ import { BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.c
 import { MatButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
 import { MatSelect } from '@angular/material/select';
+import { IRules } from '../../models/iRules';
 
 @Component({
   selector: 'app-salary-related-settings',
@@ -19,54 +20,77 @@ import { MatSelect } from '@angular/material/select';
 export class SalaryRelatedSettingsComponent implements OnInit {
   salaryForm: FormGroup;
   isEditable: boolean = false;
-  overtimeOptions: string[] = ['Increase', 'Deductions']; // Options for overtime
+  typeOptions: string[] = ['increase', 'deduction'];
+  currentRule: IRules | null = null;
 
   constructor(private rulesService: GeneralRulesService) {
-    // Form initialization with validators
     this.salaryForm = new FormGroup({
-      overtime: new FormControl({ value: '', disabled: true }, [Validators.required]),
-      penalty: new FormControl({ value: '', disabled: true }, [Validators.required, Validators.min(1)])
+      type: new FormControl({ value: '', disabled: true }, [Validators.required]),
+      hour_amount: new FormControl({ value: '', disabled: true }, [Validators.required, Validators.min(1)])
     });
   }
 
   ngOnInit(): void {
-    // Initialize form if you need to load existing data
-    // this.getRule(someRuleId);
+    this.loadExistingRule();
   }
 
-  // Getters for easier access in the template
-  get getOvertime() {
-    return this.salaryForm.controls['overtime'];
-  }
-
-  get getPenalty() {
-    return this.salaryForm.controls['penalty'];
-  }
-
-  // Fetch rule data from backend (if needed)
-  getRule(ruleId: any) {
-    this.rulesService.getRule(ruleId).subscribe({
-      next: (response) => {
-        console.log(response);
-        this.salaryForm.patchValue(response);
+  loadExistingRule(): void {
+    this.rulesService.getAllRules().subscribe({
+      next: (rules: IRules[]) => {
+        const selectedType = this.salaryForm.get('type')?.value;
+        const matchingRule = rules.find(rule => rule.type === selectedType);
+        if (matchingRule) {
+          this.currentRule = matchingRule;
+          this.salaryForm.patchValue({
+            type: matchingRule.type,
+            hour_amount: matchingRule.hour_amount
+          });
+        } else {
+          this.currentRule = null; // No rule of the selected type exists
+        }
       },
-      error: (error) => {
-        console.log(error);
-      }
+      error: (error) => console.error('Error loading rules:', error)
     });
   }
 
-  // Update the rule in the backend based on form data
-  onUpdate(ruleId: any) {
+
+  get getType() {
+    return this.salaryForm.controls['type'];
+  }
+
+  get getHourAmount() {
+    return this.salaryForm.controls['hour_amount'];
+  }
+
+  toggleEdit(): void {
+    this.isEditable = !this.isEditable;
+    if (this.isEditable) {
+      this.salaryForm.enable();
+    } else {
+      this.salaryForm.disable();
+    }
+  }
+
+  ruleHandler(): void {
     if (this.salaryForm.valid) {
-      this.rulesService.updateRule(this.salaryForm.value, ruleId).subscribe({
-        next: (response) => {
-          console.log(response);
-          this.toggleEdit(); // Disable editing after save
-          alert('Updated successfully!');
+      const formValue: IRules = this.salaryForm.value;
+
+      // Check if the rule of the selected type already exists
+      this.rulesService.getAllRules().subscribe({
+        next: (rules: IRules[]) => {
+          const matchingRule = rules.find(rule => rule.type === formValue.type);
+
+          if (matchingRule) {
+            // If rule exists, update it
+            this.updateRule({ ...matchingRule, hour_amount: formValue.hour_amount });
+          } else {
+            // If no rule exists, create a new one
+            this.createRule(formValue);
+          }
         },
         error: (error) => {
-          console.log(error);
+          console.error('Error loading rules:', error);
+          alert('Failed to process the rule. Please try again.');
         }
       });
     } else {
@@ -74,31 +98,34 @@ export class SalaryRelatedSettingsComponent implements OnInit {
     }
   }
 
-  // Enable or disable form controls for editing
-  toggleEdit(): void {
-    this.isEditable = !this.isEditable;
-    if (this.isEditable) {
-      this.salaryForm.enable(); // Enable form fields for editing
-    } else {
-      this.salaryForm.disable(); // Disable form fields after save
-    }
+
+  private updateRule(rule: IRules): void {
+    this.rulesService.updateRule(rule).subscribe({
+      next: (updatedRule) => {
+        console.log('Rule updated:', updatedRule);
+        this.currentRule = updatedRule;
+        this.toggleEdit();
+        alert('Updated successfully!');
+      },
+      error: (error) => {
+        console.error('Error updating rule:', error);
+        alert('Failed to update rule. Please try again.');
+      }
+    });
   }
 
-  // Handle form submission and call the update function
-  ruleHandler(): void {
-    if (this.salaryForm.valid) {
-      console.log('Form Value:', this.salaryForm.value);
-      const selectedOvertime = this.salaryForm.value.overtime;
-      const penaltyValue = this.salaryForm.value.penalty;
-
-      console.log(`Selected Overtime: ${selectedOvertime}`);
-      console.log(`Penalty: ${penaltyValue}`);
-
-      // Call the update method with the rule ID (you can replace 'ruleId' with actual value)
-      this.onUpdate(1); // Assuming ruleId is 1, you should pass the correct ruleId
-    } else {
-      console.warn('Form is invalid');
-    }
+  private createRule(rule: IRules): void {
+    this.rulesService.addNewRule(rule).subscribe({
+      next: (newRule) => {
+        console.log('New rule created:', newRule);
+        this.currentRule = newRule;
+        this.toggleEdit();
+        alert('New rule created successfully!');
+      },
+      error: (error) => {
+        console.error('Error creating rule:', error);
+        alert('Failed to create rule. Please try again.');
+      }
+    });
   }
 }
-
