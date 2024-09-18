@@ -1,43 +1,35 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-export interface Salary {
-  id: number;
-  type: string;
-  hour_amount:number;
-}
+import { IRules } from '../../models/iRules';
+import { Observable, map } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-export class HourRuleService {
+export class GeneralRulesService {
+  private apiUrl: string = 'http://pioneer-back.test/api/hour-rules';
 
-  private apiUrl = 'http://pioneer-back.test/api/hour-rules';
-  
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
-  // Fetch all hour salary rules
-  getHourSalaryRules(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}`);
+  getAllRules(): Observable<IRules[]> {
+    return this.http.get<{ data: IRules[] }>(this.apiUrl).pipe(
+      map((response: { data: any; }) => response.data) // Extract the `data` field
+    );
   }
 
-  // Fetch a single hour salary rule by ID
-  getHourSalaryRule(id: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  addNewRule(rule: IRules): Observable<IRules> {
+    return this.http.post<IRules>(this.apiUrl, rule);
   }
 
-  // Update an existing hour salary rule
-  updateHourSalaryRule(id: number, data:any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}`, data);
+  getRule(ruleId: number): Observable<IRules> {
+    return this.http.get<IRules>(`${this.apiUrl}/${ruleId}`);
   }
 
-  // Create a new hour salary rule
-  createHourSalaryRule(data: { hour: number; salary: number }): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}`, data);
+  deleteRule(ruleId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${ruleId}`);
   }
 
-  // Delete an hour salary rule
-  deleteHourSalaryRule(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  updateRule(rule: IRules): Observable<IRules> {
+    return this.http.put<IRules>(`${this.apiUrl}/${rule.id}`, rule);
   }
 }
