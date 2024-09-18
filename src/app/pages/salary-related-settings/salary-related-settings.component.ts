@@ -134,10 +134,12 @@ export class SalaryRelatedSettingsComponent implements OnInit {
   private handleUpdateSuccess(): void {
     this.updateSuccessCount++;
     if (this.updateSuccessCount === this.requiredUpdates) {
+      this.loadExistingRules(); // Reload the rules after successful updates
       this.toggleEdit();
       alert('All rules updated successfully!');
     }
   }
+  
 
   private handleUpdateFailure(error: any): void {
     this.updateFailureCount++;
