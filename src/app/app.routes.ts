@@ -81,6 +81,17 @@ export const routes: Routes = [
           pageName: 'Admins',
           operation: 'create',
         },
+         children: [
+      {
+        path: 'add-new-admin',
+        component: AddNewAdminComponent,
+        canActivate: [authGuard],
+        data: {
+          breadcrumb: 'Add New Admin',
+          pageName: 'Admins',
+          operation: 'create',
+        },
+
       },
     ],
   },
@@ -203,9 +214,8 @@ export const routes: Routes = [
   { path: 'not-found', component: NotFoundComponent },
   { path: 'unauthorized', component: UnauthorizedComponent },
   { path: 'internal-server', component: InternalServerComponent },
-  { path: '**', redirectTo: 'not-found' } 
-];
-
+  { path: '**', redirectTo: 'not-found' }
+],
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
