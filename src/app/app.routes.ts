@@ -27,6 +27,7 @@ import { EditEmployeeComponent } from './pages/edit-employee/edit-employee.compo
 import { ShowComponent } from './pages/show/show.component';
 import { InternalServerComponent } from './pages/internal-server/internal-server.component';
 import { DepartmentsComponent } from './pages/departments/departments.component';
+import { EditAdminComponent } from './pages/edit-admin/edit-admin.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, data: { breadcrumb: 'Home' } },
@@ -80,6 +81,16 @@ export const routes: Routes = [
           breadcrumb: 'Add New Admin',
           pageName: 'Admins',
           operation: 'create',
+        },
+      },
+      {
+        path: 'edit-admin/:id',
+        component: EditAdminComponent,
+        canActivate: [authGuard],
+        data: {
+          breadcrumb: 'Edit Admin',
+          pageName: 'Admins',
+          operation: 'update',
         },
       },
     ],
@@ -203,7 +214,7 @@ export const routes: Routes = [
   { path: 'not-found', component: NotFoundComponent },
   { path: 'unauthorized', component: UnauthorizedComponent },
   { path: 'internal-server', component: InternalServerComponent },
-  { path: '**', redirectTo: 'not-found' } 
+  { path: '**', redirectTo: 'not-found' }
 ];
 
 @NgModule({
