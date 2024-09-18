@@ -2,27 +2,26 @@
 <div class="container">
   <form (ngSubmit)="ruleHandler()" [formGroup]="salaryForm" class="form-container">
     <div class="salary-settings">
-      <!-- Type Select -->
+      <!-- Overtime Input -->
       <mat-form-field class="example-full-width" appearance="outline">
-        <mat-label>Type</mat-label>
-        <mat-select formControlName="type" [disabled]="!isEditable">
-          <mat-option *ngFor="let option of typeOptions" [value]="option">
-            {{ option }}
-          </mat-option>
-        </mat-select>
-        <mat-error *ngIf="getType.touched && getType.hasError('required')">
-          Type is required
+        <mat-label>Overtime (hours)</mat-label>
+        <input matInput formControlName="overtime" type="number" [disabled]="!isEditable">
+        <mat-error *ngIf="getOvertime.touched && getOvertime.hasError('required')">
+          Overtime amount is required
+        </mat-error>
+        <mat-error *ngIf="getOvertime.touched && getOvertime.hasError('min')">
+          Overtime amount must be at least 1
         </mat-error>
       </mat-form-field>
-      <!-- Hour Amount Input -->
+      <!-- Penalty Input -->
       <mat-form-field class="example-full-width" appearance="outline">
-        <mat-label>Hour Amount</mat-label>
-        <input matInput formControlName="hour_amount" type="number" [disabled]="!isEditable">
-        <mat-error *ngIf="getHourAmount.touched && getHourAmount.hasError('required')">
-          Hour amount is required
+        <mat-label>Penalty (hours)</mat-label>
+        <input matInput formControlName="penalty" type="number" [disabled]="!isEditable">
+        <mat-error *ngIf="getPenalty.touched && getPenalty.hasError('required')">
+          Penalty amount is required
         </mat-error>
-        <mat-error *ngIf="getHourAmount.touched && getHourAmount.hasError('min')">
-          Hour amount must be at least 1
+        <mat-error *ngIf="getPenalty.touched && getPenalty.hasError('min')">
+          Penalty amount must be at least 1
         </mat-error>
       </mat-form-field>
     </div>
