@@ -1,45 +1,55 @@
 <app-breadcrumbs></app-breadcrumbs>
-
+<div class="line"></div>
 <div class="container">
-  <form (ngSubmit)="ruleHandler()" [formGroup]="salaryForm" class="form-container">
-
-    <div class="salary-settings">
-      <!-- Overtime Select -->
-      <mat-form-field class="example-full-width" appearance="outline">
-        <mat-label>Overtime</mat-label>
-        <mat-select formControlName="overtime" [disabled]="!isEditable">
-          <mat-option *ngFor="let option of overtimeOptions" [value]="option">
-            {{ option }}
-          </mat-option>
-        </mat-select>
-        <mat-error *ngIf="getOvertime.touched && getOvertime.hasError('required')">
-          Overtime is required
-        </mat-error>
-      </mat-form-field>
-
-      <!-- Penalty Input -->
-      <mat-form-field class="example-full-width" appearance="outline">
-        <mat-label>Penalty</mat-label>
-        <input matInput formControlName="penalty" [disabled]="!isEditable">
-        <mat-error *ngIf="getPenalty.touched && getPenalty.hasError('required')">
-          Penalty is required
-        </mat-error>
-        <mat-error *ngIf="getPenalty.touched && getPenalty.hasError('min')">
-          Penalty must be at least 1
-        </mat-error>
-      </mat-form-field>
+  <form (submit)="ruleHandler($event)" [formGroup]="salaryForm">
+    <div>
+      <h2 class="my-4">Salary Related</h2>
+      <div class="salary_related">
+        <div>
+          <mat-form-field class="example-full-width">
+            <mat-label>Overtime</mat-label>
+            <input matInput #message type="number" maxlength="256" formControlName="overtime">
+            <mat-hint align="end">{{message.value.length}} / 256</mat-hint>
+          </mat-form-field>
+          @if(getOvertime.touched ){
+          <ng-container>
+            @if(getOvertime.hasError('required') || getOvertime.value == '0'){
+            <div id="emailHelp" class="form-text text-danger">
+              Overtime is Required
+            </div>
+            }
+            @else if(getOvertime.hasError('min')){
+            <div id="emailHelp" class="form-text text-danger">
+              Overtime must be more than 0
+            </div>
+            }
+          </ng-container>
+          }
+        </div>
+        <div>
+          <mat-form-field class="example-full-width">
+            <mat-label>Penalty</mat-label>
+            <input matInput #message type="number" maxlength="256" formControlName="penalty">
+            <mat-hint align="end">{{message.value.length}} / 256</mat-hint>
+          </mat-form-field>
+          @if(getPenalty.touched ){
+          <ng-container>
+            @if(getPenalty.hasError('required')){
+            <div id="emailHelp" class="form-text text-danger">
+              Penalty is Required
+            </div>
+            }
+            @else if(getPenalty.hasError('min')){
+            <div id="emailHelp" class="form-text text-danger">
+              Penalty must be more than 0
+            </div>
+            }
+          </ng-container>
+          }
+        </div>
+      </div>
     </div>
-
-    <div class="button-container">
-      <!-- Edit Button -->
-      <button mat-raised-button color="primary" type="button" (click)="toggleEdit()" *ngIf="!isEditable">
-        Edit
-      </button>
-
-      <!-- Save Changes Button -->
-      <button mat-raised-button color="primary" type="submit" *ngIf="isEditable">
-        Save Changes
-      </button>
-    </div>
+    <div class="line"></div>
+    <button type="submit" class="btn btn-success">Save Salary Settings</button>
   </form>
 </div>
