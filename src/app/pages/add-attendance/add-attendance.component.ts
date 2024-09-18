@@ -14,10 +14,10 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AddAttendanceService } from '../../services/add-attendance/add-attendance.service';
 import { forkJoin, Observable } from 'rxjs';
-import {
-  NgxMatTimepickerComponent,
-  NgxMatTimepickerModule,
-} from 'ngx-mat-timepicker';
+// import {
+//   NgxMatTimepickerComponent,
+//   NgxMatTimepickerModule,
+// } from 'ngx-mat-timepicker';
 
 @Component({
   selector: 'app-add-attendance',
@@ -31,7 +31,7 @@ import {
     ReactiveFormsModule,
     MatButtonModule,
     MatTableModule,
-    NgxMatTimepickerModule,
+    // NgxMatTimepickerModule,
   ],
   templateUrl: './add-attendance.component.html',
   styleUrls: ['./add-attendance.component.scss'],
