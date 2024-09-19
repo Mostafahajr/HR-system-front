@@ -32,22 +32,32 @@ export class SidenavComponent implements OnInit {
 
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe((event: any) => {
-        this.activeRoute = event.urlAfterRedirects; // Capture the active route
+      .subscribe(() => {
+        this.activeRoute = this.router.url; // Always get the current route from the router
         this.checkSidenavVisibility();
       });
   }
+
   checkSidenavVisibility() {
-    const hiddenRoutes = ['/login', '/not-found', '/unauthorized', '/internal-server'];
-    this.showSidenav = !hiddenRoutes.some(route => this.router.url.includes(route));
+    const hiddenRoutes = [
+      '/login',
+      '/not-found',
+      '/unauthorized',
+      '/internal-server',
+    ];
+    this.showSidenav = !hiddenRoutes.some((route) =>
+      this.router.url.includes(route)
+    );
   }
 
   navigate(route: string): void {
     this.router.navigate([route]);
-    this.activeRoute = route; // Update active route when navigating
   }
 
   isActive(route: string): boolean {
+    if (route === '' || route === '/') {
+      return this.activeRoute === '' || this.activeRoute === '/'; // Treat '' and '/' as equivalent
+    }
     return this.activeRoute === route;
   }
 }

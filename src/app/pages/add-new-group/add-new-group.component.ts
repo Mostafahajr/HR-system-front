@@ -33,7 +33,6 @@ import { Subject, takeUntil } from 'rxjs';
     MatTableModule,
     MatPaginatorModule,
     RouterOutlet,
-    ReactiveFormsModule,
   ],
   templateUrl: './add-new-group.component.html',
   styleUrls: ['./add-new-group.component.scss'],

@@ -14,6 +14,7 @@ import { BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.c
 import { OfficialHolidaysService } from '../../services/official-holidays/official-holidays.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'app-official-holidays',
@@ -28,12 +29,12 @@ import { MatPaginator } from '@angular/material/paginator';
     MatTableModule,
     MatPaginatorModule,
     ReactiveFormsModule,
-    BreadcrumbsComponent
+    BreadcrumbsComponent,
+    MatButton,
   ],
   templateUrl: './official-holidays.component.html',
-  styleUrls: ['./official-holidays.component.scss']
+  styleUrls: ['./official-holidays.component.scss'],
 })
-
 export class OfficialHolidaysComponent implements OnInit, AfterViewInit {
   holidayForm: FormGroup;
   holidays: IHoliday[] = [];
@@ -50,7 +51,7 @@ export class OfficialHolidaysComponent implements OnInit, AfterViewInit {
     this.holidayForm = this.fb.group({
       name: ['', Validators.required],
       date: ['', Validators.required],
-      type: ['holiday']  // Default to 'holiday'
+      type: ['holiday'], // Default to 'holiday'
     });
   }
 
@@ -71,7 +72,9 @@ export class OfficialHolidaysComponent implements OnInit, AfterViewInit {
               id: holiday.id,
               name: holiday.description,
               date: holiday.date,
-              type: holiday.off_day_types.length ? holiday.off_day_types[0].name : 'holiday' // Default to 'holiday'
+              type: holiday.off_day_types.length
+                ? holiday.off_day_types[0].name
+                : 'holiday', // Default to 'holiday'
             }))
             .filter((holiday: IHoliday) => holiday.type === 'holiday'); // Filter by type
           this.dataSource.data = this.holidays;
@@ -84,7 +87,7 @@ export class OfficialHolidaysComponent implements OnInit, AfterViewInit {
       },
       complete: () => {
         console.log('Completed loading holidays');
-      }
+      },
     });
   }
 
@@ -103,23 +106,32 @@ export class OfficialHolidaysComponent implements OnInit, AfterViewInit {
       id: this.generateId(), // Generate a unique ID
       name: formValues.name,
       date: formValues.date,
-      type: formValues.type // Include type from form
+      type: formValues.type, // Include type from form
     };
 
     this.holidaysService.addHoliday(newHoliday).subscribe({
       next: (holiday: IHoliday) => {
-        if (holiday.type === 'holiday') { // Only add to the list if type is 'holiday'
+        if (holiday.type === 'holiday') {
+          // Only add to the list if type is 'holiday'
           this.holidays.push(holiday);
           this.dataSource.data = this.holidays;
           this.holidayForm.reset();
-          this.snackBar.open('Holiday added successfully!', 'Close', { duration: 3000 });
+          this.snackBar.open('Holiday added successfully!', 'Close', {
+            duration: 3000,
+          });
         } else {
-          this.snackBar.open('Only holidays can be added to this list.', 'Close', { duration: 3000 });
+          this.snackBar.open(
+            'Only holidays can be added to this list.',
+            'Close',
+            { duration: 3000 }
+          );
         }
       },
       error: (error: any) => {
-        this.snackBar.open('Failed to add holiday', 'Close', { duration: 3000 });
-      }
+        this.snackBar.open('Failed to add holiday', 'Close', {
+          duration: 3000,
+        });
+      },
     });
   }
 
@@ -127,7 +139,7 @@ export class OfficialHolidaysComponent implements OnInit, AfterViewInit {
     this.holidayForm.patchValue({
       name: holiday.name,
       date: holiday.date,
-      type: holiday.type // Include type for editing
+      type: holiday.type, // Include type for editing
     });
   }
 
@@ -141,32 +153,40 @@ export class OfficialHolidaysComponent implements OnInit, AfterViewInit {
 
     this.holidaysService.updateHoliday(holidayId, updatedHoliday).subscribe({
       next: (holiday: IHoliday) => {
-        const index = this.holidays.findIndex(h => h.id === holidayId);
+        const index = this.holidays.findIndex((h) => h.id === holidayId);
         if (index > -1) {
           this.holidays[index] = holiday;
           this.dataSource.data = this.holidays;
-          this.snackBar.open('Holiday updated successfully!', 'Close', { duration: 3000 });
+          this.snackBar.open('Holiday updated successfully!', 'Close', {
+            duration: 3000,
+          });
         }
       },
       error: (error: any) => {
-        this.snackBar.open('Failed to update holiday', 'Close', { duration: 3000 });
-      }
+        this.snackBar.open('Failed to update holiday', 'Close', {
+          duration: 3000,
+        });
+      },
     });
   }
 
   deleteHoliday(holidayId: string): void {
     this.holidaysService.deleteHoliday(holidayId).subscribe({
       next: () => {
-        const index = this.holidays.findIndex(h => h.id === holidayId);
+        const index = this.holidays.findIndex((h) => h.id === holidayId);
         if (index > -1) {
           this.holidays.splice(index, 1);
           this.dataSource.data = this.holidays;
-          this.snackBar.open('Holiday deleted successfully!', 'Close', { duration: 3000 });
+          this.snackBar.open('Holiday deleted successfully!', 'Close', {
+            duration: 3000,
+          });
         }
       },
       error: (error: any) => {
-        this.snackBar.open('Failed to delete holiday', 'Close', { duration: 3000 });
-      }
+        this.snackBar.open('Failed to delete holiday', 'Close', {
+          duration: 3000,
+        });
+      },
     });
   }
 

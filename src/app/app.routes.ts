@@ -27,9 +27,15 @@ import { EditEmployeeComponent } from './pages/edit-employee/edit-employee.compo
 import { ShowComponent } from './pages/show/show.component';
 import { InternalServerComponent } from './pages/internal-server/internal-server.component';
 import { DepartmentsComponent } from './pages/departments/departments.component';
+import { loginGuard } from './gaurds/login.guard';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent, data: { breadcrumb: 'Home' } },
+  {
+    path: '',
+    component: HomeComponent,
+    canActivate: [authGuard],
+    data: { breadcrumb: 'Home' },
+  },
   {
     path: 'groups-and-permissions',
     component: GroupsAndPermissionsComponent,
@@ -188,7 +194,6 @@ export const routes: Routes = [
       pageName: 'Salaries',
       operation: 'read',
     },
-
   },
   {
     path: 'departments',
@@ -199,11 +204,16 @@ export const routes: Routes = [
     },
   },
   // Add the login route
-  { path: 'login', component: LoginComponent, data: { breadcrumb: 'Login' } },
+  {
+    path: 'login',
+    component: LoginComponent,
+    canActivate: [loginGuard],
+    data: { breadcrumb: 'Login' },
+  },
   { path: 'not-found', component: NotFoundComponent },
   { path: 'unauthorized', component: UnauthorizedComponent },
   { path: 'internal-server', component: InternalServerComponent },
-  { path: '**', redirectTo: 'not-found' } 
+  { path: '**', redirectTo: 'not-found' },
 ];
 
 @NgModule({

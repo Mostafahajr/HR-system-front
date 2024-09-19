@@ -5,44 +5,77 @@
         <mat-icon>home</mat-icon>
         Home
       </button>
-      <button mat-button (click)="navigate('groups-and-permissions')"  [class.active]="isActive('/groups-and-permissions')">
-        <mat-icon>group</mat-icon>
+      <button
+        mat-button
+        (click)="navigate('groups-and-permissions')"
+        [class.active]="isActive('/groups-and-permissions')"
+      >
+        <mat-icon>groups</mat-icon>
         Groups and Permissions
       </button>
-      <button mat-button (click)="navigate('admins')" [class.active]="isActive('/admins')">
-
+      <button
+        mat-button
+        (click)="navigate('admins')"
+        [class.active]="isActive('/admins')"
+      >
         <mat-icon>admin_panel_settings</mat-icon>
         Admins
       </button>
-      <button mat-button (click)="navigate('employees')" [class.active]="isActive('/employees')">
-        <mat-icon>people</mat-icon>
+      <button
+        mat-button
+        (click)="navigate('departments')"
+        [class.active]="isActive('/departments')"
+      >
+        <mat-icon>corporate_fare</mat-icon>
+        Departments
+      </button>
+      <button
+        mat-button
+        (click)="navigate('employees')"
+        [class.active]="isActive('/employees')"
+      >
+        <mat-icon>badge</mat-icon>
         Employees
       </button>
-      <button mat-button (click)="navigate('salary-related-settings')"   [class.active]="isActive('/salary-related-settings')">
-
-        <mat-icon>settings</mat-icon>
-        Salary Related Settings
-      </button>
-      <button mat-button (click)="navigate('weekend-settings')"  [class.active]="isActive('/weekend-settings')">
-        <mat-icon>settings</mat-icon>
+      <button
+        mat-button
+        (click)="navigate('weekend-settings')"
+        [class.active]="isActive('/weekend-settings')"
+      >
+        <mat-icon>event</mat-icon>
         Weekend Settings
       </button>
-      <button mat-button (click)="navigate('official-holidays')"[class.active]="isActive('/official-holidays')">
+      <button
+        mat-button
+        (click)="navigate('official-holidays')"
+        [class.active]="isActive('/official-holidays')"
+      >
         <mat-icon>event</mat-icon>
-        Official Holidays
+        Official Holidays settings
       </button>
-      <button mat-button (click)="navigate('attendance-reports')"  [class.active]="isActive('/attendance-reports')">
-
+      <button
+        mat-button
+        (click)="navigate('attendance-reports')"
+        [class.active]="isActive('/attendance-reports')"
+      >
         <mat-icon>assignment</mat-icon>
         Attendance Reports
       </button>
-      <button mat-button (click)="navigate('salaries')" [class.active]="isActive('/salaries')" >
-        <mat-icon>assignment</mat-icon>
-        Salaries
+      <button
+        mat-button
+        (click)="navigate('salary-related-settings')"
+        [class.active]="isActive('/salary-related-settings')"
+      >
+        <mat-icon>calculate</mat-icon>
+        Salary Related Settings
       </button>
-      <button mat-button (click)="navigate('departments')" [class.active]="isActive('/departments')" >
-        <mat-icon>assignment</mat-icon>
-        Departments
+      <button
+        mat-button
+        (click)="navigate('salaries')"
+        [class.active]="isActive('/salaries')"
+      >
+        <mat-icon>payments</mat-icon>
+        Salaries
       </button>
     </mat-nav-list>
   </mat-sidenav>
