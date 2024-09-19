@@ -1,7 +1,4 @@
-table {
-  width: 50%;
-  margin: 0 0 30px 0;
-}
+/* Style the table to fit the overall layout */
 
 .example-form-field {
   width: 200px;
@@ -68,4 +65,24 @@ table {
 .top_bar {
   display: flex;
   justify-content: space-between;
+  margin-top: 16px;
+}
+
+.mat-elevation-z8 {
+  box-shadow: none !important;
+}
+
+.mat-stroked-button {
+  height: 56px;
+  border: 0;
+  border-radius: 10px;
+}
+
+.content-container {
+  height: 55vh;
+  overflow: auto;
+}
+
+.check-col {
+  width: 48px;
 }

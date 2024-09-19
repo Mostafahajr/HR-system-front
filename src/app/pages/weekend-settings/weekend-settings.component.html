@@ -1,20 +1,35 @@
 <app-breadcrumbs></app-breadcrumbs>
 
 <div class="container">
-<form [formGroup]="weekendForm" (ngSubmit)="updateWeekendDays()">
+  <form [formGroup]="weekendForm" (ngSubmit)="updateWeekendDays()">
     <div class="day-offs">
       <!-- Weekend 1 Selection -->
       <div>
-        <mat-form-field class="selectInput example-full-width" appearance="outline">
+        <mat-form-field
+          class="selectInput example-full-width"
+          appearance="outline"
+        >
           <mat-label>Weekend 1</mat-label>
-          <mat-select formControlName="weekend1" required [disabled]="!isEditable">
+          <mat-select
+            formControlName="weekend1"
+            required
+            [disabled]="!isEditable"
+          >
             <mat-option value="">--</mat-option>
-            <mat-option *ngFor="let day of days" [value]="day">{{ day }}</mat-option>
+            <mat-option *ngFor="let day of days" [value]="day">{{
+              day
+            }}</mat-option>
           </mat-select>
           <mat-error *ngIf="weekendForm.get('weekend1')?.hasError('required')">
             Weekend 1 is required.
           </mat-error>
-          <mat-error *ngIf="weekendForm.get('weekend1')?.value === weekendForm.get('weekend2')?.value && weekendForm.get('weekend1')?.touched">
+          <mat-error
+            *ngIf="
+              weekendForm.get('weekend1')?.value ===
+                weekendForm.get('weekend2')?.value &&
+              weekendForm.get('weekend1')?.touched
+            "
+          >
             Weekend 1 and Weekend 2 cannot be the same.
           </mat-error>
         </mat-form-field>
@@ -22,16 +37,31 @@
 
       <!-- Weekend 2 Selection -->
       <div>
-        <mat-form-field class="selectInput example-full-width" appearance="outline">
+        <mat-form-field
+          class="selectInput example-full-width"
+          appearance="outline"
+        >
           <mat-label>Weekend 2</mat-label>
-          <mat-select formControlName="weekend2" required [disabled]="!isEditable">
+          <mat-select
+            formControlName="weekend2"
+            required
+            [disabled]="!isEditable"
+          >
             <mat-option value="">--</mat-option>
-            <mat-option *ngFor="let day of days" [value]="day">{{ day }}</mat-option>
+            <mat-option *ngFor="let day of days" [value]="day">{{
+              day
+            }}</mat-option>
           </mat-select>
           <mat-error *ngIf="weekendForm.get('weekend2')?.hasError('required')">
             Weekend 2 is required.
           </mat-error>
-          <mat-error *ngIf="weekendForm.get('weekend2')?.value === weekendForm.get('weekend1')?.value && weekendForm.get('weekend2')?.touched">
+          <mat-error
+            *ngIf="
+              weekendForm.get('weekend2')?.value ===
+                weekendForm.get('weekend1')?.value &&
+              weekendForm.get('weekend2')?.touched
+            "
+          >
             Weekend 1 and Weekend 2 cannot be the same.
           </mat-error>
         </mat-form-field>
@@ -41,11 +71,22 @@
     <div class="line"></div>
 
     <!-- Edit and Save buttons -->
-    <button mat-raised-button color="primary" type="button" class="edit-button" (click)="toggleEdit()" *ngIf="!isEditable">
+    <button
+      mat-stroked-button
+      type="button"
+      class="edit-button"
+      (click)="toggleEdit()"
+      *ngIf="!isEditable"
+    >
       Edit
     </button>
 
-    <button mat-raised-button color="primary" type="submit" class="save-button" *ngIf="isEditable">
+    <button
+      mat-stroked-button
+      type="submit"
+      class="save-button"
+      *ngIf="isEditable"
+    >
       Save Weekend Settings
     </button>
   </form>
