@@ -10,156 +10,159 @@
 //     width: 300px;
 // }
 
-.search-input input {
-    width: 100%;
-    padding: 20px 40px 20px 10px;
-    border: 1px solid #006699;
-    font-size: 14px;
+.search-input-container input {
+  padding: 18px 16px;
+  background-color: transparent;
+  border: 1px solid #191c1f7f;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-size: 16px;
 }
-
+.search-input-container input::placeholder {
+  color: #191c1f69;
+  font-size: 16px;
+}
 .search-icon {
-    position: absolute;
-    top: 50%;
-    right: 15px;
-    transform: translateY(-50%);
-    color: #006699;
-    font-size: 16px;
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  transform: translateY(-50%);
+  color: #006699;
+  font-size: 16px;
 }
 
 .filter-fields {
-    display: flex;
-    gap: 20px;
-    align-items: center;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  width: fit-content;
 }
 
 .mat-form-field.custom-form-field {
-    flex: 1;
-    width: 150px;
+  flex: 1;
+  width: 150px;
 
-    .mat-select {
-        border: 1px solid #006699;
-        border-radius: 50px;
+  .mat-select {
+    border: 1px solid #006699;
+    border-radius: 50px;
 
-        .mat-select-value {
-            font-size: 14px;
-        }
-
-        .mat-select-arrow {
-            color: #006699;
-        }
+    .mat-select-value {
+      font-size: 14px;
     }
+
+    .mat-select-arrow {
+      color: #006699;
+    }
+  }
 }
 
 .search-button:hover {
-    background-color: #174c5b;
+  background-color: #174c5b;
 }
 
 .full-width-table {
-    width: 100%;
+  width: 100%;
 }
 
 .mat-elevation-z8 {
-    box-shadow: none !important;
+  box-shadow: none !important;
 }
 
 .custom-icon-button {
-    background-color: transparent;
-    color: #006699;
-    border: 2px solid transparent;
-    border-radius: 4px;
-    padding: 8px;
-    min-width: 44px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+  background-color: transparent;
+  color: #006699;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  padding: 8px;
+  min-width: 44px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
 }
 
 .view-button:hover {
-    background-color: #0560de;
-    color: #ffffff;
-    border-color: #0560de;
+  background-color: #0560de;
+  color: #ffffff;
+  border-color: #0560de;
 }
 
 .edit-button:hover {
-    background-color: rgb(88, 144, 88);
-    color: #ffffff;
-    border-color: rgb(88, 144, 88);
+  background-color: rgb(88, 144, 88);
+  color: #ffffff;
+  border-color: rgb(88, 144, 88);
 }
 
 .delete-button:hover {
-    background-color: rgb(121, 45, 45);
-    color: #ffffff;
-    border-color: rgb(121, 45, 45);
+  background-color: rgb(121, 45, 45);
+  color: #ffffff;
+  border-color: rgb(121, 45, 45);
 }
 
 .custom-icon-button:focus {
-    outline: none;
+  outline: none;
 }
 
 .search-icon {
-    position: absolute;
-    left: 0.5rem;
-    color: #888;
+  position: absolute;
+  left: 0.5rem;
+  color: #888;
 }
 
 .filter-container {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 20px;
 }
 
 .search-input {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .search-input input {
-    // padding: 0.5rem;
-    border: 1px solid #3a3a3a;
-    border-radius: 4px;
-    height: 10px;
-    background-color: transparent;
-    margin-top: -20px;
+  // padding: 0.5rem;
+  border: 1px solid #3a3a3a;
+  border-radius: 4px;
+  height: 10px;
+  background-color: transparent;
+  margin-top: -20px;
 }
 
 .search-input::placeholder {
-    color: #3a3a3a;
+  color: #3a3a3a;
 }
 
 .search-icon {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .filter-fields {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-    flex: 1;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  flex: 1;
 }
 
 .mat-form-field {
-    flex: 1;
+  flex: 1;
 }
 
 mat-paginator {
-    padding-top: 20px;
-    padding-bottom: 40px;
+  padding-top: 20px;
+  padding-bottom: 40px;
 }
 
 #table {
-    scroll-behavior: inherit;
-    overflow-y: auto; /* Enable vertical scrolling */
-    overflow-x: hidden; /* Disable horizontal scrolling */
-    height: 65vh;
-    max-width: 100%; /* Restrict width to parent container */
+  overflow: auto; /* Enable vertical scrolling */
+  height: 48vh;
 }
 
 .full-width-table {
-    width: 100%;
-    table-layout: fixed; /* Prevent columns from expanding */
+  width: 100%;
+  table-layout: fixed; /* Prevent columns from expanding */
 }

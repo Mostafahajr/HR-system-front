@@ -28,8 +28,18 @@ import { ShowComponent } from './pages/show/show.component';
 import { InternalServerComponent } from './pages/internal-server/internal-server.component';
 import { DepartmentsComponent } from './pages/departments/departments.component';
 
+import { loginGuard } from './gaurds/login.guard';
+
+import { EditAdminComponent } from './pages/edit-admin/edit-admin.component';
+
+
 export const routes: Routes = [
-  { path: '', component: HomeComponent, data: { breadcrumb: 'Home' } },
+  {
+    path: '',
+    component: HomeComponent,
+    canActivate: [authGuard],
+    data: { breadcrumb: 'Home' },
+  },
   {
     path: 'groups-and-permissions',
     component: GroupsAndPermissionsComponent,
@@ -80,6 +90,27 @@ export const routes: Routes = [
           breadcrumb: 'Add New Admin',
           pageName: 'Admins',
           operation: 'create',
+        },
+         children: [
+      {
+        path: 'add-new-admin',
+        component: AddNewAdminComponent,
+        canActivate: [authGuard],
+        data: {
+          breadcrumb: 'Add New Admin',
+          pageName: 'Admins',
+          operation: 'create',
+        },
+
+      },
+      {
+        path: 'edit-admin/:id',
+        component: EditAdminComponent,
+        canActivate: [authGuard],
+        data: {
+          breadcrumb: 'Edit Admin',
+          pageName: 'Admins',
+          operation: 'update',
         },
       },
     ],
@@ -188,7 +219,6 @@ export const routes: Routes = [
       pageName: 'Salaries',
       operation: 'read',
     },
-
   },
   {
     path: 'departments',
@@ -198,12 +228,16 @@ export const routes: Routes = [
       breadcrumb: 'Departments',
     },
   },
-  // Add the login route
-  { path: 'login', component: LoginComponent, data: { breadcrumb: 'Login' } },
+  {
+    path: 'login',
+    component: LoginComponent,
+    canActivate: [loginGuard],
+    data: { breadcrumb: 'Login' },
+  },
   { path: 'not-found', component: NotFoundComponent },
   { path: 'unauthorized', component: UnauthorizedComponent },
   { path: 'internal-server', component: InternalServerComponent },
-  { path: '**', redirectTo: 'not-found' } 
+  { path: '**', redirectTo: 'not-found' },
 ];
 
 @NgModule({

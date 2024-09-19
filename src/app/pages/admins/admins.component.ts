@@ -1,3 +1,4 @@
+import { AdminsService } from './../../services/admins/admins.service';
 import { Component, AfterViewInit, ViewChild } from '@angular/core';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
@@ -22,11 +23,13 @@ import { BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.c
 })
 export class AdminsComponent implements AfterViewInit {
   displayedColumns: string[] = ['no', 'name', 'group', 'email', 'actions'];
-  dataSource = new MatTableDataSource<UserElement>(USER_DATA);
+  dataSource = new MatTableDataSource<UserElement>;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router,private userServices:AdminsService) {
+    this.getUsers()
+  }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
@@ -34,6 +37,20 @@ export class AdminsComponent implements AfterViewInit {
 
   navigate(route: string): void {
     this.router.navigate([route]);
+  }
+
+  getUsers(){
+    this.userServices.getUsers().subscribe({
+      next:(response)=>
+      {
+        console.log(response);
+
+        this.dataSource = response;
+      },
+      error:(error)=>{
+        console.log(error);
+      }
+    })
   }
 
   isAddNewAdminRoute(): boolean {

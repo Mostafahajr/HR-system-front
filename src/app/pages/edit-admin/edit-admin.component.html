@@ -1,0 +1,75 @@
+<div style="margin-top: 50px;" class="container">
+  <form class="example-form" [formGroup]="updateAdminForm" (ngSubmit)="admin($event)">
+      <table class="example-full-width" cellspacing="0"><tr>
+          <td><mat-form-field class="example-full-width" appearance="outline">
+              <mat-label>fullName</mat-label>
+              <input matInput type="text" formControlName="name">
+          <mat-icon matSuffix>person</mat-icon>
+              </mat-form-field>
+              <mat-error *ngIf="updateAdminForm.get('name')?.errors&& updateAdminForm.get('name')?.touched">
+                  <p *ngIf="updateAdminForm.get('name')?.getError('required')">FullName is Required</p>
+                  <p *ngIf="updateAdminForm.get('username')?.getError('required')">UserName is Required</p>
+                  <p *ngIf="updateAdminForm.get('username')?.getError('pattern') || updateAdminForm.get('username')?.getError('min') || updateAdminForm.get('username')?.getError('max')">username must At least 3 characters and less than 20 characters</p>
+
+              </mat-error>
+          </td>
+      <td><mat-form-field class="example-full-width" appearance="outline">
+          <mat-label>userName</mat-label>
+          <input matInput type="text" formControlName="username">
+          <mat-icon matSuffix>person</mat-icon>
+      </mat-form-field>
+      <mat-error *ngIf="updateAdminForm.get('username')?.errors&& updateAdminForm.get('username')?.touched">
+          <p *ngIf="updateAdminForm.get('username')?.getError('required')">UserName is Required</p>
+          <p *ngIf="updateAdminForm.get('username')?.getError('pattern') || updateAdminForm.get('username')?.getError('min') || updateAdminForm.get('username')?.getError('max')">username must At least 3 characters and less than 20 characters</p>
+
+      </mat-error>
+  </td>
+      </tr>
+      <tr>
+      <td><mat-form-field class="example-full-width" appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email">
+          <mat-icon matSuffix> email</mat-icon>
+      </mat-form-field>
+      <mat-error *ngIf="updateAdminForm.get('email')?.errors && updateAdminForm.get('email')?.touched">
+          <p *ngIf="updateAdminForm.get('email')?.getError('required')">email is Required</p>
+          <p *ngIf="updateAdminForm.get('email')?.getError('email')">Enter correct email</p>
+          </mat-error>
+  </td>
+  <td>
+      <mat-form-field appearance="outline">
+          <mat-label>Enter your password</mat-label>
+          <input matInput [type]="hide ? 'password' : 'text'" formControlName="password"/>
+      </mat-form-field>
+      <mat-error *ngIf="updateAdminForm.get('password')?.errors && updateAdminForm.get('password')?.touched">
+          <p *ngIf="updateAdminForm.get('password')?.getError('required')">password is Required</p>
+          <p *ngIf="updateAdminForm.get('password')?.getError('pattern')">password must At least 8 characters and one word uppercase and special characters</p>
+      </mat-error>
+  </td>
+  </tr>
+  <tr>
+      <td><mat-form-field class="custom-mat-form-field" appearance="outline">
+          <mat-label>Permissions</mat-label>
+          <mat-select matNativeControl required formControlName="group_type_id" class="custom-mat-select" [(value)]="selectedValue">
+          <mat-option  *ngFor="let group of groups;$index" [value]="group.id" >
+            {{group.group_name}}
+          </mat-option>
+          <mat-option value="2">HR</mat-option>
+          </mat-select>
+          </mat-form-field>
+          <mat-error *ngIf="updateAdminForm.get('group_type_id')?.errors && updateAdminForm.get('group_type_id')?.touched">
+              <p *ngIf="updateAdminForm.get('group_type_id')?.getError('required')">permission is Required</p>
+          </mat-error>
+      </td>
+  </tr>
+
+
+
+      </table>
+          <button mat-raised-button class="saveButton" type="submit">Save</button>
+          <button mat-raised-button class="editButton"><mat-icon matPrefix>mode_edit</mat-icon>Edit</button>
+          <button mat-raised-button class="deleteButton"><mat-icon matPrefix>clear</mat-icon>Delete</button>
+  </form>
+  </div>
+
+ 
