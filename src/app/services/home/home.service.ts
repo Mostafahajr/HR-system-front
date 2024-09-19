@@ -2,19 +2,19 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class HomeService {
-  baseUrl: any = 'http://127.0.0.1:8000/api/home?year=2024&month=09';
-  month:any;
-  constructor(public http:HttpClient) { }
-   getStatic() {
-    const date =new Date();
+  baseUrl: any = 'http://pioneer-back.test/api/home?year=2024&month=09';
+  month: any;
+  constructor(public http: HttpClient) {}
+  getStatic() {
+    const date = new Date();
     const year = date.getFullYear();
 
     if (date.getMonth() + 1 < 10) {
-      this.month = "0"+date.getMonth() + 1;
-    }else{
+      this.month = '0' + date.getMonth() + 1;
+    } else {
       this.month = date.getMonth() + 1;
     }
 

@@ -1,11 +1,11 @@
-import { AdminsService } from './../../services/admins/admins.service';
 import { Component, AfterViewInit, ViewChild } from '@angular/core';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';  // Import MatIconModule
+import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterOutlet } from '@angular/router';
 import { BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
+import { AdminsService } from './../../services/admins/admins.service';
 
 @Component({
   selector: 'app-admins',
@@ -16,19 +16,26 @@ import { BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.c
     MatButtonModule,
     MatTableModule,
     MatPaginator,
-    MatIconModule  // Add MatIconModule to the imports
+    MatIconModule,
   ],
   templateUrl: './admins.component.html',
   styleUrls: ['./admins.component.scss'],
 })
 export class AdminsComponent implements AfterViewInit {
-  displayedColumns: string[] = ['no', 'name', 'group', 'email', 'actions'];
-  dataSource = new MatTableDataSource<UserElement>;
+  displayedColumns: string[] = [
+    'id',
+    'name',
+    'username',
+    'group_name',
+    'email',
+    'actions',
+  ];
+  dataSource = new MatTableDataSource<UserElement>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  constructor(private router: Router,private userServices:AdminsService) {
-    this.getUsers()
+  constructor(private router: Router, private userServices: AdminsService) {
+    this.getUsers();
   }
 
   ngAfterViewInit() {
@@ -39,31 +46,28 @@ export class AdminsComponent implements AfterViewInit {
     this.router.navigate([route]);
   }
 
-  getUsers(){
+  getUsers() {
     this.userServices.getUsers().subscribe({
-      next:(response)=>
-      {
+      next: (response: any) => {
         console.log(response);
-
-        this.dataSource = response;
+        this.dataSource.data = response.data;
       },
-      error:(error)=>{
+      error: (error) => {
         console.log(error);
-      }
-    })
+      },
+    });
   }
 
   isAddNewAdminRoute(): boolean {
     return this.router.url === '/admins';
   }
 
-  // Action buttons methods
   viewDetails(element: UserElement) {
     console.log('Viewing details for', element.name);
   }
 
-  editUser(element: UserElement) {
-    console.log('Editing user', element.name);
+  editUser(id: number) {
+    console.log('Editing user with id', id);
   }
 
   deleteUser(element: UserElement) {
@@ -72,31 +76,9 @@ export class AdminsComponent implements AfterViewInit {
 }
 
 export interface UserElement {
-  no: number;
+  id: number;
+  username: string;
   name: string;
-  group: string;
+  group_name: string;
   email: string;
 }
-
-const USER_DATA: UserElement[] = [
-  { no: 1, name: 'Mohamed Wael', group: 'SuperAdmin', email: 'mohamed@gmail.com' },
-  { no: 2, name: 'Haneen Wael', group: 'Manager', email: 'Haneen@gmail.com' },
-  { no: 3, name: 'Saja Wael', group: 'SuperVisor', email: 'Saja@gmail.com' },
-  { no: 4, name: 'Fedaa Wael', group: 'HR', email: 'fedaa@gmail.com' },
-  { no: 5, name: 'Abdo Hesham', group: 'HR', email: 'Abdo@gmail.com' },
-  { no: 6, name: 'Mohamed Wael', group: 'SuperAdmin', email: 'mohamed@gmail.com' },
-  { no: 7, name: 'Haneen Wael', group: 'Manager', email: 'Haneen@gmail.com' },
-  { no: 8, name: 'Saja Wael', group: 'SuperVisor', email: 'Saja@gmail.com' },
-  { no: 9, name: 'Fedaa Wael', group: 'HR', email: 'fedaa@gmail.com' },
-  { no: 10, name: 'Abdo Hesham', group: 'HR', email: 'Abdo@gmail.com' },
-  { no: 11, name: 'Mohamed Wael', group: 'SuperAdmin', email: 'mohamed@gmail.com' },
-  { no: 12, name: 'Haneen Wael', group: 'Manager', email: 'Haneen@gmail.com' },
-  { no: 13, name: 'Saja Wael', group: 'SuperVisor', email: 'Saja@gmail.com' },
-  { no: 14, name: 'Fedaa Wael', group: 'HR', email: 'fedaa@gmail.com' },
-  { no: 15, name: 'Abdo Hesham', group: 'HR', email: 'Abdo@gmail.com' },
-  { no: 16, name: 'Mohamed Wael', group: 'SuperAdmin', email: 'mohamed@gmail.com' },
-  { no: 17, name: 'Haneen Wael', group: 'Manager', email: 'Haneen@gmail.com' },
-  { no: 18, name: 'Saja Wael', group: 'SuperVisor', email: 'Saja@gmail.com' },
-  { no: 19, name: 'Fedaa Wael', group: 'HR', email: 'fedaa@gmail.com' },
-  { no: 20, name: 'Abdo Hesham', group: 'HR', email: 'Abdo@gmail.com' },
-];

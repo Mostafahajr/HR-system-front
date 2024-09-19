@@ -24,20 +24,18 @@
   @switch (breadcrumbs[breadcrumbs.length - 1].label) {
   <!-- /fgd -->
   @case("Groups and Permissions"){
-  <button mat-button (click)="navigate('groups-and-permissions/add-new-group')">
+  <button mat-button (click)="navigate('groups-and-permissions/create')">
     Add New Group
   </button>
   } @case("Admins"){
-  <button mat-button (click)="navigate('admins/add-new-admin')">
-    Add New Admin
-  </button>
+  <button mat-button (click)="navigate('admins/create')">Add New Admin</button>
   } @case("Employees"){
-  <button mat-button (click)="navigate('employees/add-new-employee')">
+  <button mat-button (click)="navigate('employees/create')">
     Add New Employee
   </button>
   } @case ("Attendance Reports") {
   <div>
-    <button mat-button (click)="navigate('attendance-reports/add-attendance')">
+    <button mat-button (click)="navigate('attendance-reports/create')">
       Add Attendance
     </button>
     <button mat-button class="btn-success">Import Excel Sheet</button>
