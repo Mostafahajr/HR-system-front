@@ -27,7 +27,11 @@ import { EditEmployeeComponent } from './pages/edit-employee/edit-employee.compo
 import { ShowComponent } from './pages/show/show.component';
 import { InternalServerComponent } from './pages/internal-server/internal-server.component';
 import { DepartmentsComponent } from './pages/departments/departments.component';
+
 import { loginGuard } from './gaurds/login.guard';
+
+import { EditAdminComponent } from './pages/edit-admin/edit-admin.component';
+
 
 export const routes: Routes = [
   {
@@ -86,6 +90,27 @@ export const routes: Routes = [
           breadcrumb: 'Add New Admin',
           pageName: 'Admins',
           operation: 'create',
+        },
+         children: [
+      {
+        path: 'add-new-admin',
+        component: AddNewAdminComponent,
+        canActivate: [authGuard],
+        data: {
+          breadcrumb: 'Add New Admin',
+          pageName: 'Admins',
+          operation: 'create',
+        },
+
+      },
+      {
+        path: 'edit-admin/:id',
+        component: EditAdminComponent,
+        canActivate: [authGuard],
+        data: {
+          breadcrumb: 'Edit Admin',
+          pageName: 'Admins',
+          operation: 'update',
         },
       },
     ],
@@ -203,7 +228,6 @@ export const routes: Routes = [
       breadcrumb: 'Departments',
     },
   },
-  // Add the login route
   {
     path: 'login',
     component: LoginComponent,

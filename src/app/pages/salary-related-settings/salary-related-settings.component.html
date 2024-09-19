@@ -1,41 +1,35 @@
 <app-breadcrumbs></app-breadcrumbs>
-
 <div class="container">
   <form (ngSubmit)="ruleHandler()" [formGroup]="salaryForm" class="form-container">
-
     <div class="salary-settings">
-      <!-- Overtime Select -->
+      <!-- Overtime Input -->
       <mat-form-field class="example-full-width" appearance="outline">
-        <mat-label>Overtime</mat-label>
-        <mat-select formControlName="overtime" [disabled]="!isEditable">
-          <mat-option *ngFor="let option of overtimeOptions" [value]="option">
-            {{ option }}
-          </mat-option>
-        </mat-select>
+        <mat-label>Overtime (hours)</mat-label>
+        <input matInput formControlName="overtime" type="number" [disabled]="!isEditable">
         <mat-error *ngIf="getOvertime.touched && getOvertime.hasError('required')">
-          Overtime is required
+          Overtime amount is required
+        </mat-error>
+        <mat-error *ngIf="getOvertime.touched && getOvertime.hasError('min')">
+          Overtime amount must be at least 1
         </mat-error>
       </mat-form-field>
-
       <!-- Penalty Input -->
       <mat-form-field class="example-full-width" appearance="outline">
-        <mat-label>Penalty</mat-label>
-        <input matInput formControlName="penalty" [disabled]="!isEditable">
+        <mat-label>Penalty (hours)</mat-label>
+        <input matInput formControlName="penalty" type="number" [disabled]="!isEditable">
         <mat-error *ngIf="getPenalty.touched && getPenalty.hasError('required')">
-          Penalty is required
+          Penalty amount is required
         </mat-error>
         <mat-error *ngIf="getPenalty.touched && getPenalty.hasError('min')">
-          Penalty must be at least 1
+          Penalty amount must be at least 1
         </mat-error>
       </mat-form-field>
     </div>
-
     <div class="button-container">
       <!-- Edit Button -->
       <button mat-raised-button color="primary" type="button" (click)="toggleEdit()" *ngIf="!isEditable">
         Edit
       </button>
-
       <!-- Save Changes Button -->
       <button mat-raised-button color="primary" type="submit" *ngIf="isEditable">
         Save Changes
