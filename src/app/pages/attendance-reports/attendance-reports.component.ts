@@ -33,8 +33,8 @@ export interface UserData {
   employee_name: string;
   employee_id: number;
   department: string;
-  arrival_time: Date;
-  leave_time: Date;
+  arrival_time: string;
+  leave_time: string;
   date: Date;
 }
 
@@ -75,8 +75,8 @@ export class AttendanceReportsComponent {
   filteredDataSource = new MatTableDataSource<UserData>([]);
 
   isUpdated: boolean = false;
-  updateArrival: Date = new Date();
-  updateLeave: Date = new Date();
+  updateArrival: string = '';
+  updateLeave: string = '';
   updatedUserId: any;
 
   startDate: Date | null = null;
@@ -187,6 +187,14 @@ export class AttendanceReportsComponent {
     this.updateArrival = arrival;
     this.updateLeave = leave;
 
+  }
+
+  to12HoursFormat(timeString: string):string{
+    const [hours, minutes] = timeString.split(':').map(Number);
+  const date = new Date();
+  date.setHours(hours, minutes);
+
+  return this.datePipe.transform(date, 'hh:mm a') || '';
   }
 
   updateRecord(
