@@ -181,9 +181,12 @@ export class AttendanceReportsComponent {
     }
   }
 
-  editUser(id: number) {
+  editUser(id: number,arrival:any,leave:any) {
     this.isUpdated = true;
     this.updatedUserId = id;
+    this.updateArrival = arrival;
+    this.updateLeave = leave;
+
   }
 
   updateRecord(
@@ -191,7 +194,7 @@ export class AttendanceReportsComponent {
     name: string,
     department: string,
     date: Date,
-    employee_id: number
+    employee_id: number,
   ) {
     if (this.updateArrival && this.updateLeave) {
       const updateAttendance = {
@@ -203,6 +206,8 @@ export class AttendanceReportsComponent {
         leave_time: this.updateLeave,
         date: date,
       };
+      console.log(updateAttendance);
+
       this.attendanceService.updateAttendance(id, updateAttendance).subscribe({
         next: (response) => {
           console.log(response);

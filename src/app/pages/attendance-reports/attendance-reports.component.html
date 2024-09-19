@@ -136,7 +136,10 @@
               <button
                 mat-icon-button
                 class="custom-icon-button edit-button"
-                (click)="editUser(row.id)"
+                (click)="editUser(row.id,
+                      row.arrival_time,
+                      row.leave_time
+                      )"
               >
                 <mat-icon>edit</mat-icon>
               </button>
