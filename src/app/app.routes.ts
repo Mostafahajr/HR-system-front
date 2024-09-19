@@ -82,6 +82,17 @@ export const routes: Routes = [
           pageName: 'Admins',
           operation: 'create',
         },
+         children: [
+      {
+        path: 'add-new-admin',
+        component: AddNewAdminComponent,
+        canActivate: [authGuard],
+        data: {
+          breadcrumb: 'Add New Admin',
+          pageName: 'Admins',
+          operation: 'create',
+        },
+
       },
       {
         path: 'edit-admin/:id',
