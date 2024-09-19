@@ -1,23 +1,19 @@
 <app-breadcrumbs></app-breadcrumbs>
 
-<form [formGroup]="holidayForm" (ngSubmit)="addHoliday()">
-  <div class="input-group">
-    <mat-form-field appearance="outline" class="custom-form-field">
-      <mat-label>Name</mat-label>
-      <input matInput formControlName="name" aria-describedby="name-error" />
-      <mat-icon
-        *ngIf="
-          holidayForm.get('name')?.invalid && holidayForm.get('name')?.touched
-        "
-        class="error-icon"
-      >
-        error
-      </mat-icon>
-      <mat-error id="name-error" *ngIf="holidayForm.get('name')?.invalid">
-        Name is required
-      </mat-error>
-    </mat-form-field>
 
+<div class="form-container">
+  <form [formGroup]="holidayForm" (ngSubmit)="addOrUpdateHoliday()">
+    <div class="input-group">
+    <mat-form-field appearance="outline" class="custom-form-field">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name" aria-describedby="name-error">
+        <mat-icon *ngIf="holidayForm.get('name')?.invalid && holidayForm.get('name')?.touched" class="error-icon">
+            error
+        </mat-icon>
+        <mat-error id="name-error" *ngIf="holidayForm.get('name')?.invalid">
+            Name is required
+        </mat-error>
+    </mat-form-field>
     <mat-form-field appearance="outline" class="custom-form-field">
       <mat-label>Date</mat-label>
       <input
@@ -91,7 +87,6 @@
         </div>
       </td>
     </ng-container>
-
     <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
@@ -104,3 +99,4 @@
   aria-label="Select page"
 >
 </mat-paginator>
+
