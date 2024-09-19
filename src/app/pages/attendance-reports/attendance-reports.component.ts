@@ -91,11 +91,12 @@ export class AttendanceReportsComponent  {
 
 
 
+    const today = new Date();
+    this.startDate = new Date(today.setHours(0, 0, 0, 0));
+    this.endDate = new Date(today.setHours(23, 59, 59, 999));
+
+    // Fetch data from API and apply default filter
     this.getAttendanceApi();
-
-
-
-    // Assign the data to the data source for the table to render
 
   }
 
@@ -118,7 +119,7 @@ export class AttendanceReportsComponent  {
         this.dataSource.data = formattedData;
         this.filteredDataSource.data = formattedData;
         console.log(this.filteredDataSource);
-
+        this.applyDateFilter();
 
 
       },
@@ -127,7 +128,7 @@ export class AttendanceReportsComponent  {
       }
     })
 
-    this.applyDateFilter();
+
   }
 
 
@@ -163,6 +164,7 @@ export class AttendanceReportsComponent  {
 
   applyDateFilter() {
     this.filteredDataSource.data =this.dataSource.data;
+    console.log(this.startDate,this.endDate);
 
     if (this.startDate && this.endDate) {
       const start = new Date(this.startDate);

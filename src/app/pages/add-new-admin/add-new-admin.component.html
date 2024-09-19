@@ -3,21 +3,21 @@
         <table class="example-full-width" cellspacing="0"><tr>
             <td><mat-form-field class="example-full-width" appearance="outline">
                 <mat-label>fullName</mat-label>
-                <input matInput type="text" formControlName="fullName">
+                <input matInput type="text" formControlName="name">
             <mat-icon matSuffix>person</mat-icon>
                 </mat-form-field>
-                <mat-error *ngIf="addNewAdminForm.get('fullName')?.errors&& addNewAdminForm.get('fullName')?.touched">
-                    <p *ngIf="addNewAdminForm.get('fullName')?.getError('required')">FullName is Required</p>
-                    <p *ngIf="addNewAdminForm.get('fullName')?.getError('minlength')">MinLength is 3</p>
+                <mat-error *ngIf="addNewAdminForm.get('name')?.errors&& addNewAdminForm.get('name')?.touched">
+                    <p *ngIf="addNewAdminForm.get('name')?.getError('required')">FullName is Required</p>
+                    <p *ngIf="addNewAdminForm.get('name')?.getError('minlength')">MinLength is 3</p>
                 </mat-error>
             </td>
         <td><mat-form-field class="example-full-width" appearance="outline">
             <mat-label>userName</mat-label>
-            <input matInput type="text" formControlName="userName">
+            <input matInput type="text" formControlName="username">
             <mat-icon matSuffix>person</mat-icon>
         </mat-form-field>
-        <mat-error *ngIf="addNewAdminForm.get('userName')?.errors&& addNewAdminForm.get('userName')?.touched">
-            <p *ngIf="addNewAdminForm.get('userName')?.getError('required')">UserName is Required</p>
+        <mat-error *ngIf="addNewAdminForm.get('username')?.errors&& addNewAdminForm.get('username')?.touched">
+            <p *ngIf="addNewAdminForm.get('username')?.getError('required')">UserName is Required</p>
         </mat-error>
     </td>
         </tr>
@@ -46,13 +46,14 @@
     <tr>
         <td><mat-form-field class="custom-mat-form-field" appearance="outline">
             <mat-label>Permissions</mat-label>
-            <mat-select matNativeControl required formControlName="permession" class="custom-mat-select">
-            <mat-option value="SuperAdmin">SuperAdmin</mat-option>
-            <mat-option value="HR">HR</mat-option>
+            <mat-select matNativeControl required formControlName="group_type_id" class="custom-mat-select">
+              <mat-option  *ngFor="let group of groups;$index" [value]="group.id" >
+                {{group.group_name}}
+              </mat-option>
             </mat-select>
             </mat-form-field>
-            <mat-error *ngIf="addNewAdminForm.get('permession')?.errors && addNewAdminForm.get('permession')?.touched">
-                <p *ngIf="addNewAdminForm.get('permession')?.getError('required')">permission is Required</p>
+            <mat-error *ngIf="addNewAdminForm.get('group_type_id')?.errors && addNewAdminForm.get('group_type_id')?.touched">
+                <p *ngIf="addNewAdminForm.get('group_type_id')?.getError('required')">permission is Required</p>
             </mat-error>
         </td>
     </tr>
@@ -63,4 +64,4 @@
             <button mat-raised-button class="deleteButton"><mat-icon matPrefix>clear</mat-icon>Delete</button>
     </form>
     </div>
-    
+{{addNewAdminForm.value | json}}

@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class AttendanceService {
-  private apiUrl = 'http://pioneer-back.test/api/attendance';
+  private apiUrl = 'http://127.0.0.1:8000/api/attendance';
 
   constructor(private http: HttpClient) {}
 

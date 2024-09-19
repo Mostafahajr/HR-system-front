@@ -1,11 +1,14 @@
 import { AdminsService } from './../../services/admins/admins.service';
-import { Component, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, OnInit } from '@angular/core';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';  // Import MatIconModule
+import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterOutlet } from '@angular/router';
 import { BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
+import { Observable } from 'rxjs';
+import { CommonModule } from '@angular/common';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-admins',
@@ -16,41 +19,62 @@ import { BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.c
     MatButtonModule,
     MatTableModule,
     MatPaginator,
-    MatIconModule  // Add MatIconModule to the imports
+    MatIconModule,
+    CommonModule
   ],
   templateUrl: './admins.component.html',
   styleUrls: ['./admins.component.scss'],
 })
-export class AdminsComponent implements AfterViewInit {
+export class AdminsComponent implements AfterViewInit, OnInit {
   displayedColumns: string[] = ['no', 'name', 'group', 'email', 'actions'];
-  dataSource = new MatTableDataSource<UserElement>;
+  admins: {}={};
+  dataSource = new MatTableDataSource<any>([]); // Initialize with empty MatTableDataSource
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private router: Router,private userServices:AdminsService) {
-    this.getUsers()
-  }
+  constructor(private router: Router, private userServices: AdminsService) {}
 
-  ngAfterViewInit() {
+  ngOnInit(): void {
+    this.getUsers();
     this.dataSource.paginator = this.paginator;
   }
 
-  navigate(route: string): void {
-    this.router.navigate([route]);
+
+  ngAfterViewInit() {
+    // Moved to getUsers to ensure data is set before assigning paginator
   }
 
-  getUsers(){
-    this.userServices.getUsers().subscribe({
-      next:(response)=>
-      {
-        console.log(response);
+  navigate(id:any): void {
+    this.router.navigate([`admins/edit-admin/${id}`]);
+  }
 
-        this.dataSource = response;
+  getUsers() {
+    this.userServices.getUsers().subscribe({
+      next: (response) => {
+        console.log('API Response:', response);
+
+        // Check if response is an array
+        const formattedData = response.data.map((item: any) => ({
+          id: item.id,
+          name: item.name,
+          email: item.email,
+          username: item.uesrname,
+          group: item.group_name,
+          group_id:item.group_type_id,
+          password:item.password,
+          email_verified:item.email_verified_at,
+          created_at:item.created_at,
+          updated_at:item.updated_at
+
+        }));
+
+        this.dataSource.data = formattedData;
       },
-      error:(error)=>{
-        console.log(error);
+      error: (error) => {
+        console.log('Error:', error);
       }
-    })
+    });
   }
 
   isAddNewAdminRoute(): boolean {
@@ -58,45 +82,22 @@ export class AdminsComponent implements AfterViewInit {
   }
 
   // Action buttons methods
-  viewDetails(element: UserElement) {
+  viewDetails(element: any) {
     console.log('Viewing details for', element.name);
   }
 
-  editUser(element: UserElement) {
-    console.log('Editing user', element.name);
-  }
 
-  deleteUser(element: UserElement) {
-    console.log('Deleting user', element.name);
+
+  deleteUser(id: any) {
+    this.userServices.deleteUser(id).subscribe({
+      next:(response)=>{
+        console.log(response);
+      },
+      error:(error)=>{
+        console.log(error);
+      }
+    })
+    this.dataSource.data = this.dataSource.data.filter(user => user.id != id);
   }
 }
 
-export interface UserElement {
-  no: number;
-  name: string;
-  group: string;
-  email: string;
-}
-
-const USER_DATA: UserElement[] = [
-  { no: 1, name: 'Mohamed Wael', group: 'SuperAdmin', email: 'mohamed@gmail.com' },
-  { no: 2, name: 'Haneen Wael', group: 'Manager', email: 'Haneen@gmail.com' },
-  { no: 3, name: 'Saja Wael', group: 'SuperVisor', email: 'Saja@gmail.com' },
-  { no: 4, name: 'Fedaa Wael', group: 'HR', email: 'fedaa@gmail.com' },
-  { no: 5, name: 'Abdo Hesham', group: 'HR', email: 'Abdo@gmail.com' },
-  { no: 6, name: 'Mohamed Wael', group: 'SuperAdmin', email: 'mohamed@gmail.com' },
-  { no: 7, name: 'Haneen Wael', group: 'Manager', email: 'Haneen@gmail.com' },
-  { no: 8, name: 'Saja Wael', group: 'SuperVisor', email: 'Saja@gmail.com' },
-  { no: 9, name: 'Fedaa Wael', group: 'HR', email: 'fedaa@gmail.com' },
-  { no: 10, name: 'Abdo Hesham', group: 'HR', email: 'Abdo@gmail.com' },
-  { no: 11, name: 'Mohamed Wael', group: 'SuperAdmin', email: 'mohamed@gmail.com' },
-  { no: 12, name: 'Haneen Wael', group: 'Manager', email: 'Haneen@gmail.com' },
-  { no: 13, name: 'Saja Wael', group: 'SuperVisor', email: 'Saja@gmail.com' },
-  { no: 14, name: 'Fedaa Wael', group: 'HR', email: 'fedaa@gmail.com' },
-  { no: 15, name: 'Abdo Hesham', group: 'HR', email: 'Abdo@gmail.com' },
-  { no: 16, name: 'Mohamed Wael', group: 'SuperAdmin', email: 'mohamed@gmail.com' },
-  { no: 17, name: 'Haneen Wael', group: 'Manager', email: 'Haneen@gmail.com' },
-  { no: 18, name: 'Saja Wael', group: 'SuperVisor', email: 'Saja@gmail.com' },
-  { no: 19, name: 'Fedaa Wael', group: 'HR', email: 'fedaa@gmail.com' },
-  { no: 20, name: 'Abdo Hesham', group: 'HR', email: 'Abdo@gmail.com' },
-];

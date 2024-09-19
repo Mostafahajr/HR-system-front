@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import {MatIconModule} from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 import { EmployeesService } from '../../services/employees/employees.service';
+import { AdminsService } from '../../services/admins/admins.service';
 
 
 @Component({
@@ -18,31 +19,41 @@ import { EmployeesService } from '../../services/employees/employees.service';
 })
 export class AddNewAdminComponent {
   admins:any;
+  groups:any;
   hide = true;
   addNewAdminForm =new FormGroup({
-    fullName: new FormControl('',[Validators.required,Validators.minLength(3),Validators.maxLength(20),Validators.pattern('/^[A-Za-z ]$/')]),
-    userName: new FormControl('',[Validators.required,Validators.minLength(3),Validators.maxLength(20),Validators.pattern('/^[A-Za-z ]$/')]),
+    name: new FormControl('',[Validators.required,Validators.minLength(3),Validators.maxLength(20),Validators.pattern(/^[A-Za-z ]{3,}$/)]),
+    username: new FormControl('',[Validators.required,Validators.minLength(3),Validators.maxLength(20),Validators.pattern(/^[A-Za-z ]{3,}$/)]),
     email: new FormControl('',[Validators.required,Validators.email]),
-    password: new FormControl('',[Validators.required,Validators.pattern('^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$')]),
-    permession: new FormControl('',[Validators.required])
+    password: new FormControl('',[Validators.required]),
+    group_type_id: new FormControl('',[Validators.required])
 });
-constructor(private EmployeesServices:EmployeesService){
+constructor(private userService:AdminsService){
+}
+ngOnInit(): void {
+  this.userService.getGroups().subscribe({
+    next:(response)=>{
+
+      console.log(response.data);
+
+      this.groups = response.data;
+    }
+  })
 }
 admin(e: any) {
-  e.preventDefault();
-  this.EmployeesServices.getAllEmployees().subscribe({
-    next: (response) => {
-      this.admins=response;
-      if (this.addNewAdminForm.valid && this.hasNonEmptyFields()){
-      this.EmployeesServices.addNewEmployee(this.addNewAdminForm.value).subscribe({
-        next:(response)=>{
-          console.log('admin added successfully', response);
-          this.addNewAdminForm.reset();
-        }
-      })
-    }
-    },
-  });
+  // e.preventDefault();
+  if (this.addNewAdminForm.valid) {
+    this.userService.recordUser(this.addNewAdminForm.value).subscribe({
+      next:(response)=>{
+        console.log(response);
+      },
+      error:(error)=>{
+        console.log(error);
+
+      }
+    })
+  }
+
 }
 private hasNonEmptyFields(): boolean {
   const formValues = this.addNewAdminForm.value;
