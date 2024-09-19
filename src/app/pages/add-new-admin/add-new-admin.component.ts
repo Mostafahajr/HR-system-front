@@ -20,8 +20,8 @@ export class AddNewAdminComponent {
   admins:any;
   hide = true;
   addNewAdminForm =new FormGroup({
-    fullName: new FormControl('',[Validators.required,Validators.minLength(3),Validators.maxLength(20)]),
-    userName: new FormControl('',[Validators.required]),
+    fullName: new FormControl('',[Validators.required,Validators.minLength(3),Validators.maxLength(20),Validators.pattern('/^[A-Za-z ]$/')]),
+    userName: new FormControl('',[Validators.required,Validators.minLength(3),Validators.maxLength(20),Validators.pattern('/^[A-Za-z ]$/')]),
     email: new FormControl('',[Validators.required,Validators.email]),
     password: new FormControl('',[Validators.required,Validators.pattern('^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$')]),
     permession: new FormControl('',[Validators.required])
@@ -38,7 +38,7 @@ admin(e: any) {
         next:(response)=>{
           console.log('admin added successfully', response);
           this.addNewAdminForm.reset();
-        } 
+        }
       })
     }
     },
