@@ -22,7 +22,7 @@ export class EmployeesComponent implements OnInit, AfterViewInit {
   employees: any[] = [];
   showForm = false;
   selectedEmployee: any = null;
-  displayedColumns: string[] = ['name', 'phone_number', 'salary', 'date_of_contract', 'department', 'arrival_time','leave_time','national_id','actions'];
+  displayedColumns: string[] = ['name', 'department', 'phone_number', 'address', 'salary', 'arrival_time', 'leave_time', 'actions'];
   dataSource = new MatTableDataSource<any>([]);
 
   constructor(private employeesService: EmployeesService, private router: Router) {
@@ -70,6 +70,17 @@ export class EmployeesComponent implements OnInit, AfterViewInit {
   navigate(route: string) {
     this.router.navigate([route]);
   }
+  //date and time formatting fix
+  formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString(); // Adjust the locale format as needed
+  }
+  
+  formatTime(timeString: string): string {
+    const time = new Date(timeString);
+    return time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+  
 }
 // getEmployees(): void {
 //   this.employeesService.getAllEmployees().subscribe(response => {
