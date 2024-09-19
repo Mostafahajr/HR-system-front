@@ -6,35 +6,54 @@ import { CommonModule, NgIf } from '@angular/common';
 import { GeneralRulesService } from './../../services/general-rules/general-rules.service';
 import { BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { MatButton } from '@angular/material/button';
-import { MatOption } from '@angular/material/core';
-import { MatSelect } from '@angular/material/select';
+import { IRules } from '../../models/iRules';
 
 @Component({
   selector: 'app-salary-related-settings',
   standalone: true,
-  imports: [BreadcrumbsComponent, ReactiveFormsModule, CommonModule, MatInputModule, MatFormFieldModule, NgIf, MatButton, MatOption, MatSelect],
+  imports: [BreadcrumbsComponent, ReactiveFormsModule, CommonModule, MatInputModule, MatFormFieldModule, NgIf, MatButton],
   templateUrl: './salary-related-settings.component.html',
   styleUrls: ['./salary-related-settings.component.scss']
 })
 export class SalaryRelatedSettingsComponent implements OnInit {
   salaryForm: FormGroup;
   isEditable: boolean = false;
-  overtimeOptions: string[] = ['Increase', 'Deductions']; // Options for overtime
+  overtimeRule: IRules | null = null;
+  penaltyRule: IRules | null = null;
+
+  private updateSuccessCount: number = 0;
+  private updateFailureCount: number = 0;
+  private requiredUpdates: number = 2;
 
   constructor(private rulesService: GeneralRulesService) {
-    // Form initialization with validators
     this.salaryForm = new FormGroup({
-      overtime: new FormControl({ value: '', disabled: true }, [Validators.required]),
+      overtime: new FormControl({ value: '', disabled: true }, [Validators.required, Validators.min(1)]),
       penalty: new FormControl({ value: '', disabled: true }, [Validators.required, Validators.min(1)])
     });
   }
 
   ngOnInit(): void {
-    // Initialize form if you need to load existing data
-    // this.getRule(someRuleId);
+    this.loadExistingRules();
   }
 
-  // Getters for easier access in the template
+  loadExistingRules(): void {
+    this.rulesService.getAllRules().subscribe({
+      next: (rules: IRules[]) => {
+        this.overtimeRule = rules.find(rule => rule.type === 'increase') || null;
+        this.penaltyRule = rules.find(rule => rule.type === 'deduction') || null;
+
+        this.salaryForm.patchValue({
+          overtime: this.overtimeRule?.hour_amount || '',
+          penalty: this.penaltyRule?.hour_amount || ''
+        });
+      },
+      error: (error) => {
+        console.error('Error loading rules:', error);
+        alert('Failed to load salary rules. Please try again later.');
+      }
+    });
+  }
+
   get getOvertime() {
     return this.salaryForm.controls['overtime'];
   }
@@ -43,62 +62,90 @@ export class SalaryRelatedSettingsComponent implements OnInit {
     return this.salaryForm.controls['penalty'];
   }
 
-  // Fetch rule data from backend (if needed)
-  getRule(ruleId: any) {
-    this.rulesService.getRule(ruleId).subscribe({
-      next: (response) => {
-        console.log(response);
-        this.salaryForm.patchValue(response);
+  toggleEdit(): void {
+    this.isEditable = !this.isEditable;
+    if (this.isEditable) {
+      this.salaryForm.enable();
+    } else {
+      this.salaryForm.disable();
+    }
+  }
+
+  ruleHandler(): void {
+    if (this.salaryForm.valid) {
+      const formValue = this.salaryForm.value;
+
+      this.updateSuccessCount = 0;
+      this.updateFailureCount = 0;
+
+      this.updateOrCreateRule('increase', formValue.overtime);
+      this.updateOrCreateRule('deduction', formValue.penalty);
+    } else {
+      console.warn('Form is invalid');
+    }
+  }
+
+  private updateOrCreateRule(type: 'increase' | 'deduction', hour_amount: number): void {
+    const existingRule = type === 'increase' ? this.overtimeRule : this.penaltyRule;
+
+    if (existingRule) {
+      this.updateRule({ ...existingRule, hour_amount });
+    } else {
+      this.createRule({ type, hour_amount } as IRules);
+    }
+  }
+
+  private updateRule(rule: IRules): void {
+    this.rulesService.updateRule(rule).subscribe({
+      next: (updatedRule) => {
+        console.log('Rule updated:', updatedRule);
+        this.updateLocalRule(updatedRule);
+        this.handleUpdateSuccess();
       },
       error: (error) => {
-        console.log(error);
+        console.error('Error updating rule:', error);
+        this.handleUpdateFailure(error);
       }
     });
   }
 
-  // Update the rule in the backend based on form data
-  onUpdate(ruleId: any) {
-    if (this.salaryForm.valid) {
-      this.rulesService.updateRule(this.salaryForm.value, ruleId).subscribe({
-        next: (response) => {
-          console.log(response);
-          this.toggleEdit(); // Disable editing after save
-          alert('Updated successfully!');
-        },
-        error: (error) => {
-          console.log(error);
-        }
-      });
-    } else {
-      console.warn('Form is invalid');
+  private createRule(rule: IRules): void {
+    this.rulesService.addNewRule(rule).subscribe({
+      next: (newRule) => {
+        console.log('New rule created:', newRule);
+        this.updateLocalRule(newRule);
+        this.handleUpdateSuccess();
+      },
+      error: (error) => {
+        console.error('Error creating rule:', error);
+        this.handleUpdateFailure(error);
+      }
+    });
+  }
+
+  private updateLocalRule(rule: IRules): void {
+    if (rule.type === 'increase') {
+      this.overtimeRule = rule;
+    } else if (rule.type === 'deduction') {
+      this.penaltyRule = rule;
     }
   }
 
-  // Enable or disable form controls for editing
-  toggleEdit(): void {
-    this.isEditable = !this.isEditable;
-    if (this.isEditable) {
-      this.salaryForm.enable(); // Enable form fields for editing
-    } else {
-      this.salaryForm.disable(); // Disable form fields after save
+  private handleUpdateSuccess(): void {
+    this.updateSuccessCount++;
+    if (this.updateSuccessCount === this.requiredUpdates) {
+      this.loadExistingRules(); // Reload the rules after successful updates
+      this.toggleEdit();
+      alert('All rules updated successfully!');
     }
   }
+  
 
-  // Handle form submission and call the update function
-  ruleHandler(): void {
-    if (this.salaryForm.valid) {
-      console.log('Form Value:', this.salaryForm.value);
-      const selectedOvertime = this.salaryForm.value.overtime;
-      const penaltyValue = this.salaryForm.value.penalty;
-
-      console.log(`Selected Overtime: ${selectedOvertime}`);
-      console.log(`Penalty: ${penaltyValue}`);
-
-      // Call the update method with the rule ID (you can replace 'ruleId' with actual value)
-      this.onUpdate(1); // Assuming ruleId is 1, you should pass the correct ruleId
-    } else {
-      console.warn('Form is invalid');
+  private handleUpdateFailure(error: any): void {
+    this.updateFailureCount++;
+    if (this.updateFailureCount === 1) { // Only alert once for the first failure
+      console.error('Error updating rule:', error);
+      alert('Failed to update one or more rules. Please try again.');
     }
   }
 }
-
