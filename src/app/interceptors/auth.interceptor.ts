@@ -18,6 +18,7 @@ export const authInterceptor: HttpInterceptorFn = (
   const authService = inject(AuthService);
   const token = authService.getToken();
 
+  // Attach token to the request if available
   if (token) {
     req = req.clone({
       setHeaders: {
@@ -26,13 +27,28 @@ export const authInterceptor: HttpInterceptorFn = (
     });
   }
 
+  // Handle the HTTP response and errors
   return next(req).pipe(
     catchError((error) => {
+      // Authorization error (token missing or expired)
       if (error.status === 401) {
-        authService.logout().subscribe(() => {
-          router.navigate(['/login']);
-        });
+        authService.clearToken();
+        router.navigateByUrl('/login', { replaceUrl: true });
       }
+      // Forbidden error (user lacks necessary privileges)
+      else if (error.status === 403) {
+        router.navigate(['/unauthorized']);
+      }
+      // Not Found error (resource doesn't exist)
+      // else if (error.status === 404) {
+      //   router.navigate(['/not-found']);
+      // }
+      // Internal Server Error
+      else if (error.status === 500) {
+        router.navigate(['/internal-server']);
+      }
+
+      // Rethrow the error for any other handling needed elsewhere
       return throwError(() => error);
     })
   );

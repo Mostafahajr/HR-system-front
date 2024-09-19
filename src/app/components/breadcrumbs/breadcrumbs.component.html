@@ -2,7 +2,9 @@
   <div>
     <h1>{{ breadcrumbs[breadcrumbs.length - 1].label }}</h1>
     <nav class="breadcrumb">
-      <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="home"></mat-icon>
+      <a [routerLink]="['']" class="home-link">
+        <mat-icon>home</mat-icon>
+      </a>
       <ng-container *ngFor="let breadcrumb of breadcrumbs; let last = last">
         <ng-container *ngIf="!last">
           <mat-icon aria-hidden="false" aria-label="Example home icon">
@@ -20,30 +22,23 @@
     </nav>
   </div>
   @switch (breadcrumbs[breadcrumbs.length - 1].label) {
+  <!-- /fgd -->
   @case("Groups and Permissions"){
-  <button mat-button (click)="navigate('groups-and-permissions/add-new-group')">
+  <button mat-button (click)="navigate('groups-and-permissions/create')">
     Add New Group
   </button>
-  }
-  @case("Admins"){
-  <button mat-button (click)="navigate('admins/add-new-admin')">
-    Add New Admin
-  </button>
-  }
-  @case("Employees"){
-  <button mat-button (click)="navigate('employees/add-new-employee')">
+  } @case("Admins"){
+  <button mat-button (click)="navigate('admins/create')">Add New Admin</button>
+  } @case("Employees"){
+  <button mat-button (click)="navigate('employees/create')">
     Add New Employee
   </button>
-  }
-  @case ("Attendance Reports") {
+  } @case ("Attendance Reports") {
   <div>
-    <button mat-button (click)="navigate('attendance-reports/add-attendance')">
+    <button mat-button (click)="navigate('attendance-reports/create')">
       Add Attendance
     </button>
-    <button mat-button class="btn-success">
-      Import Excel Sheet
-    </button>
-  </div>}
-}
-
+    <button mat-button class="btn-success">Import Excel Sheet</button>
+  </div>
+  } }
 </div>

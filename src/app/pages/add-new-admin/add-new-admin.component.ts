@@ -1,19 +1,35 @@
 import { Component } from '@angular/core';
-import { FormsModule, ReactiveFormsModule,FormBuilder, FormControl, FormGroup, Validators  } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import {MatSelectModule} from '@angular/material/select';
+import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
-import {MatIconModule} from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 import { EmployeesService } from '../../services/employees/employees.service';
 import { AdminsService } from '../../services/admins/admins.service';
-
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-add-new-admin',
   standalone: true,
-  imports: [ReactiveFormsModule ,MatSelectModule,MatFormFieldModule, MatInputModule, FormsModule,CommonModule,MatIconModule,MatButton],
+  imports: [
+    ReactiveFormsModule,
+    MatSelectModule,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    CommonModule,
+    MatIconModule,
+    MatButton,
+  ],
   templateUrl: './add-new-admin.component.html',
   styleUrls: ['./add-new-admin.component.scss'],
 })
@@ -28,7 +44,7 @@ export class AddNewAdminComponent {
     password: new FormControl('',[Validators.required]),
     group_type_id: new FormControl('',[Validators.required])
 });
-constructor(private userService:AdminsService){
+constructor(private userService:AdminsService,private router: Router){
 }
 ngOnInit(): void {
   this.userService.getGroups().subscribe({
@@ -46,6 +62,7 @@ admin(e: any) {
     this.userService.recordUser(this.addNewAdminForm.value).subscribe({
       next:(response)=>{
         console.log(response);
+        this.router.navigate([`admins`]);
       },
       error:(error)=>{
         console.log(error);
@@ -55,8 +72,11 @@ admin(e: any) {
   }
 
 }
+
 private hasNonEmptyFields(): boolean {
   const formValues = this.addNewAdminForm.value;
-  return Object.values(formValues).some(value => value !== '' && value !== null);
+  return Object.values(formValues).some(
+    (value) => value !== '' && value !== null
+  );
 }
 }

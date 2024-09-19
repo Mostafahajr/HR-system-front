@@ -33,7 +33,13 @@ nav a:hover {
   padding-bottom: 8px;
 }
 
-.btn-success{
+.btn-success {
   background-color: rgb(0, 130, 0);
   color: azure;
+}
+
+.home-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }

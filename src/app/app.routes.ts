@@ -4,33 +4,34 @@ import { HomeComponent } from './pages/home/home.component';
 import { AdminsComponent } from './pages/admins/admins.component';
 import { EmployeesComponent } from './pages/employees/employees.component';
 import { OfficialHolidaysComponent } from './pages/official-holidays/official-holidays.component';
-
 import { AddNewAdminComponent } from './pages/add-new-admin/add-new-admin.component';
 import { AddNewEmployeeComponent } from './pages/add-new-employee/add-new-employee.component';
 import { SalariesComponent } from './pages/salaries/salaries.component';
 import { LoginComponent } from './pages/login/login.component';
-
 import { SalaryRelatedSettingsComponent } from './pages/salary-related-settings/salary-related-settings.component';
 import { WeekendSettingsComponent } from './pages/weekend-settings/weekend-settings.component';
-
 import { AddAttendanceComponent } from './pages/add-attendance/add-attendance.component';
-import { authGuard } from './gaurds/auth.guard';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { UnauthorizedComponent } from './pages/unauthorized/unauthorized.component';
-
 import { AddNewGroupComponent } from './pages/add-new-group/add-new-group.component';
 import { GroupsAndPermissionsComponent } from './pages/groups-and-permissions/groups-and-permissions.component';
-import { EditGroupComponent } from './pages/edit-group-component/edit-group.component';
 import { AttendanceReportsComponent } from './pages/attendance-reports/attendance-reports.component';
-
 import { EditEmployeeComponent } from './pages/edit-employee/edit-employee.component';
 import { ShowComponent } from './pages/show/show.component';
 import { InternalServerComponent } from './pages/internal-server/internal-server.component';
 import { DepartmentsComponent } from './pages/departments/departments.component';
 import { EditAdminComponent } from './pages/edit-admin/edit-admin.component';
+import { authGuard } from './gaurds/auth.guard';
+import { EditGroupComponent } from './pages/edit-group-component/edit-group.component';
+import { loginGuard } from './gaurds/login.guard';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent, data: { breadcrumb: 'Home' } },
+  {
+    path: '',
+    component: HomeComponent,
+    canActivate: [authGuard],
+    data: { breadcrumb: 'Home' },
+  },
   {
     path: 'groups-and-permissions',
     component: GroupsAndPermissionsComponent,
@@ -42,7 +43,7 @@ export const routes: Routes = [
     },
     children: [
       {
-        path: 'add-new-group',
+        path: 'create',
         component: AddNewGroupComponent,
         canActivate: [authGuard],
         data: {
@@ -52,7 +53,7 @@ export const routes: Routes = [
         },
       },
       {
-        path: 'edit-group/:id',
+        path: 'edit/:id',
         component: EditGroupComponent,
         canActivate: [authGuard],
         data: {
@@ -74,7 +75,7 @@ export const routes: Routes = [
     },
     children: [
       {
-        path: 'add-new-admin',
+        path: 'create',
         component: AddNewAdminComponent,
         canActivate: [authGuard],
         data: {
@@ -84,7 +85,7 @@ export const routes: Routes = [
         },
       },
       {
-        path: 'edit-admin/:id',
+        path: 'edit/:id',
         component: EditAdminComponent,
         canActivate: [authGuard],
         data: {
@@ -106,12 +107,12 @@ export const routes: Routes = [
     },
     children: [
       {
-        path: 'add-new-employee',
+        path: 'create',
         component: AddNewEmployeeComponent,
         canActivate: [authGuard],
         data: {
           breadcrumb: 'Add New Employee',
-          pageName: 'Employeees',
+          pageName: 'Employees',
           operation: 'create',
         },
       },
@@ -121,8 +122,8 @@ export const routes: Routes = [
         canActivate: [authGuard],
         data: {
           breadcrumb: 'Edit Employee',
-          pageName: 'Employeees',
-          operation: 'edit',
+          pageName: 'Employees',
+          operation: 'update',
         },
       },
       {
@@ -130,8 +131,8 @@ export const routes: Routes = [
         component: ShowComponent,
         canActivate: [authGuard],
         data: {
-          breadcrumb: 'show Employee',
-          pageName: 'Employeees',
+          breadcrumb: 'Show Employee',
+          pageName: 'Employees',
           operation: 'read',
         },
       },
@@ -178,7 +179,7 @@ export const routes: Routes = [
     },
     children: [
       {
-        path: 'add-attendance',
+        path: 'create',
         component: AddAttendanceComponent,
         canActivate: [authGuard],
         data: {
@@ -189,7 +190,6 @@ export const routes: Routes = [
       },
     ],
   },
-
   {
     path: 'salaries',
     component: SalariesComponent,
@@ -199,7 +199,6 @@ export const routes: Routes = [
       pageName: 'Salaries',
       operation: 'read',
     },
-
   },
   {
     path: 'departments',
@@ -209,12 +208,16 @@ export const routes: Routes = [
       breadcrumb: 'Departments',
     },
   },
-  // Add the login route
-  { path: 'login', component: LoginComponent, data: { breadcrumb: 'Login' } },
+  {
+    path: 'login',
+    component: LoginComponent,
+    canActivate: [loginGuard],
+    data: { breadcrumb: 'Login' },
+  },
   { path: 'not-found', component: NotFoundComponent },
   { path: 'unauthorized', component: UnauthorizedComponent },
   { path: 'internal-server', component: InternalServerComponent },
-  { path: '**', redirectTo: 'not-found' }
+  { path: '**', redirectTo: 'not-found' },
 ];
 
 @NgModule({

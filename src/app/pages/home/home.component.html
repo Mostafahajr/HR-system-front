@@ -1,2 +1,97 @@
 <app-breadcrumbs></app-breadcrumbs>
-<p>Home Works</p>
+
+@if (static) {
+<div class="d-around">
+  <div class="d-gap">
+    <mat-card class="example-card p-3" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title-group>
+          <mat-card-title>Employee</mat-card-title>
+          <mat-card-subtitle>No.</mat-card-subtitle>
+          <h2>{{static.employeeCount}}</h2>
+        </mat-card-title-group>
+      </mat-card-header>
+      <mat-card-content class="text-center">
+
+        <mat-card-subtitle>Attendance Rate</mat-card-subtitle>
+        <div>
+          {{static.attendanceRate}}
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="example-card" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title-group>
+          <mat-card-title>Holiday</mat-card-title>
+          <mat-card-subtitle>No.</mat-card-subtitle>
+          <h2>{{static.numberOfHoliday}}</h2>
+        </mat-card-title-group>
+      </mat-card-header>
+      <mat-card-content class="text-center">
+
+        <mat-card-subtitle>upcomingHoliday</mat-card-subtitle>
+        <div class="d-flex">
+          <i>{{static.holidays}}</i>
+          <i>{{static.upcomingHoliday}}</i>
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <mat-card class=" w-100" appearance="outlined">
+    <mat-card-header>
+      <mat-card-title-group>
+
+          <mat-card-title>Salary's sum</mat-card-title>
+
+        <p>{{static.sumOfSalaries}}</p>
+
+
+      </mat-card-title-group>
+    </mat-card-header>
+    <mat-card-content class="text-center">
+
+      <mat-card-subtitle>Top Employees Salary</mat-card-subtitle>
+      <div>
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" style="background-color: transparent;">
+
+          <!--- Note that these columns can be defined in any order.
+                The actual rendered columns are set as a property on the row definition" -->
+
+
+
+          <!-- Name Column -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef> Name </th>
+            <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+          </ng-container>
+
+          <!-- Weight Column -->
+          <ng-container matColumnDef="department">
+            <th mat-header-cell *matHeaderCellDef> department </th>
+            <td mat-cell *matCellDef="let element"> {{element.department}} </td>
+          </ng-container>
+
+          <!-- Symbol Column -->
+          <ng-container matColumnDef="salary">
+            <th mat-header-cell *matHeaderCellDef> salary </th>
+            <td mat-cell *matCellDef="let element"> {{element.salary}} </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+
+      </div>
+
+    </mat-card-content>
+  </mat-card>
+</div>
+
+}@else {
+<p>not connected</p>
+}
+

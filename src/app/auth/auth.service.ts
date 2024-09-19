@@ -65,4 +65,9 @@ export class AuthService {
   getToken(): string | null {
     return localStorage.getItem('token');
   }
+
+  clearToken() {
+    localStorage.removeItem('token');
+    this.currentUserSubject.next(null);
+  }
 }

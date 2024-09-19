@@ -67,4 +67,14 @@ ngOnInit(): void {
         }
       );
     }
+    //date and time formatting fix
+    formatDate(dateString: string): string {
+      const date = new Date(dateString);
+      return date.toLocaleDateString(); // Adjust the locale format as needed
+    }
+    
+    formatTime(timeString: string): string {
+      const time = new Date(timeString);
+      return time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
 }

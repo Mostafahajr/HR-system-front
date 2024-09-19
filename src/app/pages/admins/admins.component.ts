@@ -26,7 +26,7 @@ import { MatSort } from '@angular/material/sort';
   styleUrls: ['./admins.component.scss'],
 })
 export class AdminsComponent implements AfterViewInit, OnInit {
-  displayedColumns: string[] = ['no', 'name', 'group', 'email', 'actions'];
+  displayedColumns: string[] = ['no', 'name','username', 'group', 'email', 'actions'];
   admins: {}={};
   dataSource = new MatTableDataSource<any>([]); // Initialize with empty MatTableDataSource
 
@@ -42,11 +42,11 @@ export class AdminsComponent implements AfterViewInit, OnInit {
 
 
   ngAfterViewInit() {
-    // Moved to getUsers to ensure data is set before assigning paginator
+    this.dataSource.paginator = this.paginator;
   }
 
   navigate(id:any): void {
-    this.router.navigate([`admins/edit-admin/${id}`]);
+    this.router.navigate([`admins/edit/${id}`]);
   }
 
   getUsers() {
@@ -59,7 +59,7 @@ export class AdminsComponent implements AfterViewInit, OnInit {
           id: item.id,
           name: item.name,
           email: item.email,
-          username: item.uesrname,
+          username: item.username,
           group: item.group_name,
           group_id:item.group_type_id,
           password:item.password,

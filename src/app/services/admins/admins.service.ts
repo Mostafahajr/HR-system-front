@@ -3,12 +3,12 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AdminsService {
   private apiUrl = 'http://127.0.0.1:8000/api';
 
-  constructor(private http:HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getUsers(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/users`);
@@ -34,5 +34,4 @@ export class AdminsService {
   deleteUser(userId: any) {
     return this.http.delete(`${this.apiUrl}/users/${userId}`);
   }
-
 }
