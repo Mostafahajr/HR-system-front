@@ -1,28 +1,35 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IRules } from '../../models/iRules';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GeneralRulesService {
-  rulesApiUrl: any = 'http://localhost:3005/Rules';
-  constructor(public http: HttpClient) {}
+  private apiUrl: string = 'http://pioneer-back.test/api/hour-rules';
+
+  constructor(private http: HttpClient) { }
 
   getAllRules(): Observable<IRules[]> {
-    return this.http.get<IRules[]>(this.rulesApiUrl);
+    return this.http.get<{ data: IRules[] }>(this.apiUrl).pipe(
+      map((response: { data: any; }) => response.data) // Extract the `data` field
+    );
   }
-  addNewRules(rule: any) {
-    return this.http.post(this.rulesApiUrl, rule);
+
+  addNewRule(rule: IRules): Observable<IRules> {
+    return this.http.post<IRules>(this.apiUrl, rule);
   }
-  getRule(ruleId: number) {
-    return this.http.get(`${this.rulesApiUrl}/${ruleId}`);
+
+  getRule(ruleId: number): Observable<IRules> {
+    return this.http.get<IRules>(`${this.apiUrl}/${ruleId}`);
   }
-  deleteRule(ruleId: number) {
-    return this.http.delete(`${this.rulesApiUrl}/${ruleId}`);
+
+  deleteRule(ruleId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${ruleId}`);
   }
-  updateRule(rule: any, ruleId: number) {
-    return this.http.put(`${this.rulesApiUrl}/${ruleId}`, rule);
+
+  updateRule(rule: IRules): Observable<IRules> {
+    return this.http.put<IRules>(`${this.apiUrl}/${rule.id}`, rule);
   }
 }
