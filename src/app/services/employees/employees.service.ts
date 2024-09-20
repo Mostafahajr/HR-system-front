@@ -1,6 +1,8 @@
+
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { Employee } from '../../models/iEmployee';
 
 export interface Employee {
   id: number;
@@ -10,8 +12,8 @@ export interface Employee {
   DOB: string;
   nationality: string;
   national_id: string;
-  arrival_time: string; 
-  leave_time: string; 
+  arrival_time: string;
+  leave_time: string;
   salary: number;
   date_of_contract: string;
   department: {
@@ -19,35 +21,36 @@ export interface Employee {
     name: string;
   };
 }
+
 export interface EmployeeResponse {
-  data: any[];
+  data: Employee[];
 }
+
 @Injectable({
   providedIn: 'root'
 })
 export class EmployeesService {
-  baseUrl: string = "http://pioneer-back.test/api/employees";
+  baseUrl: string = "http://pioneer-back2.test/api/employees";
 
   constructor(private http: HttpClient) {}
 
   getAllEmployees(): Observable<EmployeeResponse> {
     return this.http.get<EmployeeResponse>(this.baseUrl);
   }
-  getEmployeeById(id: number): Observable<Employee> {
-    return this.http.get<Employee>(`${this.baseUrl}/${id}`);
-  }
-  deleteEmployee(employeeId:any){
-    return this.http.delete(`${this.baseUrl}/${employeeId}`)
-  }
-  addNewEmployee(employee: any): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/employees`, employee);
-  }
-  editEmployee(id:number){
-    return this.http.get(`${this.baseUrl}/${id}`);
 
+  getEmployeeById(id: number): Observable<any> { // Updated return type
+    return this.http.get<any>(`${this.baseUrl}/${id}`);
   }
-  updateEmployee(employeeId: any, employee: any) {
+
+  deleteEmployee(employeeId: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/${employeeId}`);
+  }
+
+  addNewEmployee(employee: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}`, employee);
+  }
+
+  updateEmployee(employeeId: number, employee: any): Observable<any> {
     return this.http.put(`${this.baseUrl}/${employeeId}`, employee);
   }
-  }
-
+}

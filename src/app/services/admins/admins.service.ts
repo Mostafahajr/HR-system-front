@@ -6,7 +6,9 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class AdminsService {
-  private apiUrl = 'http://127.0.0.1:8000/api';
+
+  private apiUrl = 'http://pioneer-back.test/api';
+
 
   constructor(private http: HttpClient) {}
 

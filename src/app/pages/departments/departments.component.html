@@ -1,5 +1,5 @@
 <app-breadcrumbs></app-breadcrumbs>
-@if(isAddNewEmployeeRoute()){
+@if(isDepartmentRoute()){
 <div class="container">
   <form [formGroup]="addNewDepartmentForm" (ngSubmit)="department($event)">
     <mat-form-field class="selectInput example-full-width" appearance="outline">

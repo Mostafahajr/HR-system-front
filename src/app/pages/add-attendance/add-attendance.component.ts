@@ -3,43 +3,47 @@ import {
   ChangeDetectorRef,
   Component,
   OnInit,
+  AfterViewInit,
+  ViewChild,
 } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { MatTableModule } from '@angular/material/table';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { MatTableModule, MatTableDataSource } from '@angular/material/table';
+import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { Observable, forkJoin } from 'rxjs';
 import { AddAttendanceService } from '../../services/add-attendance/add-attendance.service';
-import { forkJoin, Observable } from 'rxjs';
-// import {
-//   NgxMatTimepickerComponent,
-//   NgxMatTimepickerModule,
-// } from 'ngx-mat-timepicker';
+import { ActivatedRoute  ,Router} from '@angular/router';
+
 
 @Component({
   selector: 'app-add-attendance',
   standalone: true,
-  // imports: [
-  //   CommonModule,
-  //   MatFormFieldModule,
-  //   MatDatepickerModule,
-  //   MatInputModule,
-  //   MatSelectModule,
-  //   ReactiveFormsModule,
-  //   MatButtonModule,
-  //   MatTableModule,
-  //   NgxMatTimepickerModule,
-  // ],
+  imports: [
+    CommonModule,
+    MatFormFieldModule,
+    MatDatepickerModule,
+    MatInputModule,
+    MatSelectModule,
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatTableModule,
+    NgxMatTimepickerModule,
+    MatPaginatorModule,
+  ],
   templateUrl: './add-attendance.component.html',
   styleUrls: ['./add-attendance.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AddAttendanceComponent implements OnInit {
+export class AddAttendanceComponent implements OnInit, AfterViewInit {
   filterForm: FormGroup;
-  dataSource: AttendanceRecord[] = [];
+  dataSource = new MatTableDataSource<AttendanceRecord>();
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
   displayedColumns: string[] = [
     'id',
     'department',
@@ -65,7 +69,9 @@ export class AddAttendanceComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private addAttendanceService: AddAttendanceService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private route: ActivatedRoute,
+    // private router: Router
   ) {
     this.filterForm = this.fb.group({
       date: [new Date()],
@@ -74,7 +80,39 @@ export class AddAttendanceComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.onSearch(); // Load initial data
+    // Retrieve passed Excel data from the route state
+    const excelData = history.state.data;
+
+    if (excelData) {
+      console.log('Excel Data:', excelData);
+      const firstRecord = excelData[0];
+      if (firstRecord) {
+        this.filterForm.patchValue({
+          date: new Date(firstRecord.date),
+          department: firstRecord.departmentName || '',
+        });
+      }
+
+      this.dataSource.data = excelData.map((item: any, index: number) => ({
+        id: index + 1, // Serial ID starting from 1
+        department: item.departmentName,
+        employee_name: item.employeeName,
+        arrival_time: item.attendance,
+        leave_time: item.departure,
+        date: item.date,
+      }));
+      this.cdr.markForCheck();
+      
+     
+    } else {
+      console.log('No Excel data passed.');
+    }
+
+    this.onSearch();
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
   }
 
   private formatTimeToPicker(isoTime: string): string {
@@ -109,14 +147,15 @@ export class AddAttendanceComponent implements OnInit {
       .getAllAttendance(formattedDate, department)
       .subscribe({
         next: (data) => {
-          this.dataSource = data.map((record: any) => ({
+          this.dataSource.data = data.map((record: any, index: number) => ({
+            id: index + 1,
             ...record,
             arrival_time:
               this.formatTimeToPicker(record.arrival_time) || '9:00 AM',
             leave_time: this.formatTimeToPicker(record.leave_time) || '5:00 PM',
           }));
           this.updatedRecords.clear();
-          this.cdr.markForCheck(); // Ensure changes are detected
+          this.cdr.markForCheck();
         },
         error: (err) => {
           console.error('Error occurred:', err);
@@ -124,21 +163,17 @@ export class AddAttendanceComponent implements OnInit {
       });
   }
 
-
   updateTime(
     element: AttendanceRecord,
     field: 'arrival_time' | 'leave_time',
     event: any
   ) {
-    console.log('Time changed:', event);
-
     let time: string;
 
-    // Timepicker provides the time in a string format
     if (event && typeof event === 'string') {
       time = event;
     } else if (event && event.format) {
-      time = event.format(); // If using Moment.js or another date library
+      time = event.format();
     } else {
       return;
     }
@@ -146,7 +181,6 @@ export class AddAttendanceComponent implements OnInit {
     if (time) {
       element[field] = time;
       this.updatedRecords.set(element.id, { ...element });
-      console.log(this.updatedRecords);
       this.cdr.markForCheck();
     }
   }
@@ -177,8 +211,8 @@ export class AddAttendanceComponent implements OnInit {
         next: () => {
           console.log('All updates submitted successfully');
           this.updatedRecords.clear();
-          this.onSearch(); // Refresh the data
-          alert('attendance updated successfully');
+          this.onSearch();
+          alert('Attendance updated successfully');
         },
         error: (err) => {
           console.error('Error occurred during update:', err);
@@ -191,7 +225,9 @@ export class AddAttendanceComponent implements OnInit {
 
   deleteAttendance(id: number) {
     this.addAttendanceService.deleteAttendance(id).subscribe(() => {
-      this.dataSource = this.dataSource.filter((record) => record.id !== id);
+      this.dataSource.data = this.dataSource.data.filter(
+        (record) => record.id !== id
+      );
       this.updatedRecords.delete(id);
       this.cdr.detectChanges();
     });
