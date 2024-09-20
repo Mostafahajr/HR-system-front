@@ -62,7 +62,15 @@ mat-paginator {
 }
 
 .wrapper {
-  scroll-behavior: inherit;
   overflow: auto;
-  height: 65vh;
+  height: 60vh;
+}
+//styling filters
+.filter-fields{
+  display: flex;
+  gap: 10px;
+}
+.filter-fields mat-form-field{
+  margin-top: 10px;;
+  width: 25%;
 }

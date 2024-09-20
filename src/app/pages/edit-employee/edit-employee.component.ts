@@ -1,82 +1,103 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { EmployeesService } from './../../services/employees/employees.service';
-import { OnInit } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { DepartmentsService, department } from './../../services/departments/departments.service';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+
 import { MatInputModule } from '@angular/material/input';
-import { MatIcon } from '@angular/material/icon';
-import { MatButton } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { Employee } from '../../models/iEmployee';
+
 @Component({
   selector: 'app-edit-employee',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatInputModule, MatIcon,MatButton],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatInputModule,
+    MatIconModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatSelectModule
+  ],
   templateUrl: './edit-employee.component.html',
-  styleUrl: './edit-employee.component.scss'
+  styleUrls: ['./edit-employee.component.scss']
 })
+
 export class EditEmployeeComponent implements OnInit {
-  companyStartDate: Date = new Date('2008-01-01');
   employeeForm: FormGroup;
   employeeId: number;
+  departments: department[] = [];
 
   constructor(
+    private fb: FormBuilder,
     private employeeService: EmployeesService,
+    private departmentsService: DepartmentsService,
     private route: ActivatedRoute,
     private router: Router
   ) {
-    this.employeeForm = new FormGroup({
-      name: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]),
-      salary: new FormControl('', [Validators.required, Validators.pattern('^[0-9]+$')]),
-      date_of_contract: new FormControl('', [Validators.required, this.dateOfContractValidator.bind(this)]),
-      phone_number: new FormControl('', [Validators.required, Validators.pattern('^01[0-9]{9}$')]),
-      arrival_time: new FormControl('', [Validators.required]),
-      leave_time: new FormControl('', [Validators.required]),
-      national_id: new FormControl('', [Validators.required, Validators.pattern('^\\d{9}$')]),
-      department: new FormControl('', [Validators.required]),
-    });
+    this.employeeForm = this.fb.group({
+      name: ['', [Validators.required, Validators.maxLength(255)]],
+      address: ['', [Validators.required, Validators.maxLength(255)]],
+      phone_number: ['', [Validators.required, Validators.maxLength(15)]],
+      gender: ['', [Validators.required]],
+      DOB: ['', [Validators.required, this.dobValidator]],
+      nationality: ['', [Validators.required, Validators.maxLength(255)]],
+      national_id: ['', [Validators.required, Validators.minLength(14), Validators.maxLength(14)]],
+      arrival_time: ['', [Validators.required]],
+      leave_time: ['', [Validators.required]],
+      salary: ['', [Validators.required, Validators.min(0)]],
+      date_of_contract: ['', [Validators.required, this.dateOfContractValidator]],
+      department_id: [null, [Validators.required]]
+    }, { validators: this.leaveTimeValidator });
 
-    this.employeeId = this.route.snapshot.params['id'];
-  }
-
-  private dateOfContractValidator(control: any) {
-    const contractDate = new Date(control.value);
-    if (contractDate < this.companyStartDate) {
-      return { beforeCompanyStartDate: true };
-    }
-    return null;
+    this.employeeId = 0;
   }
 
   ngOnInit(): void {
+    this.loadDepartments();
     this.route.paramMap.subscribe(params => {
-      const employeeIdStr = params.get('id'); // Get the 'id' parameter from the route
+      const employeeIdStr = params.get('id');
       if (employeeIdStr) {
-        const employeeId = Number(employeeIdStr);
-        if (!isNaN(employeeId)) {
-          this.getEmployee(employeeId); // Fetch and display the employee with the given ID
-        } else {
-          console.error('Invalid employee ID:', employeeIdStr);
-        }
-      } else {
-        console.error('No employee ID found in the route');
+        this.employeeId = +employeeIdStr;
+        this.getEmployee(this.employeeId);
       }
     });
   }
-  getEmployee(id: number): void {
+
+  loadDepartments(): void {
+    this.departmentsService.getDepartments().subscribe(
+      (response: any) => {
+        this.departments = response.data;
+      },
+      (error) => {
+        console.error('Error fetching departments', error);
+      }
+    );
+  }
+
+  private getEmployee(id: number): void {
     this.employeeService.getEmployeeById(id).subscribe(
       (response: any) => {
-        console.log('API Response:', response);
-        const employeeData = response.data;
-
-        // Patch the employee data into the form
+        const employee = response.data;
         this.employeeForm.patchValue({
-          name: employeeData.name,
-          salary: employeeData.salary,
-          date_of_contract: new Date(employeeData.date_of_contract),
-          phone_number: employeeData.phone_number,
-          arrival_time: employeeData.arrival_time,
-          leave_time: employeeData.leave_time,
-          national_id: employeeData.national_id,
-          department: employeeData.department ? employeeData.department.name : '',
+          name: employee.name,
+          address: employee.address,
+          phone_number: employee.phone_number,
+          gender: employee.gender,
+          DOB: this.formatDateForForm(employee.DOB),
+          nationality: employee.nationality,
+          national_id: String(employee.national_id), // Explicitly convert to string
+          arrival_time: this.formatTimeForView(employee.arrival_time), // Ensure format is HH:MM
+          leave_time: this.formatTimeForView(employee.leave_time), // Ensure format is HH:MM
+          salary: employee.salary,
+          date_of_contract: this.formatDateForForm(employee.date_of_contract),
+          department_id: employee.department?.id
         });
       },
       (error) => {
@@ -85,30 +106,11 @@ export class EditEmployeeComponent implements OnInit {
     );
   }
 
-  formatTimeForForm(time: string): string {
-    return time.split(' ')[1] || ''; // Extracts only the time part, returns empty string if undefined
-  }
 
-  formatDateForSubmission(date: string | Date): string {
-    if (date instanceof Date) {
-      return date.toISOString().split('T')[0];
-    } else if (typeof date === 'string') {
-      // If it's already a string, assume it's in the correct format
-      return date.split('T')[0]; // Remove any time component if present
-    }
-    return ''; // Return empty string for invalid input
-  }
 
-  formatTimeForSubmission(time: string): string {
-    if (!time) return '';
-    const [hours, minutes] = time.split(':');
-    const now = new Date();
-    now.setHours(Number(hours), Number(minutes), 0, 0);
-    return now.toISOString().slice(0, 19).replace('T', ' ');
-  }
   onSubmit() {
     if (this.employeeForm.valid) {
-      const formData = this.employeeForm.value;
+      const formData = { ...this.employeeForm.value };
       formData.date_of_contract = this.formatDateForSubmission(formData.date_of_contract);
       formData.DOB = this.formatDateForSubmission(formData.DOB);
       formData.arrival_time = this.formatTimeForSubmission(formData.arrival_time);
@@ -117,14 +119,68 @@ export class EditEmployeeComponent implements OnInit {
       this.employeeService.updateEmployee(this.employeeId, formData).subscribe(
         (response) => {
           console.log('Employee updated successfully:', response);
-          this.router.navigate(['/employees']); // Redirect after success
+          this.router.navigate(['/employees']);
         },
         (error) => {
           console.error('Error updating employee:', error);
         }
       );
     } else {
-      console.log('Form is invalid', this.employeeForm.errors); // Add more details to the log
+      console.log('Form is invalid', this.employeeForm.errors);
     }
   }
+  
+
+
+  private formatTimeForView(time: string): string {
+    // Return only the time part in H:i:s format
+    return time ? time.split('T')[1].substring(0, 8) : '00:00:00'; // Ensure HH:MM:SS format
+  }
+  
+  private formatTimeForSubmission(time: string): string {
+    // Ensure time is in H:i:s format for submission
+    return time ? time : '00:00:00'; // Keep format as H:i:s
+  }
+  
+
+
+
+
+  private dobValidator(control: any) {
+    const dob = new Date(control.value);
+    const today = new Date();
+    return dob < today ? null : { dobInvalid: true };
+  }
+
+  private dateOfContractValidator(control: any) {
+    const dateOfContract = new Date(control.value);
+    const dob = new Date(control.parent?.get('DOB')?.value);
+    return dateOfContract >= dob ? null : { dateOfContractInvalid: true };
+  }
+
+  private leaveTimeValidator(group: FormGroup) {
+    const arrivalTime = group.get('arrival_time')?.value;
+    const leaveTime = group.get('leave_time')?.value;
+    if (arrivalTime && leaveTime) {
+      return arrivalTime < leaveTime ? null : { leaveTimeInvalid: true };
+    }
+    return null;
+  }
+
+  private formatDateForForm(date: string): string {
+    return date ? date.split('T')[0] : '';
+  }
+
+  private formatDateForSubmission(date: string): string {
+    return date ? new Date(date).toISOString().split('T')[0] : '';
+  }
+
+  formatTime(controlName: string): void {
+    const control = this.employeeForm.get(controlName);
+    if (control && control.value) {
+      const formattedTime = this.formatTimeForView(control.value);
+      control.setValue(formattedTime, { emitEvent: false });
+    }
+  }
+
 }
