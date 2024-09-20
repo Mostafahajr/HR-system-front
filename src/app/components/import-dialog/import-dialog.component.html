@@ -1,0 +1,39 @@
+<section>
+    <h3 mat-dialog-title>Importing Excel Sheet</h3>
+    <div mat-dialog-content>
+        <p class="sub-heading">
+            This is the Excel sheet you are importing. Are you sure you want to proceed?
+        </p>
+
+        <!-- Form Fields Container: Section and Date Fields Side by Side -->
+        <div class="form-container">
+            <mat-form-field appearance="outline">
+                <mat-label>Section</mat-label>
+                <mat-select [(ngModel)]="sectionName" readonly>
+                    <mat-option [value]="sectionName">{{ sectionName }}</mat-option>
+                </mat-select>
+                <mat-hint>Select a section</mat-hint>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Date</mat-label>
+                <input matInput [(ngModel)]="date" placeholder="mm/dd/yyyy" readonly />
+                <mat-hint>Select a date</mat-hint>
+            </mat-form-field>
+        </div>
+
+        <!-- Display Selected File -->
+        <div class="file-display">
+            <img src="/images/excel.png" alt="Excel Icon" class="file-icon" />
+            <span>{{ fileName }}</span>
+        </div>
+    </div>
+
+    <!-- Dialog Actions with Enhanced Buttons -->
+    <div mat-dialog-actions>
+        <div class="example-button-row">
+            <button mat-button class="yes-import-button" (click)="confirmImport()">Yes, Import</button>
+            <button mat-button class="close-button" (click)="close()">Close</button>
+        </div>
+    </div>
+</section>
