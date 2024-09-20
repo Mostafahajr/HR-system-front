@@ -1,44 +1,50 @@
 <div class="main">
-  <div>
-    <h1>{{ breadcrumbs[breadcrumbs.length - 1].label }}</h1>
-    <nav class="breadcrumb">
-      <a [routerLink]="['']" class="home-link">
-        <mat-icon>home</mat-icon>
-      </a>
-      <ng-container *ngFor="let breadcrumb of breadcrumbs; let last = last">
-        <ng-container *ngIf="!last">
-          <mat-icon aria-hidden="false" aria-label="Example home icon">
-            chevron_right
-          </mat-icon>
-          <a [routerLink]="breadcrumb.url">{{ breadcrumb.label }}</a>
+    <div>
+        <h1>{{ breadcrumbs[breadcrumbs.length - 1]?.label }}</h1>
+        <nav class="breadcrumb">
+            <a [routerLink]="['']" class="home-link">
+                <mat-icon fontIcon="home">home</mat-icon>
+            </a>
+            <ng-container *ngFor="let breadcrumb of breadcrumbs; let last = last">
+                <ng-container *ngIf="!last">
+                    <mat-icon aria-hidden="false" aria-label="Example home icon">chevron_right</mat-icon>
+                    <a [routerLink]="breadcrumb.url">{{ breadcrumb.label }}</a>
+                </ng-container>
+                <ng-container *ngIf="last">
+                    <mat-icon aria-hidden="false" aria-label="Example home icon">chevron_right</mat-icon>
+                    {{ breadcrumb.label }}
+                </ng-container>
+            </ng-container>
+        </nav>
+    </div>
+
+    <!-- Switch Case for Buttons -->
+    <ng-container [ngSwitch]="breadcrumbs[breadcrumbs.length - 1]?.label">
+        <ng-container *ngSwitchCase="'Groups and Permissions'">
+            <button mat-button (click)="navigate('groups-and-permissions/create')">
+        Add New Group
+      </button>
         </ng-container>
-        <ng-container *ngIf="last">
-          <mat-icon aria-hidden="false" aria-label="Example home icon">
-            chevron_right
-          </mat-icon>
-          {{ breadcrumb.label }}
+        <ng-container *ngSwitchCase="'Admins'">
+            <button mat-button (click)="navigate('admins/create')">
+        Add New Admin
+      </button>
         </ng-container>
-      </ng-container>
-    </nav>
-  </div>
-  @switch (breadcrumbs[breadcrumbs.length - 1].label) {
-  <!-- /fgd -->
-  @case("Groups and Permissions"){
-  <button mat-button (click)="navigate('groups-and-permissions/create')">
-    Add New Group
-  </button>
-  } @case("Admins"){
-  <button mat-button (click)="navigate('admins/create')">Add New Admin</button>
-  } @case("Employees"){
-  <button mat-button (click)="navigate('employees/create')">
-    Add New Employee
-  </button>
-  } @case ("Attendance Reports") {
-  <div>
-    <button mat-button (click)="navigate('attendance-reports/create')">
-      Add Attendance
-    </button>
-    <button mat-button class="btn-success">Import Excel Sheet</button>
-  </div>
-  } }
+        <ng-container *ngSwitchCase="'Employees'">
+            <button mat-button (click)="navigate('employees/create')">
+        Add New Employee
+      </button>
+        </ng-container>
+        <ng-container *ngSwitchCase="'Attendance Reports'">
+            <div>
+                <button mat-button (click)="navigate('attendance-reports/create')">
+          Add Attendance
+        </button>
+                <button mat-button (click)="fileInput.click()">
+          Import Excel Sheet
+        </button>
+                <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none" accept=".xlsx,.xls">
+            </div>
+        </ng-container>
+    </ng-container>
 </div>

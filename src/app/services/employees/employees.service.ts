@@ -10,8 +10,8 @@ export interface Employee {
   DOB: string;
   nationality: string;
   national_id: string;
-  arrival_time: string; 
-  leave_time: string; 
+  arrival_time: string;
+  leave_time: string;
   salary: number;
   date_of_contract: string;
   department: {
@@ -26,7 +26,7 @@ export interface EmployeeResponse {
   providedIn: 'root'
 })
 export class EmployeesService {
-  baseUrl: string = "http://pioneer-back.test/api/employees";
+  baseUrl: string = "http://pioneer-back2.test/api/employees";
 
   constructor(private http: HttpClient) {}
 
