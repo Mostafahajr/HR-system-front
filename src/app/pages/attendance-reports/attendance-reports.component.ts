@@ -33,8 +33,8 @@ export interface UserData {
   employee_name: string;
   employee_id: number;
   department: string;
-  arrival_time: Date;
-  leave_time: Date;
+  arrival_time: string;
+  leave_time: string;
   date: Date;
 }
 
@@ -75,8 +75,8 @@ export class AttendanceReportsComponent {
   filteredDataSource = new MatTableDataSource<UserData>([]);
 
   isUpdated: boolean = false;
-  updateArrival: Date = new Date();
-  updateLeave: Date = new Date();
+  updateArrival: string = '';
+  updateLeave: string = '';
   updatedUserId: any;
 
   startDate: Date | null = null;
@@ -84,12 +84,25 @@ export class AttendanceReportsComponent {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  constructor(
-    private router: Router,
-    private datePipe: DatePipe,
-    private attendanceService: AttendanceService
-  ) {
+
+
+
+
+
+
+
+  constructor(private router: Router,private datePipe: DatePipe,private attendanceService:AttendanceService) {
+    // Create 100 users
+
+
+
+    const today = new Date();
+    this.startDate = new Date(today.setHours(0, 0, 0, 0));
+    this.endDate = new Date(today.setHours(23, 59, 59, 999));
+
+    // Fetch data from API and apply default filter
     this.getAttendanceApi();
+
   }
 
   getAttendanceApi() {
@@ -109,12 +122,17 @@ export class AttendanceReportsComponent {
 
         this.dataSource.data = formattedData;
         this.filteredDataSource.data = formattedData;
+        console.log(this.filteredDataSource);
+        this.applyDateFilter();
+
+
       },
       error: (error) => {
         console.log(error);
-      },
-    });
-    this.applyDateFilter();
+      }
+    })
+
+
   }
 
   getTimeFromDate(dateString: string): string {
@@ -146,7 +164,8 @@ export class AttendanceReportsComponent {
   }
 
   applyDateFilter() {
-    this.filteredDataSource.data = this.dataSource.data;
+    this.filteredDataSource.data =this.dataSource.data;
+    console.log(this.startDate,this.endDate);
 
     if (this.startDate && this.endDate) {
       const start = new Date(this.startDate);
@@ -162,9 +181,20 @@ export class AttendanceReportsComponent {
     }
   }
 
-  editUser(id: number) {
+  editUser(id: number,arrival:any,leave:any) {
     this.isUpdated = true;
     this.updatedUserId = id;
+    this.updateArrival = arrival;
+    this.updateLeave = leave;
+
+  }
+
+  to12HoursFormat(timeString: string):string{
+    const [hours, minutes] = timeString.split(':').map(Number);
+  const date = new Date();
+  date.setHours(hours, minutes);
+
+  return this.datePipe.transform(date, 'hh:mm a') || '';
   }
 
   updateRecord(
@@ -172,7 +202,7 @@ export class AttendanceReportsComponent {
     name: string,
     department: string,
     date: Date,
-    employee_id: number
+    employee_id: number,
   ) {
     if (this.updateArrival && this.updateLeave) {
       const updateAttendance = {
@@ -184,6 +214,8 @@ export class AttendanceReportsComponent {
         leave_time: this.updateLeave,
         date: date,
       };
+      console.log(updateAttendance);
+
       this.attendanceService.updateAttendance(id, updateAttendance).subscribe({
         next: (response) => {
           console.log(response);

@@ -75,7 +75,7 @@
               <mat-icon on matSuffix>access_time</mat-icon>
             </mat-form-field>
             }@else {
-            <p class="x-time">{{ row.arrival_time }}</p>
+            <p class="x-time">{{ to12HoursFormat(row.arrival_time) }}</p>
             }
           </td>
         </ng-container>
@@ -91,7 +91,7 @@
               <mat-icon matSuffix>access_time</mat-icon>
             </mat-form-field>
             }@else {
-            <div class="x-time">{{ row.leave_time }}</div>
+            <div class="x-time">{{ to12HoursFormat(row.leave_time) }}</div>
             }
           </td>
         </ng-container>
@@ -136,7 +136,10 @@
               <button
                 mat-icon-button
                 class="custom-icon-button edit-button"
-                (click)="editUser(row.id)"
+                (click)="editUser(row.id,
+                      row.arrival_time,
+                      row.leave_time
+                      )"
               >
                 <mat-icon>edit</mat-icon>
               </button>
