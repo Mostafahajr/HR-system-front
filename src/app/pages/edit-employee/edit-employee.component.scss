@@ -35,3 +35,10 @@ button
 {
     margin-left: 30px;
 }
+.table-scroll {
+    padding-top: 10px;
+    scroll-behavior: inherit;
+    overflow:auto;
+    height: 70vh;
+    max-width: 100%;
+}

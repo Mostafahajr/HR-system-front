@@ -1,13 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-export interface department{
-  id:number;
-  department_name:string;
-  }
-  export interface DepartmentResponse {
-    data: any[];
-  }
+export interface department {
+  name: any;
+  id: number;
+  department_name: string;
+}
+export interface DepartmentResponse {
+  data: any[];
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -37,3 +38,4 @@ export class DepartmentsService {
       return this.http.delete<void>(`${this.apiUrl}/${id}`);
     }
   }
+}

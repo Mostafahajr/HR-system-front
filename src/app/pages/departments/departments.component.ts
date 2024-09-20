@@ -12,6 +12,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCommonModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
 import { catchError, switchMap, throwError } from 'rxjs';
+import { Department } from '../../models/iDepartment';
 
 @Component({
   selector: 'app-departments',
@@ -20,57 +21,72 @@ import { catchError, switchMap, throwError } from 'rxjs';
   templateUrl: './departments.component.html',
   styleUrl: './departments.component.scss'
 })
-export class DepartmentsComponent implements OnInit ,AfterViewInit {
+export class DepartmentsComponent implements OnInit, AfterViewInit {
 
-  constructor(private departmenServices : DepartmentsService , private router:Router)
-  {}
-  departments: any[] = [];
-  displayedColumns: string[] = ['id','department','actions'];
-  dataSource = new MatTableDataSource<any>(this.departments);
-  departmentId: any;
-  editingDepartment: any = null;
+  constructor(private departmenServices: DepartmentsService, private router: Router) { }
+
+  departments: Department[] = [];  // Ensure you're using the Department interface
+  displayedColumns: string[] = ['id', 'department', 'actions'];
+  dataSource = new MatTableDataSource<Department>(this.departments);  // Updated with Department type
+  editingDepartment: Department | null = null;  // Edited to ensure department follows the interface
 
   addNewDepartmentForm = new FormGroup({
-  department_name:new FormControl('',[Validators.required]),
+    department_name: new FormControl('', [Validators.required]),
   });
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+
   ngOnInit(): void {
     this.fetchDepartments();
   }
+
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
   }
-  startEditing(department: any): void {
-    this.editingDepartment = { ...department }; // Clone department for editing
+
+  startEditing(department: Department): void {  // Use the Department type
+    this.editingDepartment = { ...department };  // Clone department for editing
   }
 
   cancelEditing(): void {
     this.editingDepartment = null;
   }
 
-  saveEdit(department: any): void {
-    this.departmenServices.updateDepartment(department.id, { department_name: department.department_name })
-      .subscribe({
-        next: (response) => {
-          console.log('Department updated successfully', response);
-          this.fetchDepartments(); // Refresh the department list
-          this.editingDepartment = null; // Exit edit mode
-        },
-        error: (err) => {
-          console.error('Error updating department', err);
-        }
-      });
+  saveEdit(department: Department): void {  // Ensure the department follows the interface
+    if (department && department.id && department.department_name) {
+      this.departmenServices.updateDepartment(department.id, { department_name: department.department_name })
+        .subscribe({
+          next: (response) => {
+            console.log('Department updated successfully', response);
+            this.fetchDepartments();  // Refresh the department list
+            this.editingDepartment = null;  // Exit edit mode
+          },
+          error: (err) => {
+            console.error('Error updating department', err);
+          }
+        });
+    }
   }
 
-  department(e: any) {
+  department(e: any): void {
     e.preventDefault();
-    console.log(this.addNewDepartmentForm.value); // Check if 'department' has a value here
+    console.log(this.addNewDepartmentForm.value);
+  
     if (this.addNewDepartmentForm.valid && this.hasNonEmptyFields()) {
-      // console.log(this.addNewDepartmentForm.value);
-      this.departmenServices.addNewDepartment(this.addNewDepartmentForm.value).subscribe({
+      const departmentNameValue = this.addNewDepartmentForm.value.department_name;
+  
+      const newDepartment: Partial<Department> = {
+        department_name: departmentNameValue ?? '',
+      };
+  
+      this.departmenServices.addNewDepartment(newDepartment).subscribe({
         next: (response) => {
           console.log('Department added successfully', response);
-          this.addNewDepartmentForm.reset(); // Reset the form after success
+          this.addNewDepartmentForm.reset();
+          this.addNewDepartmentForm.markAsPristine();
+          this.addNewDepartmentForm.markAsUntouched();
+          this.addNewDepartmentForm.updateValueAndValidity();
+          this.fetchDepartments();
         },
         error: (err) => {
           console.error('Error adding department', err);
@@ -78,35 +94,36 @@ export class DepartmentsComponent implements OnInit ,AfterViewInit {
       });
     }
   }
+  
+
+
   private hasNonEmptyFields(): boolean {
     const formValues = this.addNewDepartmentForm.value;
     return Object.values(formValues).some(value => value !== '' && value !== null);
   }
+
   fetchDepartments(): void {
-    this.departmenServices.gatDepartments().subscribe((response: any) => {
+    this.departmenServices.getDepartments().subscribe((response: any) => {
       this.departments = response.data;
       this.dataSource.data = this.departments;
     });
   }
-  
-  navigate(route: string): void {
-    this.router.navigate([route]);
-  }
-  isAddNewEmployeeRoute(){
-    return this.router.url === '/departments';
-  }
-  
+
   deleteDepartment(id: number): void {
     this.departmenServices.deleteDepartment(id).pipe(
-      switchMap(() => this.departmenServices.gatDepartments()), // Refresh the department list
+      switchMap(() => this.departmenServices.getDepartments()),  // Refresh the department list
       catchError(error => {
         console.error('Error deleting department', error);
         return throwError(() => new Error('Error deleting department'));
       })
     ).subscribe({
       next: (response: any) => {
-        this.dataSource.data = response.data; // Update the data source after deletion
+        this.dataSource.data = response.data;  // Update the data source after deletion
       }
     });
   }
+  isDepartmentRoute(){
+    return this.router.url === '/departments';
+  }
+
 }

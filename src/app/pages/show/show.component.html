@@ -2,9 +2,7 @@
   <mat-card *ngFor="let employee of dataSource.data" class="employee-card">
     <mat-card-header>
       <mat-card-title>{{ employee.name }}</mat-card-title>
-      <mat-card-subtitle>{{
-        employee.department.name || "N/A"
-      }}</mat-card-subtitle>
+      <mat-card-subtitle>{{ employee.department?.name || "N/A" }}</mat-card-subtitle>
     </mat-card-header>
 
     <mat-divider></mat-divider>
@@ -39,6 +37,8 @@
           {{ formatDate(employee.date_of_contract) | date : "mediumDate" }}
         </div>
       </div>
+      <!-- Back Button -->
+      <button mat-raised-button color="primary" (click)="goBack()">Back</button>
     </mat-card-content>
   </mat-card>
 </div>

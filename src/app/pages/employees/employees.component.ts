@@ -1,13 +1,17 @@
-import { EmployeesService } from './../../services/employees/employees.service';
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
-import { ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterOutlet, RouterLink } from '@angular/router';
-import { MatButton } from '@angular/material/button';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { CommonModule } from '@angular/common';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatIcon } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
+import { EmployeesService } from '../../services/employees/employees.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-employees',
@@ -15,90 +19,111 @@ import { MatIcon } from '@angular/material/icon';
   imports: [
     BreadcrumbsComponent,
     ReactiveFormsModule,
-    MatButton,
+    MatButtonModule,
     RouterOutlet,
     MatTableModule,
     CommonModule,
     MatPaginatorModule,
-    MatIcon,
+    MatIconModule,
     RouterLink,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule
   ],
   templateUrl: './employees.component.html',
-  styleUrls: ['./employees.component.scss'], // Corrected to styleUrls
+  styleUrls: ['./employees.component.scss'],
 })
-export class EmployeesComponent implements OnInit, AfterViewInit {
+export class EmployeesComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+
   employees: any[] = [];
   showForm = false;
   selectedEmployee: any = null;
-  displayedColumns: string[] = [
-    'name',
-    'department',
-    'phone_number',
-    'salary',
-    'arrival_time',
-    'leave_time',
-    'actions',
-  ];
+  displayedColumns: string[] = ['name', 'department', 'phone_number', 'salary', 'arrival_time', 'leave_time', 'actions'];
   dataSource = new MatTableDataSource<any>([]);
 
-  constructor(
-    private employeesService: EmployeesService,
-    private router: Router
-  ) {
-    this.router.events.subscribe(() => {
-      this.showForm = this.router.url.includes('employees/add-new-employee');
+  departmentFilter = new FormControl('');
+  nameFilter = new FormControl('');
+
+  departments: string[] = [];
+  private routerSubscription: Subscription;
+
+  constructor(private employeesService: EmployeesService, private router: Router) {
+    this.routerSubscription = this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        if (this.router.url === '/employees') {
+          this.getEmployees();
+        }
+      }
     });
   }
-  isAddNewEmployeeRoute() {
-    return this.router.url === '/employees';
-  }
+
   ngOnInit(): void {
     this.getEmployees();
+    this.setupFilters();
   }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
   }
-  getEmployees(): void {
-    this.employeesService.getAllEmployees().subscribe(
-      (response) => {
-        console.log('API Response:', response);
-        this.employees = response.data.map((employee: any) => ({
-          ...employee,
-          department_name: employee.department
-            ? employee.department.name
-            : 'N/A',
-        }));
-        this.dataSource.data = this.employees;
-      },
-      (error) => {
-        console.error('Error fetching employee data', error);
-      }
-    );
+
+  ngOnDestroy() {
+    if (this.routerSubscription) {
+      this.routerSubscription.unsubscribe();
+    }
   }
+
+  getEmployees(): void {
+    this.employeesService.getAllEmployees().subscribe(response => {
+      this.employees = response.data.map((employee: any) => ({
+        ...employee,
+        department_name: employee.department ? employee.department.name : 'N/A'
+      }));
+      this.dataSource.data = this.employees;
+      this.extractDepartments();
+    }, error => {
+      console.error('Error fetching employee data', error);
+    });
+  }
+
+  setupFilters(): void {
+    this.departmentFilter.valueChanges.subscribe(() => this.applyFilters());
+    this.nameFilter.valueChanges.subscribe(() => this.applyFilters());
+  }
+
+  applyFilters(): void {
+    this.dataSource.filterPredicate = (data: any, filter: string) => {
+      const departmentMatch = !this.departmentFilter.value || data.department_name.toLowerCase().includes(this.departmentFilter.value.toLowerCase());
+      const nameMatch = !this.nameFilter.value || data.name.toLowerCase().includes(this.nameFilter.value.toLowerCase());
+      return departmentMatch && nameMatch;
+    };
+    this.dataSource.filter = Math.random().toString(); // Trigger filter
+  }
+
+  extractDepartments(): void {
+    this.departments = [...new Set(this.employees.map(e => e.department_name))];
+  }
+
   showDetails(employeeId: number): void {
-    // Navigate to the employee details page with the employee ID
     this.router.navigate([`employees/show/${employeeId}`]);
   }
+
   editEmployee(employeeId: number) {
     this.router.navigate([`employees/edit/${employeeId}`]);
   }
+
   deleteEmployee(employeeId: any) {
-    this.employeesService.deleteEmployee(employeeId).subscribe(
-      () => {
-        this.getEmployees(); // Refresh the employee list
-      },
-      (error) => {
-        console.error('Error deleting employee', error);
-      }
-    );
+    this.employeesService.deleteEmployee(employeeId).subscribe(() => {
+      this.getEmployees(); // Refresh the employee list
+    }, error => {
+      console.error('Error deleting employee', error);
+    });
   }
 
   navigate(route: string) {
     this.router.navigate([route]);
   }
-  //date and time formatting fix
+
   formatDate(dateString: string): string {
     const date = new Date(dateString);
     return date.toLocaleDateString(); // Adjust the locale format as needed
@@ -108,18 +133,8 @@ export class EmployeesComponent implements OnInit, AfterViewInit {
     const time = new Date(timeString);
     return time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
+
+  isAddNewEmployeeRoute() {
+    return this.router.url === '/employees';
+  }
 }
-// getEmployees(): void {
-//   this.employeesService.getAllEmployees().subscribe(response => {
-//     console.log('API Response:', response);
-//     // Filter employees where the date_of_contract is after or equal to '2008-01-01'
-//     this.employees = response.data.filter((employee: any) => {
-//       const contractDate = new Date(employee.date_of_contract);
-//       const filterDate = new Date('2008-01-01');
-//       return contractDate >= filterDate;
-//     });
-//     this.dataSource.data = this.employees; // Update the data source for the table
-//   }, error => {
-//     console.error('Error fetching employee data', error);
-//   });
-// }
