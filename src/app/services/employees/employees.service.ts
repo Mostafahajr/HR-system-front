@@ -2,7 +2,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Employee } from '../../models/iEmployee';
 
 export interface Employee {
   id: number;
@@ -30,7 +29,7 @@ export interface EmployeeResponse {
   providedIn: 'root'
 })
 export class EmployeesService {
-  baseUrl: string = "http://pioneer-back2.test/api/employees";
+  baseUrl: string = "http://pioneer-back.test/api/employees";
 
   constructor(private http: HttpClient) {}
 
