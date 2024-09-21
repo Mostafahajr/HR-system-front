@@ -178,124 +178,89 @@ export class SalariesComponent implements AfterViewInit {
     }
   }
 
+
   printEmployeeSalaryPDF(element: SalaryData) {
-    const doc = new jsPDF();
+    // Open a new window for printing
+    const printWindow = window.open('', '_blank');
 
-    // Add title with employee name
-    doc.setFontSize(18);
-    doc.text(`${element.name} Salary Report`, 14, 22);
-
-    // Prepare data for the first table
-    const firstTableData = [
-      ['Name', element.name],
-      ['Department', element.department.department_name],
-      ['Salary', element.salary],
-      ['Contract Arrival Time', this.formatTimeToHHMM(element.contract_arrival_time)],
-      ['Contract Leave Time', this.formatTimeToHHMM(element.contract_leave_time)],
-      ['Attended Days', element.attended_days],
-      ['Absent Days', element.absent_days],
-      ['Total Bonus Hours', this.formatMinutesToHHMM(element.total_bonus_minutes)],
-      ['Total Penalty Hours', this.formatMinutesToHHMM(element.total_penalty_minutes)],
-      ['Total Bonus EGP', this.roundNumber(element.total_bonus_egp)],
-      ['Total Penalty EGP', this.roundNumber(element.total_penalty_egp)],
-      ['Net Salary', this.roundNumber(element.net_salary)]
-    ];
-
-    // Add the first table with enhanced styles
-    (doc as any).autoTable({
-      startY: 32,
-      head: [],
-      body: firstTableData,
-      theme: 'grid', // Use 'grid' theme for borders
-      styles: {
-        fontSize: 12,
-        cellPadding: 2, // Tighter spaces
-        textColor: [0, 0, 0],
-        lineColor: [44, 62, 80],
-        lineWidth: 0.1,
-      },
-      columnStyles: {
-        0: { cellWidth: 70 }, // Adjusted for longer labels
-        1: { cellWidth: 100 },
-      },
-      didParseCell: function (data: any) {
-        if (data.section === 'body') {
-          if (data.column.index === 0) {
-            // Left column (labels)
-            data.cell.styles.fontStyle = 'bold';
-            data.cell.styles.fillColor = [230, 230, 230]; // Light gray background
+    // Prepare the HTML content
+    const htmlContent = `
+      <html>
+        <head>
+          <title>${element.name} Salary Report</title>
+          <style>
+          body { font-family: Arial, sans-serif; }
+          h1 { font-size: 20px; text-align: center; margin-bottom: 20px; }
+          h2 { font-size: 16px; margin-top: 30px; margin-bottom: 10px; }
+          table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+          th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+          .employee-info td:first-child { 
+            background-color: #f7f7f7; /* Slight gray for the first column */
+            font-weight: bold; 
+            width: 200px;
           }
-        }
-      }
-    });
+          .daily-records th { 
+            background-color: #f7f7f7; /* Slight gray for the header */
+            font-weight: bold;
+          }
+          .daily-records td { background-color: #ffffff; }
+          .total-row { font-weight: bold; background-color: #f2f2f2; }
+        </style>
+        </head>
+        <body onload="window.print(); window.close()">
+          <h1>${element.name} Salary Report</h1>
+          <table class="employee-info">
+            <tr><td>Name</td><td>${element.name}</td></tr>
+            <tr><td>Department</td><td>${element.department.department_name}</td></tr>
+            <tr><td>Salary</td><td>${element.salary}</td></tr>
+            <tr><td>Contract Arrival Time</td><td>${this.formatTimeToHHMM(element.contract_arrival_time)}</td></tr>
+            <tr><td>Contract Leave Time</td><td>${this.formatTimeToHHMM(element.contract_leave_time)}</td></tr>
+            <tr><td>Attended Days</td><td>${element.attended_days}</td></tr>
+            <tr><td>Absent Days</td><td>${element.absent_days}</td></tr>
+            <tr><td>Total Bonus Hours</td><td>${this.formatMinutesToHHMM(element.total_bonus_minutes)}</td></tr>
+            <tr><td>Total Penalty Hours</td><td>${this.formatMinutesToHHMM(element.total_penalty_minutes)}</td></tr>
+            <tr><td>Total Bonus EGP</td><td>${this.roundNumber(element.total_bonus_egp)}</td></tr>
+            <tr><td>Total Penalty EGP</td><td>${this.roundNumber(element.total_penalty_egp)}</td></tr>
+            <tr><td>Net Salary</td><td>${this.roundNumber(element.net_salary)}</td></tr>
+          </table>
+         
+          <h2>Daily Records</h2>
+          <table class="daily-records">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Arrival Time</th>
+                <th>Leave Time</th>
+                <th>Bonus Hours</th>
+                <th>Penalty Hours</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${element.daily_records.map(record => `
+                <tr>
+                  <td>${record.date}</td>
+                  <td>${record.arrival_time || 'N/A'}</td>
+                  <td>${record.leave_time || 'N/A'}</td>
+                  <td>${this.formatMinutesToHHMM(record.bonus_minutes)}</td>
+                  <td>${this.formatMinutesToHHMM(record.penalty_minutes)}</td>
+                </tr>
+              `).join('')}
+              <tr class="total-row">
+                <td>Total</td>
+                <td></td>
+                <td></td>
+                <td>${this.formatMinutesToHHMM(element.daily_records.reduce((sum, record) => sum + record.bonus_minutes, 0))}</td>
+                <td>${this.formatMinutesToHHMM(element.daily_records.reduce((sum, record) => sum + record.penalty_minutes, 0))}</td>
+              </tr>
+            </tbody>
+          </table>
+        </body>
+      </html>
+    `;
 
-    // Keep track of the Y position after the first table
-    const finalY = (doc as any).lastAutoTable.finalY || 32;
-
-    // Add Daily Records title
-    doc.setFontSize(14);
-    doc.text('Daily Records', 14, finalY + 10);
-
-    // Prepare data for the daily records table
-    const tableColumn = ["Date", "Arrival Time", "Leave Time", "Bonus Hours", "Penalty Hours"];
-    const tableRows = element.daily_records.map(record => [
-      record.date,
-      record.arrival_time || 'N/A',
-      record.leave_time || 'N/A',
-      this.formatMinutesToHHMM(record.bonus_minutes),
-      this.formatMinutesToHHMM(record.penalty_minutes)
-    ]);
-
-    // Calculate totals
-    const totalBonusMinutes = element.daily_records.reduce((sum, record) => sum + record.bonus_minutes, 0);
-    const totalPenaltyMinutes = element.daily_records.reduce((sum, record) => sum + record.penalty_minutes, 0);
-
-    // Add totals row
-    tableRows.push([
-      'Total',
-      '', // Empty for Arrival Time
-      '', // Empty for Leave Time
-      this.formatMinutesToHHMM(totalBonusMinutes),
-      this.formatMinutesToHHMM(totalPenaltyMinutes)
-    ]);
-
-    // Render the daily records table with enhanced styles
-    (doc as any).autoTable({
-      head: [tableColumn],
-      body: tableRows,
-      startY: finalY + 16,
-      theme: 'grid',
-      styles: {
-        fontSize: 12,
-        cellPadding: 2,
-        textColor: [0, 0, 0],
-        lineColor: [44, 62, 80],
-        lineWidth: 0.1,
-      },
-      headStyles: {
-        fillColor: [41, 128, 185], // Header background color
-        textColor: [255, 255, 255], // Header text color
-      },
-      alternateRowStyles: {
-        fillColor: [245, 245, 245], // Alternate row background color
-      },
-      // Remove columnStyles to let autoTable adjust column widths automatically
-      // columnStyles: {},
-      tableWidth: 'auto', // Optional, 'auto' is the default
-    });
-
-    // Instead of saving, output the PDF as a blob
-    const pdfOutput = doc.output('blob');
-
-    // Create a URL for the blob
-    const pdfUrl = URL.createObjectURL(pdfOutput);
-
-    // Open the PDF in a new tab
-    window.open(pdfUrl, '_blank');
-
-    // Optionally, you can revoke the URL after a delay to free up memory
-    setTimeout(() => {
-      URL.revokeObjectURL(pdfUrl);
-    }, 100);
+    // Write the HTML content to the new window
+    printWindow?.document.write(htmlContent);
+    printWindow?.document.close();
   }
+
 }

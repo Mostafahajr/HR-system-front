@@ -7,13 +7,12 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { IHoliday } from '../../models/iHoliday';
 import { BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { OfficialHolidaysService } from '../../services/official-holidays/official-holidays.service';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-official-holidays',
@@ -37,10 +36,9 @@ export class OfficialHolidaysComponent implements OnInit, AfterViewInit {
   holidayForm: FormGroup;
   holidays: IHoliday[] = [];
   displayedColumns: string[] = ['name', 'date', 'actions'];
-  dataSource = new MatTableDataSource<IHoliday>(this.holidays);
+  dataSource = new MatTableDataSource<IHoliday>();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  // To keep track of the selected holiday for editing
   selectedHolidayId: string | null = null;
 
   constructor(
@@ -50,8 +48,7 @@ export class OfficialHolidaysComponent implements OnInit, AfterViewInit {
   ) {
     this.holidayForm = this.fb.group({
       name: ['', Validators.required],
-      date: ['', Validators.required],
-      type: ['holiday']  // Default to 'holiday'
+      date: ['', Validators.required]
     });
   }
 
@@ -67,14 +64,13 @@ export class OfficialHolidaysComponent implements OnInit, AfterViewInit {
     this.holidaysService.getHolidays().subscribe({
       next: (response: any) => {
         if (response && response.data && Array.isArray(response.data)) {
-          this.holidays = response.data
-            .map((holiday: any) => ({
-              id: holiday.id,
-              name: holiday.description,
-              date: holiday.date,
-              type: holiday.off_day_types.length ? holiday.off_day_types[0].name : 'holiday'
-            }))
-            .filter((holiday: IHoliday) => holiday.type === 'holiday'); // Filter by type
+          this.holidays = response.data.map((holiday: any) => ({
+            id: holiday.id,
+            name: holiday.description,
+            description: holiday.description,
+            date: new Date(holiday.date),  // Convert to Date
+            type: holiday.off_day_types.length ? holiday.off_day_types[0].name : 'holiday', // Safeguard against empty off_day_types
+          }));
           this.dataSource.data = this.holidays;
         } else {
           console.error('Unexpected response format:', response);
@@ -82,95 +78,122 @@ export class OfficialHolidaysComponent implements OnInit, AfterViewInit {
       },
       error: (error: any) => {
         console.error('Failed to load holidays:', error);
-      },
-      complete: () => {
-        console.log('Completed loading holidays');
       }
     });
   }
 
-  applyFilter(filterValue: string): void {
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-  }
 
   addOrUpdateHoliday(): void {
     if (this.holidayForm.invalid) {
       this.holidayForm.markAllAsTouched();
       return;
     }
-
+  
     const formValues = this.holidayForm.value;
     const holidayData: IHoliday = {
-      id: this.selectedHolidayId || this.generateId(), // Use existing ID if editing
+      id: this.selectedHolidayId || this.generateId(),
       name: formValues.name,
-      description: formValues.name, // Set description to be the same as name
-      date: formValues.date,
-      type: formValues.type // Include type from form
+      description: formValues.name,
+      date: formValues.date, // Updated function
     };
-
+  
     if (this.selectedHolidayId) {
-      // Update existing holiday
       this.holidaysService.updateHoliday(this.selectedHolidayId, holidayData).subscribe({
-        next: (holiday: IHoliday) => {
-          const index = this.holidays.findIndex(h => h.id === this.selectedHolidayId);
-          if (index > -1) {
-            this.holidays[index] = holiday; // Update the local list
-            this.holidayForm.reset();
-            this.selectedHolidayId = null; // Clear selected holiday ID
-            this.snackBar.open('Holiday updated successfully!', 'Close', { duration: 3000 });
-            window.location.reload(); // Reload the page to fetch latest data
+        next: (response: any) => {
+          const updatedHoliday = response.data;
+          const index = this.holidays.findIndex(h => h.id === updatedHoliday.id);
+          if (index !== -1) {
+            this.holidays[index] = {
+              id: updatedHoliday.id,
+              name: updatedHoliday.description, 
+              description: updatedHoliday.description,
+              date: formValues.date // Display in a normalized format
+            };
+            this.dataSource.data = [...this.holidays]; // Refresh dataSource with updated holidays
           }
+          this.resetForm();
+          this.snackBar.open('Holiday updated successfully!', 'Close', { duration: 3000 });
         },
         error: (error: any) => {
           this.snackBar.open('Failed to update holiday', 'Close', { duration: 3000 });
         }
       });
     } else {
-      // Add new holiday
-      this.holidaysService.addHoliday(holidayData).subscribe({
-        next: (holiday: IHoliday) => {
-          if (holiday.type === 'holiday') { // Only add to the list if type is 'holiday'
-            this.holidays.push(holiday);
-            this.dataSource.data = this.holidays;
-            this.holidayForm.reset();
-            this.snackBar.open('Holiday added successfully!', 'Close', { duration: 3000 });
-            window.location.reload(); // Reload the page to fetch latest data
-          } else {
-            this.snackBar.open('Only holidays can be added to this list.', 'Close', { duration: 3000 });
-          }
-        },
-        error: (error: any) => {
-          this.snackBar.open('Failed to add holiday', 'Close', { duration: 3000 });
-        }
-      });
+      this.addHoliday(holidayData);
     }
   }
+  
+  
+  updateHoliday(holidayData: IHoliday): void {
+    this.holidaysService.updateHoliday(this.selectedHolidayId!, holidayData).subscribe({
+      next: (updatedHoliday: IHoliday) => {
+        const index = this.holidays.findIndex(h => h.id === this.selectedHolidayId);
+        if (index > -1) {
+          this.holidays[index] = updatedHoliday;
+          this.dataSource.data = [...this.holidays];
+          this.resetForm();
+          this.snackBar.open('Holiday updated successfully!', 'Close', { duration: 3000 });
+        }
+      },
+      error: (error: any) => {
+        this.snackBar.open('Failed to update holiday', 'Close', { duration: 3000 });
+      }
+    });
+  }
+
+  addHoliday(holidayData: IHoliday): void {
+    this.holidaysService.addHoliday(holidayData).subscribe({
+      next: (response: any) => {
+        const newHoliday: IHoliday = {
+          id: response.data.id,
+          name: response.data.description, // Use the description as the name
+          description: response.data.description,
+          date: new Date(response.data.date).toISOString().split('T')[0], // Convert Date to string (YYYY-MM-DD)
+          };
+  
+        this.holidays.push(newHoliday);
+        this.dataSource.data = [...this.holidays];
+        this.resetForm();
+        this.snackBar.open('Holiday added successfully!', 'Close', { duration: 3000 });
+      },
+      error: (error: any) => {
+        this.snackBar.open('Failed to add holiday', 'Close', { duration: 3000 });
+      }
+    });
+  }
+  
+  
 
   editHoliday(holiday: IHoliday): void {
-    this.selectedHolidayId = holiday.id; // Store the ID
+    this.selectedHolidayId = holiday.id;
     this.holidayForm.patchValue({
       name: holiday.name,
-      date: holiday.date,
-      type: holiday.type
+      date: holiday.date
     });
   }
 
   deleteHoliday(holidayId: string): void {
     this.holidaysService.deleteHoliday(holidayId).subscribe({
       next: () => {
-        const index = this.holidays.findIndex(h => h.id === holidayId);
-        if (index > -1) {
-          this.holidays.splice(index, 1);
-          this.dataSource.data = this.holidays;
-          this.snackBar.open('Holiday deleted successfully!', 'Close', { duration: 3000 });
-          window.location.reload(); // Reload the page to fetch latest data
-        }
+        this.holidays = this.holidays.filter(h => h.id !== holidayId);
+        this.dataSource.data = [...this.holidays];
+        this.snackBar.open('Holiday deleted successfully!', 'Close', { duration: 3000 });
       },
       error: (error: any) => {
         this.snackBar.open('Failed to delete holiday', 'Close', { duration: 3000 });
       }
     });
   }
+
+  resetForm(): void {
+    this.holidayForm.reset();  // Reset the form fields
+    this.holidayForm.markAsPristine();  // Mark form as pristine
+    this.holidayForm.markAsUntouched();  // Mark form as untouched
+    this.holidayForm.updateValueAndValidity();  // Update the validation status
+    this.selectedHolidayId = null;
+  }
+  
+  
 
   private generateId(): string {
     return (Math.random() * 1000000).toFixed(0);

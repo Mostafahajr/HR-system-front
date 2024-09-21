@@ -14,7 +14,7 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(), // From the first config
     {
       provide: 'API_URL', // From the second config
-      useValue: 'http://pioneer-back2.test/api',
+      useValue: 'http://pioneer-back.test/api',
     },
   ],
 };

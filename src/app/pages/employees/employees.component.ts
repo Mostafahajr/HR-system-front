@@ -81,6 +81,8 @@ export class EmployeesComponent implements OnInit, AfterViewInit, OnDestroy {
       }));
       this.dataSource.data = this.employees;
       this.extractDepartments();
+      // Reassign the paginator after updating the data source to fix problem of pagination after edit add
+      this.dataSource.paginator = this.paginator;
     }, error => {
       console.error('Error fetching employee data', error);
     });

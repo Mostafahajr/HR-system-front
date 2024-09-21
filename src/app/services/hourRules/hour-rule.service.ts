@@ -7,7 +7,7 @@ import { Observable, map } from 'rxjs';
   providedIn: 'root',
 })
 export class GeneralRulesService {
-  private apiUrl: string = 'http://pioneer-back2.test/api/hour-rules';
+  private apiUrl: string = 'http://pioneer-back.test/api/hour-rules';
 
   constructor(private http: HttpClient) { }
 
