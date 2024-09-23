@@ -69,7 +69,7 @@ export const routes: Routes = [
     component: AdminsComponent,
     canActivate: [authGuard],
     data: {
-      breadcrumb: 'Admins',
+      breadcrumb: 'Users',
       pageName: 'Users',
       operation: 'read',
     },
@@ -79,8 +79,8 @@ export const routes: Routes = [
         component: AddNewAdminComponent,
         canActivate: [authGuard],
         data: {
-          breadcrumb: 'Add New Admin',
-          pageName: 'Admins',
+          breadcrumb: 'Add New User',
+          pageName: 'Users',
           operation: 'create',
         },
       },
@@ -89,8 +89,8 @@ export const routes: Routes = [
         component: EditAdminComponent,
         canActivate: [authGuard],
         data: {
-          breadcrumb: 'Edit Admin',
-          pageName: 'Admins',
+          breadcrumb: 'Edit User',
+          pageName: 'Users',
           operation: 'update',
         },
       },
