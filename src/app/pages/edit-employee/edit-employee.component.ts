@@ -1,7 +1,7 @@
   import { Component, OnInit } from '@angular/core';
   import { CommonModule } from '@angular/common';
   import { EmployeesService } from './../../services/employees/employees.service';
-  import { DepartmentsService, department } from './../../services/departments/departments.service';
+  import { DepartmentsService, Department } from './../../services/departments/departments.service';
   import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
   import { ActivatedRoute, Router } from '@angular/router';
 
@@ -34,7 +34,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
   export class EditEmployeeComponent implements OnInit {
     employeeForm: FormGroup;
     employeeId: number;
-    departments: department[] = [];
+    departments: Department[] = [];
 
     constructor(
       private fb: FormBuilder,

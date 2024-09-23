@@ -1,4 +1,9 @@
+
 import { DepartmentsService } from './../../services/departments/departments.service';
+import { catchError, switchMap, throwError } from 'rxjs';
+import { Department } from '../../models/iDepartment';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { BreadcrumbsComponent } from "../../components/breadcrumbs/breadcrumbs.component";
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -14,6 +19,9 @@ import { MatInputModule } from '@angular/material/input';
 import { catchError, switchMap, throwError } from 'rxjs';
 import { Department } from '../../models/iDepartment';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { EmployeesService } from '../../services/employees/employees.service';
+import { Employee, EmployeesByDepartment } from '../../models/iEmployee';
+
 
 @Component({
   selector: 'app-departments',
@@ -23,7 +31,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['./departments.component.scss']
 })
 export class DepartmentsComponent implements OnInit, AfterViewInit {
+
   constructor(private departmenServices: DepartmentsService, private router: Router, private snackBar: MatSnackBar) { }
+  employees: Employee[] = [];
 
   departments: Department[] = [];
   displayedColumns: string[] = ['id', 'department', 'actions'];
@@ -36,6 +46,8 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
+  constructor(private departmenServices: DepartmentsService, private employeeService: EmployeesService,private router: Router) {}
+
   ngOnInit(): void {
     this.fetchDepartments();
   }
@@ -44,6 +56,8 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
     this.dataSource.paginator = this.paginator;
   }
 
+
+  // Department-related methods
   startEditing(department: Department): void {
     this.editingDepartment = { ...department };
   }
@@ -72,6 +86,7 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
   department(e: any): void {
     e.preventDefault();
     if (this.addNewDepartmentForm.valid && this.hasNonEmptyFields()) {
+
       const departmentNameValue = this.addNewDepartmentForm.value.department_name;
       const newDepartment: Partial<Department> = { department_name: departmentNameValue ?? '' };
   
@@ -91,6 +106,7 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
       this.showToast('Please fill in the required fields.'); // Notify if form is invalid
     }
   }  
+
 
   private hasNonEmptyFields(): boolean {
     const formValues = this.addNewDepartmentForm.value;
@@ -114,6 +130,7 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
     ).subscribe({
       next: (response: any) => {
         this.dataSource.data = response.data;
+
         this.showToast('Department deleted successfully');//toast for delete
       }
     });
@@ -128,7 +145,86 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  isDepartmentRoute() {
+
+  isDepartmentRoute(): boolean {
     return this.router.url === '/departments';
+  }
+
+
+
+  generateExcelFiles(): void {
+    this.employeeService.getAllEmployees().subscribe((response: any) => {
+      const employees: Employee[] = response.data;
+
+      // Group employees by department
+      const employeesByDepartment: EmployeesByDepartment = employees.reduce((acc: EmployeesByDepartment, employee: Employee) => {
+        const departmentName = employee.department?.name || 'Unassigned'; // Handle null department
+        if (!acc[departmentName]) {
+          acc[departmentName] = [];
+        }
+        acc[departmentName].push({
+          Name: employee.name || 'Unknown',
+          ArrivalTime: employee.arrival_time ? new Date(employee.arrival_time).toLocaleString() : '',
+          DepartureTime: employee.leave_time ? new Date(employee.leave_time).toLocaleString() : ''
+        });
+        return acc;
+      }, {} as EmployeesByDepartment); // Explicitly typing the accumulator
+
+      // Generate Excel files for each department
+      for (const [departmentName, empList] of Object.entries(employeesByDepartment)) {
+        const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(empList);
+        const workbook: XLSX.WorkBook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, departmentName);
+
+        // Create a file name for each department
+        const fileName = `${departmentName.replace(/\s+/g, '_')}_Employees_2024-09-06.xlsx`;
+        const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+        this.saveExcelFile(excelBuffer, fileName);
+      }
+    });
+  }
+
+  printDepartment(department: any): void {
+    this.employeeService.getAllEmployees().subscribe((response: any) => {
+        const employees: Employee[] = response.data;
+
+        // Filter employees by the selected department
+        const filteredEmployees = employees.filter(employee => employee.department?.name === department.department_name);
+
+        // Prepare data for Excel
+        const empList = filteredEmployees.map(employee => ({
+            Name: employee.name || 'Unknown',
+            ArrivalTime: '',  // Set to empty or your actual data
+            DepartureTime: ''  // Set to empty or your actual data
+        }));
+
+        // Get today's date
+        const today = new Date();
+        const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+        // Create worksheet and workbook
+        const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(empList);
+        const workbook: XLSX.WorkBook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, department.department_name);
+
+        // Create a file name for the department using today's date
+        const fileName = `${department.department_name.replace(/\s+/g, '_')}_${formattedDate}.xlsx`;
+        const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+        this.saveExcelFile(excelBuffer, fileName);
+    });
+}
+
+
+
+  formatTime(dateTime: string): string {
+    const date = new Date(dateTime);
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
+  }
+
+  saveExcelFile(buffer: any, fileName: string): void {
+    const data: Blob = new Blob([buffer], { type: 'application/octet-stream' });
+    saveAs(data, fileName);
   }
 }

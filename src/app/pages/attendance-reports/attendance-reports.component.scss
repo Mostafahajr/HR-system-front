@@ -81,7 +81,7 @@ th.mat-header-cell {
 .d-flex {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   margin-top: 16px;
 }
 
@@ -123,5 +123,23 @@ th {
   box-shadow: 0 -2px 2px -1px rgba(0, 0, 0, 0.4);
   background-color:   #2a2f4b !important; 
   color: #ffffff; 
+}
+
+
+.action-buttons {
+  display: flex;
+  gap: 16px;
+}
+
+.time {
+  width: 150px;
+  height: 56px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+.time-text {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 

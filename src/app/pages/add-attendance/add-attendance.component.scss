@@ -38,3 +38,8 @@ table {
 .mat-elevation-z8 {
   box-shadow: none !important;
 }
+
+.date-col {
+  width: 140px; // for cells that have expected width (not all columns need to have a fixed width, leave at least one)
+  text-align: center; // optional
+}

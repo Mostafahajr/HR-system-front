@@ -1,39 +1,64 @@
 import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   OnInit,
   AfterViewInit,
   ViewChild,
+  ChangeDetectorRef,
+  ChangeDetectionStrategy,
 } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatTableModule, MatTableDataSource } from '@angular/material/table';
-import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import {
+  MatTable,
+  MatTableDataSource,
+  MatTableModule,
+} from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { Observable, forkJoin } from 'rxjs';
 import { AddAttendanceService } from '../../services/add-attendance/add-attendance.service';
-import { ActivatedRoute  ,Router} from '@angular/router';
-
+import { DepartmentsService } from '../../services/departments/departments.service';
+import { Department } from '../../models/iDepartment';
+import {
+  MatFormField,
+  MatFormFieldModule,
+  MatLabel,
+} from '@angular/material/form-field';
+import {
+  MatDatepicker,
+  MatDatepickerModule,
+  MatDatepickerToggle,
+} from '@angular/material/datepicker';
+import { MatOption } from '@angular/material/core';
+import { CommonModule } from '@angular/common';
+import { MatInput, MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-add-attendance',
   standalone: true,
   imports: [
-    CommonModule,
-    MatFormFieldModule,
-    MatDatepickerModule,
-    MatInputModule,
-    MatSelectModule,
+    MatFormField,
+    MatLabel,
+    FormsModule,
+    MatDatepickerToggle,
     ReactiveFormsModule,
+    MatOption,
+    CommonModule,
+    MatPaginator,
+    MatDatepicker,
+    MatDatepickerModule,
+    MatTable,
+    MatInput,
+    MatInputModule,
+    MatFormFieldModule,
+    MatSelectModule,
     MatButtonModule,
     MatTableModule,
-    NgxMatTimepickerModule,
     MatPaginatorModule,
   ],
   templateUrl: './add-attendance.component.html',
@@ -44,6 +69,7 @@ export class AddAttendanceComponent implements OnInit, AfterViewInit {
   filterForm: FormGroup;
   dataSource = new MatTableDataSource<AttendanceRecord>();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+
   displayedColumns: string[] = [
     'id',
     'department',
@@ -53,25 +79,16 @@ export class AddAttendanceComponent implements OnInit, AfterViewInit {
     'date',
     'actions',
   ];
-  departments: string[] = [
-    'Finance',
-    'Human Resource',
-    'Marketing',
-    'Operations',
-    'Sales',
-    'IT Support',
-    'Customer Service',
-    'Research and Development',
-    'Product Management',
-  ];
+
+  departments: Department[] = [];
   updatedRecords: Map<number, AttendanceRecord> = new Map();
+  timeZoneOffset: number = new Date().getTimezoneOffset();
 
   constructor(
     private fb: FormBuilder,
     private addAttendanceService: AddAttendanceService,
     private cdr: ChangeDetectorRef,
-    private route: ActivatedRoute,
-    // private router: Router
+    private departmentsService: DepartmentsService
   ) {
     this.filterForm = this.fb.group({
       date: [new Date()],
@@ -80,9 +97,28 @@ export class AddAttendanceComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    // Retrieve passed Excel data from the route state
-    const excelData = history.state.data;
+    this.loadDepartments();
+    this.handleExcelImport();
+  }
 
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+  }
+
+  loadDepartments() {
+    this.departmentsService.getDepartments().subscribe({
+      next: (response) => {
+        this.departments = response.data;
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        console.error('Error loading departments:', err);
+      },
+    });
+  }
+
+  handleExcelImport() {
+    const excelData = history.state.data;
     if (excelData) {
       console.log('Excel Data:', excelData);
       const firstRecord = excelData[0];
@@ -94,67 +130,59 @@ export class AddAttendanceComponent implements OnInit, AfterViewInit {
       }
 
       this.dataSource.data = excelData.map((item: any, index: number) => ({
-        id: index + 1, // Serial ID starting from 1
+        id: index + 1,
         department: item.departmentName,
         employee_name: item.employeeName,
-        arrival_time: item.attendance,
-        leave_time: item.departure,
-        date: item.date,
+        arrival_time: this.parseTime(item.date, item.attendance),
+        leave_time: this.parseTime(item.date, item.departure),
+        date: new Date(item.date),
       }));
+      this.markAllRecordsForUpdate();
       this.cdr.markForCheck();
-      
-     
     } else {
       console.log('No Excel data passed.');
+      this.onSearch();
     }
-
-    this.onSearch();
   }
 
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
+  parseTime(date: string, time: string): Date | null {
+    if (!time) return null;
+    const [hours, minutes] = time.split(':').map(Number);
+    const parsedDate = new Date(date);
+    parsedDate.setHours(hours, minutes);
+    return parsedDate;
   }
 
-  private formatTimeToPicker(isoTime: string): string {
-    if (!isoTime) return '';
-    const date = new Date(isoTime);
-    let hours = date.getUTCHours();
-    const minutes = date.getUTCMinutes();
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    hours = hours ? hours : 12;
-    const minutesStr = minutes < 10 ? '0' + minutes : minutes;
-    return `${hours}:${minutesStr} ${ampm}`;
-  }
-
-  private convertTimeToISO(time: string, date: string): string {
-    const [hoursMinutes, period] = time.split(' ');
-    let [hours, minutes] = hoursMinutes.split(':').map(Number);
-
-    if (period === 'PM' && hours !== 12) hours += 12;
-    if (period === 'AM' && hours === 12) hours = 0;
-
-    const dateObj = new Date(date);
-    dateObj.setUTCHours(hours, minutes, 0, 0);
-    return dateObj.toISOString();
+  markAllRecordsForUpdate() {
+    this.dataSource.data.forEach((record) => {
+      this.updatedRecords.set(record.id, { ...record });
+    });
   }
 
   onSearch() {
     const { date, department } = this.filterForm.value;
     const formattedDate = this.formatDate(date);
 
+    console.log('Searching with:', { formattedDate, department });
+
     this.addAttendanceService
       .getAllAttendance(formattedDate, department)
       .subscribe({
         next: (data) => {
-          this.dataSource.data = data.map((record: any, index: number) => ({
-            id: index + 1,
-            ...record,
-            arrival_time:
-              this.formatTimeToPicker(record.arrival_time) || '9:00 AM',
-            leave_time: this.formatTimeToPicker(record.leave_time) || '5:00 PM',
+          console.log('Received data:', data);
+          this.dataSource.data = data.map((record: any) => ({
+            id: record.id,
+            department: record.department_name,
+            employee_name: record.employee_name,
+            arrival_time: record.arrival_time
+              ? this.adjustToLocalTime(new Date(record.arrival_time))
+              : null,
+            leave_time: record.leave_time
+              ? this.adjustToLocalTime(new Date(record.leave_time))
+              : null,
+            date: new Date(record.date),
           }));
-          this.updatedRecords.clear();
+          console.log('Mapped data:', this.dataSource.data);
           this.cdr.markForCheck();
         },
         error: (err) => {
@@ -166,37 +194,32 @@ export class AddAttendanceComponent implements OnInit, AfterViewInit {
   updateTime(
     element: AttendanceRecord,
     field: 'arrival_time' | 'leave_time',
-    event: any
+    event: Event
   ) {
-    let time: string;
+    const input = event.target as HTMLInputElement;
+    const [hours, minutes] = input.value.split(':').map(Number);
 
-    if (event && typeof event === 'string') {
-      time = event;
-    } else if (event && event.format) {
-      time = event.format();
-    } else {
-      return;
+    let newDate: Date | null = null;
+    if (!isNaN(hours) && !isNaN(minutes)) {
+      newDate = new Date(element.date);
+      newDate.setHours(hours, minutes);
     }
 
-    if (time) {
-      element[field] = time;
-      this.updatedRecords.set(element.id, { ...element });
-      this.cdr.markForCheck();
-    }
+    element[field] = newDate;
+    this.updatedRecords.set(element.id, { ...element });
+    this.cdr.markForCheck();
   }
 
   submitUpdates() {
     const updateObservables: Observable<any>[] = [];
 
     this.updatedRecords.forEach((record) => {
-      const updatedArrivalTime = this.convertTimeToISO(
-        record.arrival_time,
-        record.date
-      );
-      const updatedLeaveTime = this.convertTimeToISO(
-        record.leave_time,
-        record.date
-      );
+      const updatedArrivalTime = record.arrival_time
+        ? this.adjustToUTC(record.arrival_time).toISOString()
+        : null;
+      const updatedLeaveTime = record.leave_time
+        ? this.adjustToUTC(record.leave_time).toISOString()
+        : null;
 
       const observable = this.addAttendanceService.updateAttendance(record.id, {
         arrival_time: updatedArrivalTime,
@@ -224,19 +247,43 @@ export class AddAttendanceComponent implements OnInit, AfterViewInit {
   }
 
   deleteAttendance(id: number) {
-    this.addAttendanceService.deleteAttendance(id).subscribe(() => {
-      this.dataSource.data = this.dataSource.data.filter(
-        (record) => record.id !== id
-      );
-      this.updatedRecords.delete(id);
-      this.cdr.detectChanges();
+    this.addAttendanceService.deleteAttendance(id).subscribe({
+      next: () => {
+        this.dataSource.data = this.dataSource.data.filter(
+          (record) => record.id !== id
+        );
+        this.updatedRecords.delete(id);
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        console.error('Error deleting attendance:', err);
+      },
     });
   }
 
   private formatDate(date: Date): string {
     const d = new Date(date);
-    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-    return d.toISOString().split('T')[0];
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}-${month}-${year}`;
+  }
+
+  formatTimeForDisplay(date: Date | null): string {
+    if (!date) return '00:00';
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    });
+  }
+
+  adjustToLocalTime(date: Date): Date {
+    return new Date(date.getTime() - this.timeZoneOffset * 60000);
+  }
+
+  adjustToUTC(date: Date): Date {
+    return new Date(date.getTime() + this.timeZoneOffset * 60000);
   }
 }
 
@@ -244,7 +291,7 @@ interface AttendanceRecord {
   id: number;
   department: string;
   employee_name: string;
-  arrival_time: string;
-  leave_time: string;
-  date: string;
+  arrival_time: Date | null;
+  leave_time: Date | null;
+  date: Date;
 }

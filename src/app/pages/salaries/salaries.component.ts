@@ -16,6 +16,7 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { EmployeesService } from '../../services/employees/employees.service';
 import { forkJoin } from 'rxjs';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 
 @Component({
@@ -30,12 +31,15 @@ import { forkJoin } from 'rxjs';
     MatInputModule,
     MatSelectModule,
     MatTableModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatProgressSpinner,
   ],
   templateUrl: './salaries.component.html',
   styleUrls: ['./salaries.component.scss']
 })
 export class SalariesComponent implements AfterViewInit {
+
+  loading: boolean = true; // Add this line for spinner
   years: string[] = ['2020', '2021', '2022', '2023', '2024'];
   // generate an associative array that contains the code of each month (jan->01, dec->12)
   monthNames = [
@@ -94,6 +98,7 @@ export class SalariesComponent implements AfterViewInit {
   }
 
   loadSalaries(): void {
+    this.loading = true; // Set loading to true before fetching data
     forkJoin({
       salariesResponse: this.salaryReportsService.getAllSalaries(this.selectedYear, this.selectedMonth),
       employeesResponse: this.employeesService.getAllEmployees()
@@ -130,6 +135,7 @@ export class SalariesComponent implements AfterViewInit {
       // Continue with the rest of the code
       this.departments = [...new Set(this.dataSource.data.map(item => item.department.department_name))];
       this.applyFilter();
+      this.loading = false; // Set loading to false after data is fetched
     });
   }
 

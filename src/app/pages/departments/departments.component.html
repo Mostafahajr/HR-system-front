@@ -1,110 +1,77 @@
 <app-breadcrumbs></app-breadcrumbs>
-@if(isDepartmentRoute()){
+@if(isDepartmentRoute()) {
 <div class="container">
-  <form [formGroup]="addNewDepartmentForm" (ngSubmit)="department($event)">
-    <mat-form-field class="selectInput example-full-width" appearance="outline">
-      <mat-label>Add Department Name</mat-label>
-      <input matInput formControlName="department_name" required />
-      <mat-error
-        *ngIf="
-          addNewDepartmentForm.get('department_name')?.hasError('required')
-        "
-      >
-        Department Name is required
-      </mat-error>
-    </mat-form-field>
-    <button mat-stroked-button class="saveButton" type="submit">Save</button>
-  </form>
+    <form [formGroup]="addNewDepartmentForm" (ngSubmit)="department($event)">
+        <mat-form-field class="selectInput example-full-width" appearance="outline">
+            <mat-label>Add Department Name</mat-label>
+            <input matInput formControlName="department_name" required placeholder="Enter Department Name" title="Department Name" />
+            <mat-error *ngIf="addNewDepartmentForm.get('department_name')?.hasError('required')">
+                Department Name is required
+            </mat-error>
+        </mat-form-field>
+
+        <button mat-stroked-button class="saveButton" type="submit">Save</button>
+        <button mat-stroked-button class="EXCEL" (click)="generateExcelFiles()">Print Employees</button>
+    </form>
 </div>
-<!-- Inline editing in the table -->
+
+<!-- Table for displaying departments with inline editing -->
 <div class="wrapper">
-  <table mat-table [dataSource]="dataSource" class="mat-table full-width-table">
-    <ng-container matColumnDef="id">
-      <th mat-header-cell *matHeaderCellDef class="id-column">ID</th>
-      <td mat-cell *matCellDef="let department" class="id-column">
-        {{ department.id }}
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="department">
-      <th mat-header-cell *matHeaderCellDef>Department</th>
-      <td mat-cell *matCellDef="let department">
-        <ng-container
-          *ngIf="editingDepartment && editingDepartment.id === department.id"
-        >
-          <input matInput [(ngModel)]="editingDepartment.department_name" />
+    <table mat-table [dataSource]="dataSource" class="mat-table full-width-table">
+        <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef class="id-column">ID</th>
+            <td mat-cell *matCellDef="let department" class="id-column">
+                {{ department.id }}
+            </td>
         </ng-container>
-        <ng-container
-          *ngIf="!(editingDepartment && editingDepartment.id === department.id)"
-        >
-          {{ department.department_name }}
+
+        <ng-container matColumnDef="department">
+            <th mat-header-cell *matHeaderCellDef>Department</th>
+            <td mat-cell *matCellDef="let department">
+                <ng-container *ngIf="editingDepartment && editingDepartment.id === department.id">
+                    <input matInput [(ngModel)]="editingDepartment.department_name" placeholder="Edit Department Name" title="Edit Department Name" />
+                </ng-container>
+                <ng-container *ngIf="!(editingDepartment && editingDepartment.id === department.id)">
+                    {{ department.department_name }}
+                </ng-container>
+            </td>
         </ng-container>
-      </td>
-    </ng-container>
 
-    <ng-container matColumnDef="actions">
-      <th
-        mat-header-cell
-        *matHeaderCellDef
-        class="actions-header action-column"
-      >
-        Actions
-      </th>
-      <td mat-cell *matCellDef="let department" class="action-column">
-        <div class="button-container">
-          <ng-container
-            *ngIf="editingDepartment && editingDepartment.id === department.id"
-          >
-            <button
-              mat-icon-button
-              color="primary"
-              (click)="saveEdit(editingDepartment)"
-              class="custom-save-button"
-            >
-              <mat-icon>save</mat-icon>
-            </button>
-            <button
-              mat-icon-button
-              color="warn"
-              (click)="cancelEditing()"
-              class="custom-cancel-button"
-            >
-              <mat-icon>close</mat-icon>
-            </button>
-          </ng-container>
-          <ng-container
-            *ngIf="
-              !(editingDepartment && editingDepartment.id === department.id)
-            "
-          >
-            <button
-              mat-icon-button
-              class="custom-icon-button edit-button"
-              (click)="startEditing(department)"
-            >
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button
-              mat-icon-button
-              class="custom-icon-button delete-button"
-              (click)="deleteDepartment(department.id)"
-            >
-              <mat-icon>delete</mat-icon>
-            </button>
-          </ng-container>
-        </div>
-      </td>
-    </ng-container>
+        <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="actions-header action-column">Actions</th>
+            <td mat-cell *matCellDef="let department" class="action-column">
+                <div class="button-container">
+                    <ng-container *ngIf="editingDepartment && editingDepartment.id === department.id">
+                        <button mat-icon-button color="primary" (click)="saveEdit(editingDepartment)" class="custom-save-button">
+                            <mat-icon>save</mat-icon>
+                        </button>
+                        <button mat-icon-button color="warn" (click)="cancelEditing()" class="custom-cancel-button">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </ng-container>
+                    <ng-container *ngIf="!(editingDepartment && editingDepartment.id === department.id)">
+                        <button mat-icon-button class="custom-icon-button edit-button" (click)="startEditing(department)">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button mat-icon-button class="custom-icon-button delete-button" (click)="deleteDepartment(department.id)">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                        <!-- Print Icon Button -->
+                        <button mat-icon-button class="custom-icon-button print-button" (click)="printDepartment(department)">
+                          <mat-icon>print</mat-icon>
+                      </button>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-  </table>
+
+                    </ng-container>
+                </div>
+            </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
 </div>
-<mat-paginator
-  [length]="dataSource.data.length"
-  [pageSize]="5"
-  [pageSizeOptions]="[5, 10, 25, 100]"
-  aria-label="Select page"
-></mat-paginator>
+
+<mat-paginator [length]="dataSource.data.length" [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page"></mat-paginator>
 }
 <router-outlet></router-outlet>

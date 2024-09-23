@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { DepartmentsService, department } from '../../services/departments/departments.service';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
+
 @Component({
   selector: 'app-add-new-employee',
   standalone: true,
@@ -34,7 +35,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 export class AddNewEmployeeComponent implements OnInit {
   companyStartDate: Date = new Date('2008-01-01');
-  departments: department[] = [];  // List to store departments
+  departments: Department[] = [];  // List to store departments
   employeeId: any;
 
   addNewemployeeForm = new FormGroup({
