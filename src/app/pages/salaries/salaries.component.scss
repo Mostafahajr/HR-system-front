@@ -18,10 +18,12 @@
   margin-bottom: 20px;
   font-size: 16px;
 }
+
 .search-input-container input::placeholder {
   color: #191c1f69;
   font-size: 16px;
 }
+
 .search-icon {
   position: absolute;
   top: 50%;
@@ -158,11 +160,20 @@ mat-paginator {
 }
 
 #table {
-  overflow: auto; /* Enable vertical scrolling */
+  overflow: auto;
+  /* Enable vertical scrolling */
   height: 48vh;
 }
 
 .full-width-table {
   width: 100%;
-  table-layout: fixed; /* Prevent columns from expanding */
+  table-layout: fixed;
+  /* Prevent columns from expanding */
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 75px;
 }
