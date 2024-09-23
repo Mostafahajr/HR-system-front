@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class PrivilegeService {
-  privilegesApiUrl: any = 'http://pioneer-back2.test/api/privileges';
+  privilegesApiUrl: any = 'http://pioneer-back.test/api/privileges';
   constructor(public http: HttpClient) {}
 
   getAllpriliveges(): Observable<any> {

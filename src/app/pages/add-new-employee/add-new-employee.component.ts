@@ -8,7 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { EmployeesService } from '../../services/employees/employees.service';
 import { MatIconModule } from '@angular/material/icon';
-import { DepartmentsService, department } from '../../services/departments/departments.service';
+import { Department, DepartmentsService } from '../../services/departments/departments.service';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 

@@ -10,8 +10,8 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./employee-excel.component.scss']
 })
 export class EmployeeExcelComponent implements OnInit {
-  private apiUrl = 'http://pioneer-back2.test/api/employees';
-  private departmentsUrl = 'http://pioneer-back2.test/api/departments';
+  private apiUrl = 'http://pioneer-back.test/api/employees';
+  private departmentsUrl = 'http://pioneer-back.test/api/departments';
   private fixedDate = '2024-09-06';
 
   constructor(private employeeService: EmployeeService, private http: HttpClient) {}

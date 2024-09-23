@@ -1,3 +1,4 @@
+import { EmployeeService } from './../../services/employee-excelsheet/employee.service';
 
 import { DepartmentsService } from './../../services/departments/departments.service';
 import { catchError, switchMap, throwError } from 'rxjs';
@@ -16,8 +17,6 @@ import { NgIf } from '@angular/common';
 import { MatButton } from '@angular/material/button';
 import { MatCommonModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
-import { catchError, switchMap, throwError } from 'rxjs';
-import { Department } from '../../models/iDepartment';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EmployeesService } from '../../services/employees/employees.service';
 import { Employee, EmployeesByDepartment } from '../../models/iEmployee';
@@ -31,8 +30,7 @@ import { Employee, EmployeesByDepartment } from '../../models/iEmployee';
   styleUrls: ['./departments.component.scss']
 })
 export class DepartmentsComponent implements OnInit, AfterViewInit {
-
-  constructor(private departmenServices: DepartmentsService, private router: Router, private snackBar: MatSnackBar) { }
+  constructor(private departmenServices: DepartmentsService, private router: Router, private employeesService : EmployeesService,private snackBar: MatSnackBar) { }
   employees: Employee[] = [];
 
   departments: Department[] = [];
@@ -46,7 +44,6 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  constructor(private departmenServices: DepartmentsService, private employeeService: EmployeesService,private router: Router) {}
 
   ngOnInit(): void {
     this.fetchDepartments();
@@ -153,7 +150,7 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
 
 
   generateExcelFiles(): void {
-    this.employeeService.getAllEmployees().subscribe((response: any) => {
+    this.employeesService.getAllEmployees().subscribe((response: any) => {
       const employees: Employee[] = response.data;
 
       // Group employees by department
@@ -185,7 +182,7 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
   }
 
   printDepartment(department: any): void {
-    this.employeeService.getAllEmployees().subscribe((response: any) => {
+    this.employeesService.getAllEmployees().subscribe((response: any) => {
         const employees: Employee[] = response.data;
 
         // Filter employees by the selected department

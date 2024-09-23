@@ -21,6 +21,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatNativeDateModule } from '@angular/material/core';
+import { provideNativeDateAdapter } from '@angular/material/core';
 
 export interface UserData {
   id: number;
@@ -54,10 +55,11 @@ export interface UserData {
     MatFormFieldModule,
     MatIconModule,
     MatNativeDateModule,
+    
   ],
   styleUrls: ['./attendance-reports.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [DatePipe],
+  providers: [DatePipe,provideNativeDateAdapter()]
 })
 export class AttendanceReportsComponent implements OnInit {
   displayedColumns: string[] = [
