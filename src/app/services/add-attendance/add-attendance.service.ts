@@ -6,7 +6,7 @@ import { Observable, tap } from 'rxjs';
   providedIn: 'root',
 })
 export class AddAttendanceService {
-  private baseUrl = 'http://pioneer-back.test/api/add-new-attendance';
+  private baseUrl = 'http://pioneer-back2.test/api/add-new-attendance';
 
   constructor(private http: HttpClient) {}
 

@@ -8,7 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { EmployeesService } from '../../services/employees/employees.service';
 import { MatIconModule } from '@angular/material/icon';
-import { DepartmentsService, department } from '../../services/departments/departments.service';
+import { DepartmentsService, Department } from '../../services/departments/departments.service';
 
 @Component({
   selector: 'app-add-new-employee',
@@ -32,7 +32,7 @@ import { DepartmentsService, department } from '../../services/departments/depar
 
 export class AddNewEmployeeComponent implements OnInit {
   companyStartDate: Date = new Date('2008-01-01');
-  departments: department[] = [];  // List to store departments
+  departments: Department[] = [];  // List to store departments
   employeeId: any;
 
   addNewemployeeForm = new FormGroup({

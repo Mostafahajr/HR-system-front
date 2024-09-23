@@ -1,14 +1,18 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-export interface department {
-  name: any;
+import { Employee } from '../../models/iEmployee';
+
+export interface Department {
   id: number;
+  name: string;  // Change 'any' to 'string' for better type safety
   department_name: string;
 }
+
 export interface DepartmentResponse {
-  data: any[];
+  data: Department[];
 }
+
 @Injectable({
   providedIn: 'root',
 })
@@ -19,19 +23,24 @@ export class DepartmentsService {
   getDepartments(): Observable<DepartmentResponse> {
     return this.http.get<DepartmentResponse>(`${this.apiUrl}`);
   }
-  getDepartmentById(id: number): Observable<department> {
-    return this.http.get<department>(`${this.apiUrl}/${id}`);
-  }
-  // Update existing vacation day
-  updateDepartment(id: number, data: any): Observable<department> {
-    return this.http.put<department>(`${this.apiUrl}/${id}`, data);
+
+  // Fetch employees based on department ID
+  getEmployeesByDepartment(departmentId: number): Observable<Employee[]> {
+    return this.http.get<Employee[]>(`${this.apiUrl}/${departmentId}/employees`);
   }
 
-  // Create new vacation day
+
+  // Update an existing department
+  updateDepartment(id: number, data: any): Observable<Department> {
+    return this.http.put<Department>(`${this.apiUrl}/${id}`, data);
+  }
+
+  // Create a new department
   addNewDepartment(data: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}`, data);
+    return this.http.post<any>(this.apiUrl, data);
   }
 
+  // Delete a department
   deleteDepartment(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
