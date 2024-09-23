@@ -7,6 +7,7 @@ import { GeneralRulesService } from './../../services/general-rules/general-rule
 import { BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { MatButton } from '@angular/material/button';
 import { IRules } from '../../models/iRules';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-salary-related-settings',
@@ -25,7 +26,7 @@ export class SalaryRelatedSettingsComponent implements OnInit {
   private updateFailureCount: number = 0;
   private requiredUpdates: number = 2;
 
-  constructor(private rulesService: GeneralRulesService) {
+  constructor(private rulesService: GeneralRulesService ,  private snackBar: MatSnackBar) {
     this.salaryForm = new FormGroup({
       overtime: new FormControl({ value: '', disabled: true }, [Validators.required, Validators.min(1)]),
       penalty: new FormControl({ value: '', disabled: true }, [Validators.required, Validators.min(1)])
@@ -136,16 +137,24 @@ export class SalaryRelatedSettingsComponent implements OnInit {
     if (this.updateSuccessCount === this.requiredUpdates) {
       this.loadExistingRules(); // Reload the rules after successful updates
       this.toggleEdit();
-      alert('All rules updated successfully!');
+      this.showToast('All rules updated successfully!', 'success'); // Show success toast
     }
   }
   
-
   private handleUpdateFailure(error: any): void {
     this.updateFailureCount++;
     if (this.updateFailureCount === 1) { // Only alert once for the first failure
       console.error('Error updating rule:', error);
-      alert('Failed to update one or more rules. Please try again.');
+      this.showToast('Failed to update one or more rules. Please try again.', 'error'); // Show error toast
     }
   }
+  private showToast(message: string, type: 'success' | 'error') {
+    this.snackBar.open(message, 'Close', {
+      duration: 5000,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+      panelClass: [type === 'success' ? 'success-snackbar' : 'error-snackbar'] // Custom classes for styling
+    });
+  }
+  
 }

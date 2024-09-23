@@ -9,6 +9,7 @@ export interface Employee {
   address: string;
   phone_number: string;
   DOB: string;
+  gender:string;
   nationality: string;
   national_id: string;
   arrival_time: string;

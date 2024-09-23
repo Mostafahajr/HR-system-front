@@ -121,7 +121,10 @@ td {
 
 th {
   box-shadow: 0 -2px 2px -1px rgba(0, 0, 0, 0.4);
+  background-color:   #2a2f4b !important; 
+  color: #ffffff; 
 }
+
 
 .action-buttons {
   display: flex;
@@ -139,3 +142,4 @@ th {
   justify-content: center;
   align-items: center;
 }
+

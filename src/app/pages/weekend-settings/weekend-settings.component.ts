@@ -8,6 +8,7 @@ import { VacationDaysService } from '../../services/vacation-days/vacation-days.
 import { Router } from '@angular/router';
 import { BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { forkJoin, Observable } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-weekend-settings',
@@ -22,7 +23,7 @@ export class WeekendSettingsComponent implements OnInit {
   isEditable: boolean = false; // Flag to control whether the form is editable
   vacationDays: any[] = []; // Array to store vacation days
 
-  constructor(private rulesService: VacationDaysService, private router: Router) {
+  constructor(private rulesService: VacationDaysService, private router: Router, private snackBar: MatSnackBar ) {
     this.weekendForm = new FormGroup({
       weekend1: new FormControl({ value: '', disabled: true }, [Validators.required]),
       weekend2: new FormControl({ value: '', disabled: true }, [Validators.required])
@@ -33,26 +34,25 @@ export class WeekendSettingsComponent implements OnInit {
     this.loadWeekendDays();
   }
 
-  // Load the weekend days from the backend
-  loadWeekendDays(): void {
+    loadWeekendDays(): void {
     this.rulesService.getVacationDays().subscribe({
       next: (response: any) => {
-        // Log the response data for debugging
+        
         console.log('Fetched vacation days response:', response);
   
-        // Check if response is an array
+      
         if (Array.isArray(response)) {
           this.vacationDays = response;
         } else if (response && response.data && Array.isArray(response.data)) {
-          // Handle case where response contains a nested data array
+          
           this.vacationDays = response.data;
         } else {
-          // Fallback to empty array if the response format is unexpected
+          
           console.error('Vacation days data is not an array:', response);
           this.vacationDays = [];
         }
   
-        // Proceed with setting form values if there are enough entries
+    
         if (this.vacationDays.length >= 2) {
           this.weekendForm.patchValue({
             weekend1: this.vacationDays[0]?.weekend_day || '',
@@ -88,23 +88,39 @@ export class WeekendSettingsComponent implements OnInit {
         { id: this.vacationDays[0]?.id, weekend_day: this.weekendForm.value.weekend1 },
         { id: this.vacationDays[1]?.id, weekend_day: this.weekendForm.value.weekend2 }
       ];
-
-      const updateRequests = updatedWeekendDays.map(day => 
+  
+      const updateRequests = updatedWeekendDays.map(day =>
         this.rulesService.updateVacationDay(day.id, { weekend_day: day.weekend_day })
       );
-
+  
       forkJoin(updateRequests).subscribe({
         next: (responses) => {
           console.log('Successfully updated weekend days:', responses);
-          // Optionally navigate away or show a success message
+          this.showToast('Weekend days updated successfully!'); // Show success toast
+          this.toggleEdit(); 
           this.router.navigate(['/weekend-settings']);
         },
         error: (error) => {
           console.error('Error updating weekend days:', error);
+            //toast
+          this.showToast('Failed to update weekend days.'); // Show error toast
         }
       });
     } else {
       console.warn('Form is invalid');
+      //toast
+      this.showToast('Please fill in all required fields.'); // Show validation error toast
     }
   }
+
+  // Function for Toast
+  showToast(message: string) {
+    this.snackBar.open(message, 'Close', {
+      duration: 5000,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+      panelClass: ['custom-snackbar'] 
+    });
+  }
+    
 }

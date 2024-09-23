@@ -1,3 +1,4 @@
+import { MatSnackBar } from '@angular/material/snack-bar'; // Import MatSnackBar
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import {
@@ -55,7 +56,8 @@ export class AddNewGroupComponent implements OnInit {
   constructor(
     private privilegeService: PrivilegeService,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private snackBar: MatSnackBar // Inject MatSnackBar
   ) {
     this.privilegeForm = this.fb.group({
       groupName: ['', Validators.required],
@@ -166,18 +168,24 @@ export class AddNewGroupComponent implements OnInit {
         .subscribe({
           next: (response) => {
             console.log('Group created successfully', response);
+            this.openSnackBar('Group created successfully!', 'Close');
             this.router.navigate(['groups-and-permissions']);
           },
           error: (error) => {
             console.error('Error creating group', error);
-            // Handle error (e.g., show error message)
+            this.openSnackBar('Error creating group. Please try again.', 'Close');
           },
           complete: () => {
-            // Optional: Handle completion if necessary
             console.log('Request completed');
           },
         });
     }
+  }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000, // Duration in milliseconds
+    });
   }
 
   getSelectedPrivileges(privileges: any[]): number[] {

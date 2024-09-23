@@ -171,9 +171,15 @@ mat-paginator {
   /* Prevent columns from expanding */
 }
 
+th {
+  background-color:   #2a2f4b !important; 
+  color: #ffffff; 
+}
+
 .spinner-container {
   display: flex;
   justify-content: center;
   align-items: center;
   margin-top: 75px;
 }
+

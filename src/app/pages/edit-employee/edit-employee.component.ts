@@ -12,6 +12,7 @@
   import { MatFormFieldModule } from '@angular/material/form-field';
   import { MatSelectModule } from '@angular/material/select';
   import { Employee } from '../../models/iEmployee';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
   @Component({
     selector: 'app-edit-employee',
@@ -23,7 +24,8 @@
       MatIconModule,
       MatButtonModule,
       MatFormFieldModule,
-      MatSelectModule
+      MatSelectModule,
+      MatSnackBarModule
     ],
     templateUrl: './edit-employee.component.html',
     styleUrls: ['./edit-employee.component.scss']
@@ -39,7 +41,8 @@
       private employeeService: EmployeesService,
       private departmentsService: DepartmentsService,
       private route: ActivatedRoute,
-      private router: Router
+      private router: Router,
+      private snackBar: MatSnackBar
     ) {
       this.employeeForm = this.fb.group({
         name: ['', [Validators.required, Validators.maxLength(255)]],
@@ -119,18 +122,27 @@
         this.employeeService.updateEmployee(this.employeeId, formData).subscribe(
           (response) => {
             console.log('Employee updated successfully:', response);
+            this.showToast('Employee updated successfully!');
             this.router.navigate(['/employees']);
           },
           (error) => {
             console.error('Error updating employee:', error);
+            this.showToast('Failed to update employee. Please try again.');
           }
         );
       } else {
         console.log('Form is invalid', this.employeeForm.errors);
       }
     }
-    
-
+    showToast(message: string) {
+      this.snackBar.open(message, 'Close', {
+        duration: 5000,  // Duration in milliseconds
+        horizontalPosition: 'center',  // Position the toast on the right
+        verticalPosition: 'bottom',
+        panelClass: ['custom-snackbar'],   // Position the toast at the top
+      });
+    }
+        
 
     private formatTimeForView(time: string): string {
       // Return only the time part in H:i:s format

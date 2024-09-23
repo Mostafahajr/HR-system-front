@@ -144,7 +144,7 @@ form {
 }
 
 .id-column {
-    width: 70px;
+  width: 120px;
 }
 
 .action-column {
@@ -152,7 +152,11 @@ form {
 }
 
 .wrapper {
-    height: 50vh;
-    overflow: auto;
-    width: 100%;
+  height: 50vh;
+  overflow: auto;
+  width: 100%;
+}
+th{
+  background-color:   #2a2f4b !important; 
+  color: #ffffff; 
 }

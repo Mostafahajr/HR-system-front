@@ -36,6 +36,7 @@ export class DepartmentsService {
   }
 
   // Create a new department
+
   addNewDepartment(data: any): Observable<any> {
     return this.http.post<any>(this.apiUrl, data);
   }

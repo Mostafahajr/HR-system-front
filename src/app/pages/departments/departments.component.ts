@@ -16,18 +16,25 @@ import { NgIf } from '@angular/common';
 import { MatButton } from '@angular/material/button';
 import { MatCommonModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
+import { catchError, switchMap, throwError } from 'rxjs';
+import { Department } from '../../models/iDepartment';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { EmployeesService } from '../../services/employees/employees.service';
 import { Employee, EmployeesByDepartment } from '../../models/iEmployee';
+
 
 @Component({
   selector: 'app-departments',
   standalone: true,
-  imports: [BreadcrumbsComponent,MatPaginator,MatTableModule, RouterLink,MatIcon,RouterOutlet,ReactiveFormsModule,MatError,NgIf,MatButton,MatCommonModule,MatInputModule,FormsModule ],
+  imports: [BreadcrumbsComponent, MatPaginator, MatTableModule, RouterLink, MatIcon, RouterOutlet, ReactiveFormsModule, MatError, NgIf, MatButton, MatCommonModule, MatInputModule, FormsModule],
   templateUrl: './departments.component.html',
   styleUrls: ['./departments.component.scss']
 })
 export class DepartmentsComponent implements OnInit, AfterViewInit {
+
+  constructor(private departmenServices: DepartmentsService, private router: Router, private snackBar: MatSnackBar) { }
   employees: Employee[] = [];
+
   departments: Department[] = [];
   displayedColumns: string[] = ['id', 'department', 'actions'];
   dataSource = new MatTableDataSource<Department>(this.departments);
@@ -49,6 +56,7 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
     this.dataSource.paginator = this.paginator;
   }
 
+
   // Department-related methods
   startEditing(department: Department): void {
     this.editingDepartment = { ...department };
@@ -62,12 +70,15 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
     if (department && department.id && department.department_name) {
       this.departmenServices.updateDepartment(department.id, { department_name: department.department_name })
         .subscribe({
-          next: () => {
-            console.log('Department updated successfully');
+          next: (response) => {
+            this.showToast('Department updated successfully');
             this.fetchDepartments();
             this.editingDepartment = null;
           },
-          error: (err) => console.error('Error updating department', err)
+          error: (err) => {
+            console.error('Error updating department', err);
+            this.showToast('Error updating department');//toast for update
+          }
         });
     }
   }
@@ -75,19 +86,27 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
   department(e: any): void {
     e.preventDefault();
     if (this.addNewDepartmentForm.valid && this.hasNonEmptyFields()) {
-      const newDepartment: Partial<Department> = {
-        department_name: this.addNewDepartmentForm.value.department_name ?? '',
-      };
+
+      const departmentNameValue = this.addNewDepartmentForm.value.department_name;
+      const newDepartment: Partial<Department> = { department_name: departmentNameValue ?? '' };
+  
       this.departmenServices.addNewDepartment(newDepartment).subscribe({
-        next: () => {
-          console.log('Department added successfully');
+        next: (response) => {
+          console.log('Response from adding department:', response);
+          this.showToast('Department added successfully');
           this.addNewDepartmentForm.reset();
           this.fetchDepartments();
         },
-        error: (err) => console.error('Error adding department', err)
+        error: (err) => {
+          console.error('Error adding department:', err);
+          this.showToast('Error adding department'); // Toast for adding
+        }
       });
+    } else {
+      this.showToast('Please fill in the required fields.'); // Notify if form is invalid
     }
-  }
+  }  
+
 
   private hasNonEmptyFields(): boolean {
     const formValues = this.addNewDepartmentForm.value;
@@ -111,9 +130,21 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
     ).subscribe({
       next: (response: any) => {
         this.dataSource.data = response.data;
+
+        this.showToast('Department deleted successfully');//toast for delete
       }
     });
   }
+//toast function
+  showToast(message: string): void {
+    this.snackBar.open(message, 'Close', {
+      duration: 5000,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+      panelClass:['custom-snackbar']
+    });
+  }
+
 
   isDepartmentRoute(): boolean {
     return this.router.url === '/departments';
