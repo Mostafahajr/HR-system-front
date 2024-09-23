@@ -70,7 +70,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
     data: {
       breadcrumb: 'Admins',
-      pageName: 'Admins',
+      pageName: 'Users',
       operation: 'read',
     },
     children: [

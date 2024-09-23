@@ -1,48 +1,100 @@
 import { HomeService } from './../../services/home/home.service';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { AddNewGroupComponent } from '../add-new-group/add-new-group.component';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { DataSource } from '@angular/cdk/collections';
 import { MatTableModule } from '@angular/material/table';
-
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [BreadcrumbsComponent, AddNewGroupComponent,CommonModule,MatCardModule,MatTableModule],
+  imports: [BreadcrumbsComponent, AddNewGroupComponent, CommonModule, MatCardModule, MatTableModule, MatProgressSpinnerModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
-export class HomeComponent {
-  displayedColumns: string[] = [ 'name', 'department', 'salary'];
+export class HomeComponent implements OnInit {
+  displayedColumns: string[] = ['name', 'department', 'salary'];
+  departmentColumns: string[] = ['name', 'employeeCount'];
   title: string = 'Home';
-  dataSource:any;
-  static:any ={};
+ 
+  employeeData: any = null;
+  holidayData: any = null;
+  salaryData: any = null;
+  departmentData: any = null;
+ 
+  employeeLoading: boolean = true;
+  holidayLoading: boolean = true;
+  salaryLoading: boolean = true;
+  departmentLoading: boolean = true;
 
-  constructor(private homeService:HomeService){
-    this.getStatics();
+  constructor(private homeService: HomeService) {}
 
-
-    console.log(this.static);
-
+  ngOnInit() {
+    this.getEmployeeData();
+    this.getHolidayData();
+    this.getSalaryData();
+    this.getDepartmentData();
   }
-  getStatics(){
-    const jsonData = this.homeService.getStatic().subscribe({
-      next:(response)=>{
-        console.log(response);
 
-        this.static = response;
-        this.dataSource=this.static.topSalaries
-        this.static.upcomingHoliday = new Date(this.static.upcomingHoliday).toDateString();
+  getEmployeeData() {
+    this.homeService.getEmployeeAttendance().subscribe({
+      next: (data) => {
+        this.employeeData = data;
+        this.employeeLoading = false;
       },
-      error:(error)=>{
-        console.log(error);
+      error: (error) => {
+        console.error('Error fetching employee data:', error);
+        this.employeeLoading = false;
       }
-    })
+    });
+  }
 
+  getHolidayData() {
+    this.homeService.getHolidays().subscribe({
+      next: (data) => {
+        this.holidayData = data;
+        if (this.holidayData.upcomingHoliday && this.holidayData.upcomingHoliday.date) {
+          this.holidayData.upcomingHoliday.date = new Date(this.holidayData.upcomingHoliday.date).toDateString();
+        }
+        this.holidayLoading = false;
+      },
+      error: (error) => {
+        console.error('Error fetching holiday data:', error);
+        this.holidayLoading = false;
+      }
+    });
+  }
 
+  getSalaryData() {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    this.homeService.getSalaries(year, month).subscribe({
+      next: (data) => {
+        this.salaryData = data;
+        this.salaryLoading = false;
+      },
+      error: (error) => {
+        console.error('Error fetching salary data:', error);
+        this.salaryLoading = false;
+      }
+    });
+  }
 
+  getDepartmentData() {
+    this.homeService.getDepartmentInfo().subscribe({
+      next: (data) => {
+        this.departmentData = data;
+        this.departmentLoading = false;
+      },
+      error: (error) => {
+        console.error('Error fetching department data:', error);
+        this.departmentLoading = false;
+      }
+    });
   }
 }

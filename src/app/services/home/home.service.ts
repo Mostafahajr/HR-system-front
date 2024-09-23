@@ -1,23 +1,30 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class HomeService {
-  baseUrl: any = 'http://pioneer-back.test/api/home';
-  month: any;
-  constructor(public http: HttpClient) {}
-  getStatic() {
-    const date = new Date();
-    const year = date.getFullYear();
+  baseUrl: string = 'http://pioneer-back.test/api/home';
 
-    if (date.getMonth() + 1 < 10) {
-      this.month = '0' + date.getMonth() + 1;
-    } else {
-      this.month = date.getMonth() + 1;
-    }
+  constructor(private http: HttpClient) {}
 
-    return this.http.get(`${this.baseUrl}`);
+  getEmployeeAttendance(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/employee-attendance`);
+  }
+
+  getSalaries(year: number, month: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/salaries`, {
+      params: { year: year.toString(), month: month },
+    });
+  }
+
+  getHolidays(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/holidays`);
+  }
+
+  getDepartmentInfo(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/department-info`);
   }
 }
