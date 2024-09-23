@@ -10,16 +10,14 @@ export interface DepartmentResponse {
   data: any[];
 }
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class DepartmentsService {
+  constructor(private http: HttpClient) {}
+  apiUrl: string = 'http://pioneer-back.test/api/departments';
 
-  constructor(private http: HttpClient) { }
-  apiUrl: string = "http://pioneer-back.test/api/departments";
-
-
-  getDepartments(): Observable<DepartmentResponse[]> {
-    return this.http.get<DepartmentResponse[]>(`${this.apiUrl}`);
+  getDepartments(): Observable<DepartmentResponse> {
+    return this.http.get<DepartmentResponse>(`${this.apiUrl}`);
   }
   getDepartmentById(id: number): Observable<department> {
     return this.http.get<department>(`${this.apiUrl}/${id}`);
