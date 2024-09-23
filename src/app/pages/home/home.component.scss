@@ -4,44 +4,84 @@ h1 {
 }
 
 .example-card {
-  width: 400px;
+  width: 525px;
   margin-bottom: 8px;
 }
-.text-center{
+
+.text-center {
   text-align: center;
 }
-.d-flex{
+
+.d-flex {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+
   margin-top: 10px;
 }
-.d-around{
+
+.d-around {
   display: flex;
   justify-content: space-around;
-  align-items: center;
+
   margin: 10px auto;
   width: 100%;
+  margin-top: 20px;
 }
 
-.w-100{
+.w-100 {
   width: 50%;
   margin-bottom: 17px;
   margin: auto;
 }
-table{
+
+.salary-card {
+  width: 715px;
+}
+
+table {
   width: 100%;
   margin-top: 10px;
 }
-.d-gap{
+
+.d-gap {
   display: grid;
   gap: 23px;
-  margin: 10px;
+  margin-right: 10px;
 }
-.d-start{
+
+.d-start {
   display: flex;
   justify-content: end;
-  align-items: center;
+
 }
 
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  
+}
 
+.salary-spinner {
+  margin-top: 124px;
+  margin-bottom: 124px;
+}
+
+.department-container{
+  display: flex;
+  justify-content: start;
+  padding-bottom: 15px;
+}
+.department-card{
+  margin-top:15px;
+  width: 100%;
+  margin-bottom: 15px;
+}
+.main {
+  height: 76vh;
+  overflow: auto;
+  scroll-behavior: smooth;
+  padding: 0 10px 10px 10px;
+}
+.start{
+margin-right: 990px;
+}
