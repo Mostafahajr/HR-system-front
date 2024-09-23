@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class HomeService {
-  baseUrl: any = 'http://pioneer-back.test/api/home';
+  baseUrl: any = 'http://pioneer-back2.test/api/home';
   month: any;
   constructor(public http: HttpClient) {}
   getStatic() {

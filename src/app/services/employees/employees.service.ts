@@ -29,7 +29,7 @@ export interface EmployeeResponse {
   providedIn: 'root'
 })
 export class EmployeesService {
-  baseUrl: string = "http://pioneer-back.test/api/employees";
+  baseUrl: string = "http://pioneer-back2.test/api/employees";
 
   constructor(private http: HttpClient) {}
 
@@ -37,10 +37,14 @@ export class EmployeesService {
     return this.http.get<EmployeeResponse>(this.baseUrl);
   }
 
+
   getEmployeeById(id: number): Observable<any> { // Updated return type
     return this.http.get<any>(`${this.baseUrl}/${id}`);
   }
 
+  getEmployeesByDepartment(departmentId: number): Observable<Employee[]> {
+    return this.http.get<Employee[]>(`${this.baseUrl}?departmentId=${departmentId}`);
+  }
   deleteEmployee(employeeId: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/${employeeId}`);
   }

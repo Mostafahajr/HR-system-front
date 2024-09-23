@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class SalaryReportsService {
-  private baseUrl = 'http://pioneer-back.test/api/salaries/calculate'; // Update the base URL to match your API
+  private baseUrl = 'http://pioneer-back2.test/api/salaries/calculate'; // Update the base URL to match your API
 
   constructor(public http: HttpClient) { }
 

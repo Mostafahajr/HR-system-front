@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class AttendanceService {
 
-  private apiUrl = 'http://pioneer-back.test/api/attendance';
+  private apiUrl = 'http://pioneer-back2.test/api/attendance';
 
 
   constructor(private http: HttpClient) {}
