@@ -28,7 +28,7 @@ export class DepartmentsService {
   updateDepartment(id: number, data: any): Observable<department> {
     return this.http.put<department>(`${this.apiUrl}/${id}`, data);
   }
-
+  
   // Create new vacation day
   addNewDepartment(data: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}`, data);

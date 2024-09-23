@@ -13,22 +13,22 @@ import { MatCommonModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
 import { catchError, switchMap, throwError } from 'rxjs';
 import { Department } from '../../models/iDepartment';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-departments',
   standalone: true,
-  imports: [BreadcrumbsComponent,MatPaginator,MatTableModule, RouterLink,MatIcon,RouterOutlet,ReactiveFormsModule,MatError,NgIf,MatButton,MatCommonModule,MatInputModule,FormsModule],
+  imports: [BreadcrumbsComponent, MatPaginator, MatTableModule, RouterLink, MatIcon, RouterOutlet, ReactiveFormsModule, MatError, NgIf, MatButton, MatCommonModule, MatInputModule, FormsModule],
   templateUrl: './departments.component.html',
-  styleUrl: './departments.component.scss'
+  styleUrls: ['./departments.component.scss']
 })
 export class DepartmentsComponent implements OnInit, AfterViewInit {
+  constructor(private departmenServices: DepartmentsService, private router: Router, private snackBar: MatSnackBar) { }
 
-  constructor(private departmenServices: DepartmentsService, private router: Router) { }
-
-  departments: Department[] = [];  // Ensure you're using the Department interface
+  departments: Department[] = [];
   displayedColumns: string[] = ['id', 'department', 'actions'];
-  dataSource = new MatTableDataSource<Department>(this.departments);  // Updated with Department type
-  editingDepartment: Department | null = null;  // Edited to ensure department follows the interface
+  dataSource = new MatTableDataSource<Department>(this.departments);
+  editingDepartment: Department | null = null;
 
   addNewDepartmentForm = new FormGroup({
     department_name: new FormControl('', [Validators.required]),
@@ -44,25 +44,26 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
     this.dataSource.paginator = this.paginator;
   }
 
-  startEditing(department: Department): void {  // Use the Department type
-    this.editingDepartment = { ...department };  // Clone department for editing
+  startEditing(department: Department): void {
+    this.editingDepartment = { ...department };
   }
 
   cancelEditing(): void {
     this.editingDepartment = null;
   }
 
-  saveEdit(department: Department): void {  // Ensure the department follows the interface
+  saveEdit(department: Department): void {
     if (department && department.id && department.department_name) {
       this.departmenServices.updateDepartment(department.id, { department_name: department.department_name })
         .subscribe({
           next: (response) => {
-            console.log('Department updated successfully', response);
-            this.fetchDepartments();  // Refresh the department list
-            this.editingDepartment = null;  // Exit edit mode
+            this.showToast('Department updated successfully');
+            this.fetchDepartments();
+            this.editingDepartment = null;
           },
           error: (err) => {
             console.error('Error updating department', err);
+            this.showToast('Error updating department');//toast for update
           }
         });
     }
@@ -70,32 +71,26 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
 
   department(e: any): void {
     e.preventDefault();
-    console.log(this.addNewDepartmentForm.value);
-  
     if (this.addNewDepartmentForm.valid && this.hasNonEmptyFields()) {
       const departmentNameValue = this.addNewDepartmentForm.value.department_name;
-  
-      const newDepartment: Partial<Department> = {
-        department_name: departmentNameValue ?? '',
-      };
+      const newDepartment: Partial<Department> = { department_name: departmentNameValue ?? '' };
   
       this.departmenServices.addNewDepartment(newDepartment).subscribe({
         next: (response) => {
-          console.log('Department added successfully', response);
+          console.log('Response from adding department:', response);
+          this.showToast('Department added successfully');
           this.addNewDepartmentForm.reset();
-          this.addNewDepartmentForm.markAsPristine();
-          this.addNewDepartmentForm.markAsUntouched();
-          this.addNewDepartmentForm.updateValueAndValidity();
           this.fetchDepartments();
         },
         error: (err) => {
-          console.error('Error adding department', err);
+          console.error('Error adding department:', err);
+          this.showToast('Error adding department'); // Toast for adding
         }
       });
+    } else {
+      this.showToast('Please fill in the required fields.'); // Notify if form is invalid
     }
-  }
-  
-
+  }  
 
   private hasNonEmptyFields(): boolean {
     const formValues = this.addNewDepartmentForm.value;
@@ -111,19 +106,29 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
 
   deleteDepartment(id: number): void {
     this.departmenServices.deleteDepartment(id).pipe(
-      switchMap(() => this.departmenServices.getDepartments()),  // Refresh the department list
+      switchMap(() => this.departmenServices.getDepartments()),
       catchError(error => {
         console.error('Error deleting department', error);
         return throwError(() => new Error('Error deleting department'));
       })
     ).subscribe({
       next: (response: any) => {
-        this.dataSource.data = response.data;  // Update the data source after deletion
+        this.dataSource.data = response.data;
+        this.showToast('Department deleted successfully');//toast for delete
       }
     });
   }
-  isDepartmentRoute(){
-    return this.router.url === '/departments';
+//toast function
+  showToast(message: string): void {
+    this.snackBar.open(message, 'Close', {
+      duration: 5000,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+      panelClass:['custom-snackbar']
+    });
   }
 
+  isDepartmentRoute() {
+    return this.router.url === '/departments';
+  }
 }

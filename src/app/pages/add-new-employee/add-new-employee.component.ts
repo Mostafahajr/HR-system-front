@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+ import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common';
 import { EmployeesService } from '../../services/employees/employees.service';
 import { MatIconModule } from '@angular/material/icon';
 import { DepartmentsService, department } from '../../services/departments/departments.service';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-add-new-employee',
@@ -24,6 +25,7 @@ import { DepartmentsService, department } from '../../services/departments/depar
     CommonModule,
     MatIconModule,
     RouterLink,
+    MatSnackBarModule
   ],
   templateUrl: './add-new-employee.component.html',
   styleUrls: ['./add-new-employee.component.scss']
@@ -54,7 +56,8 @@ export class AddNewEmployeeComponent implements OnInit {
     private employeesService: EmployeesService,
     private departmentsService: DepartmentsService,
     private router: Router,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -85,27 +88,38 @@ export class AddNewEmployeeComponent implements OnInit {
 
   employee(e: any) {
     e.preventDefault();
-
+  
     if (this.addNewemployeeForm.valid && this.hasNonEmptyFields()) {
       let formData = { ...this.addNewemployeeForm.value };
-
+  
       formData = this.cleanFormData(formData);
       formData.arrival_time = this.formatTimeForSubmission(formData.arrival_time);
       formData.leave_time = this.formatTimeForSubmission(formData.leave_time);
-
+  
       if (this.employeeId) {
         this.employeesService.updateEmployee(this.employeeId, formData).subscribe(() => {
+          this.showToast('Employee updated successfully!');
           this.router.navigate(['/employees']);
           this.addNewemployeeForm.reset();
         });
       } else {
         this.employeesService.addNewEmployee(formData).subscribe(() => {
+          this.showToast('Employee added successfully!');
           this.router.navigate(['/employees']);
           this.addNewemployeeForm.reset();
         });
       }
     }
   }
+  showToast(message: string) {
+    this.snackBar.open(message, 'Close', {
+      duration: 5000,  // Duration in milliseconds
+      horizontalPosition: 'center',  // Position to the right
+      verticalPosition: 'bottom', 
+      panelClass: ['custom-snackbar'], // Position at the top
+    });
+  }
+    
   private cleanFormData(formData: any): any {
     Object.keys(formData).forEach(key => {
       formData[key] = formData[key] ?? '';  // Replace undefined or null with an empty string
@@ -116,7 +130,7 @@ export class AddNewEmployeeComponent implements OnInit {
   private formatTimeForSubmission(time: string | null | undefined): string {
     if (time) {
       const parts = time.split(':');
-      return parts.length === 2 ? `${time}:00` : time;  // Ensure HH:mm:ss format
+      return parts.length === 2 ?` ${time}:00` : time;  // Ensure HH:mm:ss format
     }
     return '00:00:00'; // Default to '00:00:00' if time is null or undefined
   }

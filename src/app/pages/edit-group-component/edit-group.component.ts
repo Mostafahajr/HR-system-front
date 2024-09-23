@@ -19,6 +19,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-edit-group',
@@ -55,7 +56,8 @@ export class EditGroupComponent implements OnInit {
     private privilegeService: PrivilegeService,
     private fb: FormBuilder,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private snackBar: MatSnackBar
   ) {
     this.privilegeForm = this.fb.group({
       groupName: ['', Validators.required],
@@ -152,15 +154,13 @@ export class EditGroupComponent implements OnInit {
     if (this.privilegeForm.valid) {
       const formData = this.privilegeForm.value;
       const groupName = formData.groupName;
-      const selectedPrivileges = this.getSelectedPrivileges(
-        formData.privileges
-      );
-
+      const selectedPrivileges = this.getSelectedPrivileges(formData.privileges);
+  
       const requestData = {
         group_name: groupName,
         privileges: selectedPrivileges,
       };
-
+  
       const groupId = this.route.snapshot.params['id'];
       this.privilegeService
         .updateGroup(groupId, requestData)
@@ -168,15 +168,25 @@ export class EditGroupComponent implements OnInit {
         .subscribe({
           next: (response) => {
             console.log('Group updated successfully', response);
+            this.showToast('Group updated successfully'); // Show success toast
             this.router.navigate(['groups-and-permissions']);
           },
           error: (error) => {
             console.error('Error updating group', error);
-            // Handle error (e.g., show error message)
+            this.showToast('Error updating group'); // Show error toast
           },
         });
     }
   }
+  showToast(message: string): void {
+    this.snackBar.open(message, 'Close', {
+      duration: 3000,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+      panelClass: ['custom-snackbar'] // You can style this in your CSS
+    });
+  }
+    
 
   getSelectedPrivileges(privileges: any[]): number[] {
     const selectedPrivileges: number[] = [];

@@ -100,7 +100,7 @@ form {
 }
 
 .id-column {
-  width: 70px;
+  width: 120px;
 }
 
 .action-column {
@@ -112,3 +112,7 @@ form {
   overflow: auto;
   width: 100%;
 }
+th{
+  background-color:   #2a2f4b !important; 
+  color: #ffffff; 
+  }
