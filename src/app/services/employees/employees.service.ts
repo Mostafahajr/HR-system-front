@@ -30,7 +30,7 @@ export interface EmployeeResponse {
   providedIn: 'root'
 })
 export class EmployeesService {
-  baseUrl: string = "http://pioneer-back2.test/api/employees";
+  baseUrl: string = "http://pioneer-back.test/api/employees";
 
   constructor(private http: HttpClient) {}
 

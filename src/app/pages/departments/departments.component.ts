@@ -16,8 +16,6 @@ import { NgIf } from '@angular/common';
 import { MatButton } from '@angular/material/button';
 import { MatCommonModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
-import { catchError, switchMap, throwError } from 'rxjs';
-import { Department } from '../../models/iDepartment';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EmployeesService } from '../../services/employees/employees.service';
 import { Employee, EmployeesByDepartment } from '../../models/iEmployee';
@@ -32,7 +30,7 @@ import { Employee, EmployeesByDepartment } from '../../models/iEmployee';
 })
 export class DepartmentsComponent implements OnInit, AfterViewInit {
 
-  constructor(private departmenServices: DepartmentsService, private router: Router, private snackBar: MatSnackBar) { }
+  constructor(private departmenServices: DepartmentsService, private router: Router, private snackBar: MatSnackBar, private employeeService: EmployeesService) { }
   employees: Employee[] = [];
 
   departments: Department[] = [];
@@ -46,7 +44,6 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  constructor(private departmenServices: DepartmentsService, private employeeService: EmployeesService,private router: Router) {}
 
   ngOnInit(): void {
     this.fetchDepartments();

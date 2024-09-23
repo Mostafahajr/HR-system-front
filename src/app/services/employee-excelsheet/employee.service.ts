@@ -6,7 +6,7 @@ import {Employee} from '../../models/iEmployee';
   providedIn: 'root'
 })
 export class EmployeeService {
-  private apiUrl = 'http://pioneer-back2.test/api/employees'; // Your API URL
+  private apiUrl = 'http://pioneer-back.test/api/employees'; // Your API URL
 
   constructor(private http: HttpClient) {}
 

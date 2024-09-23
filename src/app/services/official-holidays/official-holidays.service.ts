@@ -7,7 +7,7 @@ import { IHoliday } from '../../models/iHoliday'; // Adjust the path as needed
   providedIn: 'root',
 })
 export class OfficialHolidaysService {
-  private apiUrl = 'http://pioneer-back2.test/api/off-days'; // Replace with your API URL
+  private apiUrl = 'http://pioneer-back.test/api/off-days'; // Replace with your API URL
 
   constructor(private http: HttpClient) {}
 
