@@ -15,19 +15,24 @@ import { AuthService } from '../../auth/auth.service';
 })
 export class NavbarComponent implements OnInit {
   user: any = null;
-  showLogoutButton = false; // To control the visibility of the Logout button
+  showLogoutButton = false;
 
   constructor(private router: Router, private authService: AuthService) {}
 
   ngOnInit(): void {
-    this.loadUserInfo();
+    this.loadUserInfo(); // Initial check when component loads
 
-    // Subscribe to router events to update the showLogoutButton flag based on the current route
+    // Subscribe to router events to check if the user navigates after login
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe(() => {
-        this.showLogoutButton =
-          this.router.url !== '/login' && !!localStorage.getItem('token');
+      .subscribe((event: NavigationEnd) => {
+        // Check if the user navigates to a logged-in page (e.g., '/dashboard')
+        if (this.router.url !== '/login' && !!localStorage.getItem('token')) {
+          this.showLogoutButton = true;
+          this.loadUserInfo(); // Manually trigger user info fetch after navigation
+        } else {
+          this.showLogoutButton = false;
+        }
       });
   }
 
@@ -35,16 +40,16 @@ export class NavbarComponent implements OnInit {
     const token = localStorage.getItem('token');
 
     if (token) {
-      console.log(1);
+      // Fetch the user info from AuthService
       this.authService.getUserInfo().subscribe({
         next: (userInfo) => {
-          console.log(2);
-          this.user = userInfo; // Set the user info
-          console.log(3);
-          console.log('User info loaded:', this.user); // Debug log
+          this.user = userInfo; // Set the user info after login
+          console.log(this.user.user.name);
+
+          console.log('User info loaded:', this.user);
         },
         error: (err) => {
-          console.error('Error fetching user info:', err); // Handle errors
+          console.error('Error fetching user info:', err);
           this.user = null; // Set user to null if an error occurs
         },
       });
@@ -54,7 +59,7 @@ export class NavbarComponent implements OnInit {
   }
 
   logout(): void {
-    localStorage.removeItem('token');
-    this.router.navigate(['/login']);
+    localStorage.removeItem('token'); // Remove the token
+    this.router.navigate(['/login']); // Navigate to the login page
   }
 }

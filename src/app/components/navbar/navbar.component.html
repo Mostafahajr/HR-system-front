@@ -7,5 +7,10 @@
   <!-- Spacer to push the following items to the right -->
   <span class="spacer"></span>
   <!-- Show the Logout button based on the showLogoutButton flag -->
-  <button mat-button *ngIf="showLogoutButton" (click)="logout()">Logout</button>
+  <div class="side">
+    <p class="name">{{ user?.user.name }}</p>
+    <button mat-button *ngIf="showLogoutButton" (click)="logout()">
+      Logout
+    </button>
+  </div>
 </mat-toolbar>
