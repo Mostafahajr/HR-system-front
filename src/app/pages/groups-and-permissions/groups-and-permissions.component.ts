@@ -103,7 +103,6 @@ export class GroupsAndPermissionsComponent implements OnInit, AfterViewInit, OnD
         next: () => {
           // Re-fetch the groups data after deletion
           this.fetchGroups();
-          alert('Group deleted successfully');
         },
         error: (error) => {
           console.log(error);

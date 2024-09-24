@@ -23,7 +23,7 @@
         <th mat-header-cell *matHeaderCellDef>Name</th>
         <td mat-cell *matCellDef="let employee">{{ employee.name }}</td>
       </ng-container>
-      <!-- Department Column -->A
+      <!-- Department Column -->
       <ng-container matColumnDef="department">
         <th mat-header-cell *matHeaderCellDef class="dep-col">Department</th>
         <td mat-cell *matCellDef="let employee" class="dep-col">
@@ -52,8 +52,8 @@
       </ng-container>
       <!-- Actions Column -->
       <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef class="actions-header">Actions</th>
-        <td mat-cell *matCellDef="let employee">
+        <th mat-header-cell *matHeaderCellDef class="actions-col">Actions</th>
+        <td mat-cell *matCellDef="let employee" class="actions-col">
           <div class="button-container">
             <button mat-icon-button class="custom-icon-button view-button"
               [routerLink]="['/employees/show', employee.id]">
@@ -75,8 +75,10 @@
     </table>
   </div>
 </div>
-<mat-paginator [length]="dataSource.data.length" [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]"
-  aria-label="Select page">
-</mat-paginator>
+<mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+
 }
+
+
+
 <router-outlet></router-outlet>

@@ -1,56 +1,56 @@
-.full-width-table {
-  width: 100%;
-}
+// .full-width-table {
+//   width: 100%;
+// }
 
 .mat-elevation-z8 {
   box-shadow: none !important;
   height: 100%; /* Set height for the entire table container */
 }
 
-.container {
-  padding-bottom: 36px;
-}
+// .container {
+//   padding-bottom: 36px;
+// }
 
 .scrollable-table {
   max-height: 50vh; /* Define a fixed height for the scrollable area */
   overflow-y: auto; /* Make the body of the table scrollable */
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
+// table {
+//   width: 100%;
+//   border-collapse: collapse;
+// }
 
-.mat-cell,
-.mat-header-cell {
-  padding: 16px;
-  text-align: start;
-  width: 14%; /* Adjust for responsive behavior */
-}
+// .mat-cell,
+// .mat-header-cell {
+//   padding: 16px;
+//   text-align: start;
+//   width: 14%; /* Adjust for responsive behavior */
+// }
 
-th.mat-header-cell {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  background: white; /* Set background to prevent overlap issues */
-  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Add shadow for visual separation */
-}
+// th.mat-header-cell {
+//   position: sticky;
+//   top: 0;
+//   z-index: 2;
+//   background: white; /* Set background to prevent overlap issues */
+//   box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4); /* Add shadow for visual separation */
+// }
 
 /* Keep the existing styles */
-.custom-icon-button {
-  background-color: transparent;
-  color: #006699;
-  border: 2px solid transparent;
-  border-radius: 4px;
-  padding: 8px;
-  min-width: 44px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
-}
+// .custom-icon-button {
+//   background-color: transparent;
+//   color: #006699;
+//   border: 2px solid transparent;
+//   border-radius: 4px;
+//   padding: 8px;
+//   min-width: 44px;
+//   height: 40px;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   font-size: 24px;
+//   transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+// }
 
 .view-button:hover {
   background-color: #0560de;
@@ -90,19 +90,19 @@ th.mat-header-cell {
   gap: 24px;
 }
 
-.w-time {
-  width: 160px;
-  margin-bottom: -10px;
-  margin-top: 10px;
-}
+// .w-time {
+//   width: 160px;
+//   margin-bottom: -10px;
+//   margin-top: 10px;
+// }
 
-th h6 {
-  text-align: center;
-}
+// th h6 {
+//   text-align: center;
+// }
 
-td {
-  text-align: start;
-}
+// td {
+//   text-align: start;
+// }
 
 .btn {
   height: 56px;
@@ -110,26 +110,28 @@ td {
   border-radius: 10px;
 }
 
-.x-time {
-  width: 160px;
-  height: 56px;
-  margin: 10px 0;
-  display: flex;
-  justify-content: start;
-  align-items: center;
-}
+// .x-time {
+//   width: 160px;
+//   height: 56px;
+//   margin: 10px 0;
+//   display: flex;
+//   justify-content: start;
+//   align-items: center;
+// }
 
 th {
   box-shadow: 0 -2px 2px -1px rgba(0, 0, 0, 0.4);
   background-color:   #2a2f4b !important; 
   color: #ffffff; 
+  text-align: center;
+  
 }
 
 
-.action-buttons {
-  display: flex;
-  gap: 16px;
-}
+// .action-buttons {
+//   display: flex;
+//   gap: 16px;
+// }
 
 .time {
   width: 150px;
@@ -142,4 +144,23 @@ th {
   justify-content: center;
   align-items: center;
 }
-
+.table-scroll
+{
+  max-height: 55vh;
+  overflow: auto;
+}
+.time-col
+{
+  width: 156px;
+  text-align: center !important;
+  text-indent:55px;
+}
+.action-col
+{
+  width: 180px;
+  text-align: center;
+}
+.dep-col
+{
+  width: 200px;
+}

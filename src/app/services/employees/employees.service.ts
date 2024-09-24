@@ -38,7 +38,6 @@ export class EmployeesService {
     return this.http.get<EmployeeResponse>(this.baseUrl);
   }
 
-
   getEmployeeById(id: number): Observable<any> { // Updated return type
     return this.http.get<any>(`${this.baseUrl}/${id}`);
   }

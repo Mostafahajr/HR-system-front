@@ -67,7 +67,7 @@ button.submit-button {
 
 .table-container {
   overflow: auto;
-  height: 50vh;
+  max-height: 50vh;
   .mat-elevation-z8 {
     box-shadow: none !important;
   }
@@ -132,13 +132,14 @@ button.submit-button {
 .button-container {
   display: flex;
   gap: 10px;
+  justify-content: center;
 }
 .date-col {
-  width: 120px;
+  width: 150px;
   text-align: center;
 }
-.actions-col {
-  width: 150px;
+.action-col {
+  width: 170px;
   text-align: center;
 }
 /* Responsive adjustments */

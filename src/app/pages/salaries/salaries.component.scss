@@ -162,7 +162,7 @@ mat-paginator {
 #table {
   overflow: auto;
   /* Enable vertical scrolling */
-  height: 48vh;
+  max-height: 48vh;
 }
 
 .full-width-table {

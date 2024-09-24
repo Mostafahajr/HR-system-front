@@ -86,3 +86,17 @@
 .check-col {
   width: 48px;
 }
+th {
+  background-color:   #2a2f4b !important; 
+  color: #ffffff; 
+  input{
+    background-color: #f1f4f6 !important;
+  }
+}
+// input[type="checkbox"]:nth-of-type(1) {
+//   border-color: #f1f4f6;
+// }
+.white-checked
+{
+border-color: #ffffff !important;
+}

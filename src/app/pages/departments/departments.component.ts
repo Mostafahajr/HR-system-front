@@ -79,7 +79,6 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
         });
     }
   }
-
   department(e: any): void {
     e.preventDefault();
     if (this.addNewDepartmentForm.valid && this.hasNonEmptyFields()) {
@@ -91,8 +90,9 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
         next: (response) => {
           console.log('Response from adding department:', response);
           this.showToast('Department added successfully');
-          this.addNewDepartmentForm.reset();
-          this.fetchDepartments();
+          // this.addNewDepartmentForm.reset();
+          // this.fetchDepartments();
+          window.location.reload()
         },
         error: (err) => {
           console.error('Error adding department:', err);
@@ -152,76 +152,66 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
   generateExcelFiles(): void {
     this.employeeService.getAllEmployees().subscribe((response: any) => {
       const employees: Employee[] = response.data;
-
+      console.log(employees);
+      
       // Group employees by department
       const employeesByDepartment: EmployeesByDepartment = employees.reduce((acc: EmployeesByDepartment, employee: Employee) => {
-        const departmentName = employee.department?.name || 'Unassigned'; // Handle null department
+        const departmentName = employee.department?.name || 'Unassigned';
         if (!acc[departmentName]) {
           acc[departmentName] = [];
         }
         acc[departmentName].push({
           Name: employee.name || 'Unknown',
-          ArrivalTime: employee.arrival_time ? new Date(employee.arrival_time).toLocaleString() : '',
-          DepartureTime: employee.leave_time ? new Date(employee.leave_time).toLocaleString() : ''
+          ArrivalTime: '',  // Always set to empty string
+          DepartureTime: ''  // Always set to empty string
         });
         return acc;
-      }, {} as EmployeesByDepartment); // Explicitly typing the accumulator
-
+      }, {} as EmployeesByDepartment);
+  
       // Generate Excel files for each department
-      for (const [departmentName, empList] of Object.entries(employeesByDepartment)) {
+      Object.entries(employeesByDepartment).forEach(([departmentName, empList]) => {
         const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(empList);
         const workbook: XLSX.WorkBook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, departmentName);
-
-        // Create a file name for each department
-        const fileName = `${departmentName.replace(/\s+/g, '_')}_Employees_2024-09-06.xlsx`;
+  
+        const fileName = `${departmentName.replace(/\s+/g, '_')}_Employees_${this.getCurrentDate()}.xlsx`;
         const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
         this.saveExcelFile(excelBuffer, fileName);
-      }
+      });
     });
   }
-
+  
   printDepartment(department: any): void {
     this.employeeService.getAllEmployees().subscribe((response: any) => {
-        const employees: Employee[] = response.data;
-
-        // Filter employees by the selected department
-        const filteredEmployees = employees.filter(employee => employee.department?.name === department.department_name);
-
-        // Prepare data for Excel
-        const empList = filteredEmployees.map(employee => ({
-            Name: employee.name || 'Unknown',
-            ArrivalTime: '',  // Set to empty or your actual data
-            DepartureTime: ''  // Set to empty or your actual data
-        }));
-
-        // Get today's date
-        const today = new Date();
-        const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-
-        // Create worksheet and workbook
-        const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(empList);
-        const workbook: XLSX.WorkBook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, department.department_name);
-
-        // Create a file name for the department using today's date
-        const fileName = `${department.department_name.replace(/\s+/g, '_')}_${formattedDate}.xlsx`;
-        const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-        this.saveExcelFile(excelBuffer, fileName);
+      const employees: Employee[] = response.data;
+  
+      // Filter employees by the selected department
+      const filteredEmployees = employees.filter(employee => employee.department?.name === department.department_name);
+  
+      // Prepare data for Excel
+      const empList = filteredEmployees.map(employee => ({
+        Name: employee.name || 'Unknown',
+        ArrivalTime: '',  // Always set to empty string
+        DepartureTime: ''  // Always set to empty string
+      }));
+  
+      // Create worksheet and workbook
+      const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(empList);
+      const workbook: XLSX.WorkBook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, department.department_name);
+  
+      const fileName = `${department.department_name.replace(/\s+/g, '_')}_${this.getCurrentDate()}.xlsx`;
+      const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+      this.saveExcelFile(excelBuffer, fileName);
     });
-}
-
-
-
-  formatTime(dateTime: string): string {
-    const date = new Date(dateTime);
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${hours}:${minutes}`;
   }
-
-  saveExcelFile(buffer: any, fileName: string): void {
-    const data: Blob = new Blob([buffer], { type: 'application/octet-stream' });
+  
+  private getCurrentDate(): string {
+    return new Date().toISOString().split('T')[0]; // Returns date in YYYY-MM-DD format
+  }
+  
+  private saveExcelFile(buffer: any, fileName: string): void {
+    const data: Blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     saveAs(data, fileName);
   }
 }
