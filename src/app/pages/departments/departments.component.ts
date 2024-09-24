@@ -203,12 +203,28 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
       XLSX.utils.book_append_sheet(workbook, worksheet, department.department_name);
   
       // Create filename with an underscore before the date
-      const fileName = `${department.department_name}_${this.getCurrentDate()}.xlsx`;  // Add underscore before date
+      const fileName = `${department.department_name}_${this.getCurrentDateGMT3()}.xlsx`;  // Add underscore before date
       const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
       this.saveExcelFile(excelBuffer, fileName);
     });
   }
+  getCurrentDateGMT3(): string {
+    // Create a new date object for the current time
+    const now = new Date();
+    
+    // Calculate the offset for GMT+3 (3 hours in milliseconds)
+    const gmt3Offset = 3 * 60 * 60 * 1000;
+    
+    // Adjust the date to GMT+3
+    const gmt3Date = new Date(now.getTime() + gmt3Offset);
+    
+    // Format the date as YYYY-MM-DD
+    const year = gmt3Date.getFullYear();
+    const month = String(gmt3Date.getUTCMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const day = String(gmt3Date.getUTCDate()).padStart(2, '0');
   
+    return `${year}-${month}-${day}`; // Return the date in YYYY-MM-DD format
+  }
 
 
 

@@ -1,3 +1,4 @@
+import { MatSpinner } from '@angular/material/progress-spinner';
 import { MatExpansionModule } from '@angular/material/expansion';
 import {
   ChangeDetectionStrategy,
@@ -54,6 +55,7 @@ export interface UserData {
     MatFormFieldModule,
     MatIconModule,
     MatNativeDateModule,
+    MatSpinner,
   ],
   styleUrls: ['./attendance-reports.component.scss'],
   providers: [DatePipe, provideNativeDateAdapter()]
@@ -74,7 +76,7 @@ export class AttendanceReportsComponent implements OnInit {
   updateArrival: string = '';
   updateLeave: string = '';
   updatedUserId: number | null = null;
-
+  isLoading:boolean=true;
   startDate: Date | null = null;
   endDate: Date | null = null;
   nameFilter: string = '';
@@ -101,6 +103,7 @@ export class AttendanceReportsComponent implements OnInit {
   }
 
   getAttendanceApi() {
+    this.isLoading=true;
     this.attendanceService.getAttendances().subscribe({
       next: (response) => {
         const formattedData = response.data.map((item: any) => ({
@@ -116,6 +119,7 @@ export class AttendanceReportsComponent implements OnInit {
         this.dataSource.data = formattedData;
         this.filteredDataSource.data = formattedData;
         this.applyFilters();
+        this.isLoading=false;
       },
       error: (error) => {
         console.error(error);
