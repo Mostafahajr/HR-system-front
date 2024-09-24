@@ -3,7 +3,7 @@
   <form (ngSubmit)="ruleHandler()" [formGroup]="salaryForm" class="form-container">
     <div class="salary-settings">
       <!-- Overtime Input -->
-      <mat-form-field class="example-full-width" appearance="outline">
+      <mat-form-field class="example-full-width" appearance="outline" >
         <mat-label>Overtime (hours)</mat-label>
         <input matInput formControlName="overtime" type="number" [disabled]="!isEditable">
         <mat-error *ngIf="getOvertime.touched && getOvertime.hasError('required')">
@@ -25,13 +25,15 @@
         </mat-error>
       </mat-form-field>
     </div>
+    <div class="line"></div>
+
     <div class="button-container">
       <!-- Edit Button -->
-      <button mat-raised-button color="primary" type="button" (click)="toggleEdit()" *ngIf="!isEditable">
+      <button mat-stroked-button color="primary" type="button" (click)="toggleEdit()" *ngIf="!isEditable" class="edit-button">
         Edit
       </button>
       <!-- Save Changes Button -->
-      <button mat-raised-button color="primary" type="submit" *ngIf="isEditable">
+      <button mat-stroked-button  color="primary" type="submit" *ngIf="isEditable">
         Save Changes
       </button>
     </div>

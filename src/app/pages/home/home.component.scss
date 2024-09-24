@@ -6,10 +6,12 @@ h1 {
 .example-card {
   // width: 525px;
   margin-bottom: 8px;
+  height: 245px;
 }
 
 .text-center {
   text-align: center;
+  padding-bottom: 20px;
 }
 
 .d-flex {
@@ -32,6 +34,7 @@ h1 {
 
 .salary-card {
   // width: 715px;
+  padding-top: 20px;
 }
 
 table {
@@ -81,12 +84,6 @@ table {
 .start{
 margin-right: 990px;
 }
-.grid-container {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr); /* 3 equal columns */
-  gap: 10px; /* Optional: Adds space between grid items */
-  width: 100%; /* Takes up the full width of the parent container */
-}
 
 .grid-item:nth-of-type(1) {
 grid-column: span 3;
@@ -96,14 +93,69 @@ grid-column: span 3;
 }
 .grid-item:nth-of-type(2) {
   grid-column: span 5;
-
   // padding: 20px;
   text-align: center;
 
 }.grid-item:nth-of-type(3) {
   grid-column: span 4;
-
   // padding: 20px;
   text-align: center;
+}
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr); /* Defines the columns in your grid */
+  gap: 10px;
+  width: 100%;
+  margin-top: 25px;
+}
 
+.grid-item {
+  grid-column: span 4; /* Adjust based on the column span */
+}
+
+mat-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 500px; /* Set the desired fixed height */
+  overflow: hidden; /* Prevent content from overflowing */
+}
+
+mat-card-content {
+  flex-grow: 1;
+  overflow: auto; /* Allow content to scroll inside the card if necessary */
+}
+.title-col
+{
+  padding-bottom: 20px;
+}
+.emp-col
+{
+  width: 350px;
+  padding-bottom: 20px;
+}
+.department-card {
+  padding: 15px; /* Add padding inside the department card */
+
+  h2 {
+    margin: 15px 0; /* Adds space above and below the department number */
+    padding-left: 10px; /* Adds space between the department number and the left edge */
+  }
+
+  .start {
+    display: block; /* Ensures it's a block-level element */
+    margin-left: 10px; /* Adds margin between the department number and other content */
+  }
+}
+.sub-col
+{
+  margin-bottom: 30px;
+}
+.employeeCount
+{
+  text-align: center;
+}
+.count-col
+{
+  text-align: center;
 }
