@@ -141,7 +141,6 @@ th {
 }
 .time-text {
   display: flex;
-  justify-content: center;
   align-items: center;
 }
 .table-scroll
@@ -152,8 +151,7 @@ th {
 .time-col
 {
   width: 156px;
-  text-align: center !important;
-  text-indent:55px;
+
 }
 .action-col
 {
@@ -166,4 +164,14 @@ th {
 }
 .btn-margin{
   margin-right: 10px;
+}
+th{
+  text-align: center;
+}
+.time{
+  display: flex;
+}
+.no-padding{
+  width: 155px;
+  padding-top: 10px;
 }

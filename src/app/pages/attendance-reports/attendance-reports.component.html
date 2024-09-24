@@ -1,59 +1,38 @@
 <app-breadcrumbs></app-breadcrumbs>
 @if(isAddNewAttendancesRoute()) {
 
-  <div class="d-flex">
-    <div class="controllers">
-      <mat-form-field appearance="outline">
-        <input
-          matInput
-          [(ngModel)]="nameFilter"
-          (input)="applyFilter($event)"
-          placeholder="Filter by Name"
-        />
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <input
-          matInput
-          [matDatepicker]="picker1"
-          [(ngModel)]="startDate"
-          (dateChange)="applyDateFilter()"
-          placeholder="Start Date"
-        />
-        <mat-datepicker-toggle
-          matSuffix
-          [for]="picker1"
-        ></mat-datepicker-toggle>
-        <mat-datepicker #picker1></mat-datepicker>
-      </mat-form-field>
+<div class="d-flex">
+  <div class="controllers">
+    <mat-form-field appearance="outline">
+      <input matInput [(ngModel)]="nameFilter" (input)="applyFilter($event)" placeholder="Filter by Name" />
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <input matInput [matDatepicker]="picker1" [(ngModel)]="startDate" (dateChange)="applyDateFilter()"
+        placeholder="Start Date" />
+      <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+      <mat-datepicker #picker1></mat-datepicker>
+    </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <input
-          matInput
-          [matDatepicker]="picker2"
-          [(ngModel)]="endDate"
-          (dateChange)="applyDateFilter()"
-          placeholder="End Date"
-        />
-        <mat-datepicker-toggle
-          matSuffix
-          [for]="picker2"
-        ></mat-datepicker-toggle>
-        <mat-datepicker #picker2></mat-datepicker>
-      </mat-form-field>
-    </div>
-
-    <div class="action-buttons">
-      <button mat-raised-button (click)="generatePDF()" class="btn btn-margin">
-        Download PDF
-      </button>
-      <button mat-raised-button (click)="printReport()" class="btn">
-        Print
-      </button>
-    </div>
+    <mat-form-field appearance="outline">
+      <input matInput [matDatepicker]="picker2" [(ngModel)]="endDate" (dateChange)="applyDateFilter()"
+        placeholder="End Date" />
+      <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+      <mat-datepicker #picker2></mat-datepicker>
+    </mat-form-field>
   </div>
 
-  <div class="table-scroll">
-  <table mat-table [dataSource]="filteredDataSource" matSort class="mat-table full-width-table"> 
+  <div class="action-buttons">
+    <button mat-raised-button (click)="generatePDF()" class="btn btn-margin">
+      Download PDF
+    </button>
+    <button mat-raised-button (click)="printReport()" class="btn">
+      Print
+    </button>
+  </div>
+</div>
+
+<div class="table-scroll">
+  <table mat-table [dataSource]="filteredDataSource" matSort class="mat-table full-width-table">
     <!-- Employee Name Column -->
     <ng-container matColumnDef="employee_name">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
@@ -64,55 +43,44 @@
 
     <!-- Department Column -->
     <ng-container matColumnDef="department">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header class="dep-col" >Department</th>
-      <td mat-cell *matCellDef="let element"class="dep-col">{{ element.department }}</td>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header class="dep-col">Department</th>
+      <td mat-cell *matCellDef="let element" class="dep-col">{{ element.department }}</td>
     </ng-container>
 
     <!-- Arrival Time Column -->
     <ng-container matColumnDef="arrival">
-      <th  mat-header-cell *matHeaderCellDef mat-sort-header class="time-col">Arrival Time</th>
-      <td  mat-cell *matCellDef="let element" class="time-col">
-        <ng-container
-          *ngIf="isUpdated && updatedUserId === element.id; else viewMode"
-        >
-          <mat-form-field class="time" appearance="outline">
-            <input
-              matInput
-              type="time"
-              [(ngModel)]="updateArrival"
-              [value]="element.arrival_time"
-            />
+      <th mat-header-cell *matHeaderCellDef mat-sort-header class="time-col">Arrival Time</th>
+      <td mat-cell *matCellDef="let element" class="time-col">
+        <ng-container *ngIf="isUpdated && updatedUserId === element.id; else viewMode" >
+          <mat-form-field class="time" appearance="outline" class="no-padding">
+            <!-- Use ngModel to bind the updateArrival variable -->
+            <input matInput type="time" [(ngModel)]="updateArrival"  />
             <mat-icon matSuffix>access_time</mat-icon>
           </mat-form-field>
         </ng-container>
         <ng-template #viewMode>
-          <p class="time time-text">{{ element.arrival_time }}</p>
+          <p class="time time-text">{{ formatTime(element.arrival_time) }}</p>
         </ng-template>
       </td>
     </ng-container>
 
     <!-- Leave Time Column -->
     <ng-container matColumnDef="leave">
-      <th  mat-header-cell *matHeaderCellDef mat-sort-header class="time-col">Leave Time</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header class="time-col">Leave Time</th>
       <td mat-cell *matCellDef="let element" class="time-col">
-        <ng-container
-          *ngIf="isUpdated && updatedUserId === element.id; else viewModeLeave"
-        >
-          <mat-form-field class="time" appearance="outline">
-            <input
-              matInput
-              type="time"
-              [(ngModel)]="updateLeave"
-              [value]="element.leave_time"
-            />
+        <ng-container *ngIf="isUpdated && updatedUserId === element.id; else viewModeLeave" >
+          <mat-form-field class="time" appearance="outline" class="no-padding">
+            <!-- Use ngModel to bind the updateLeave variable -->
+            <input matInput type="time" [(ngModel)]="updateLeave" class="edit-time"/>
             <mat-icon matSuffix>access_time</mat-icon>
           </mat-form-field>
         </ng-container>
         <ng-template #viewModeLeave>
-          <p class="time time-text">{{ element.leave_time }}</p>
+          <p class="time time-text">{{ formatTime(element.leave_time) }}</p>
         </ng-template>
       </td>
     </ng-container>
+
 
     <!-- Date Column -->
     <ng-container matColumnDef="date">
@@ -123,11 +91,9 @@
     <!-- Actions Column -->
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef class="action-col">Actions</th>
-      <td mat-cell *matCellDef="let element"class="action-col">
+      <td mat-cell *matCellDef="let element" class="action-col">
         @if (isUpdated && updatedUserId === element.id) {
-        <button
-          mat-button
-          (click)="
+        <button mat-button (click)="
             updateRecord(
               element.id,
               element.employee_name,
@@ -135,8 +101,7 @@
               element.date,
               element.employee_id
             )
-          "
-        >
+          ">
           Save
         </button>
         <button mat-button (click)="closeUpdate()">Cancel</button>
@@ -152,10 +117,7 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
 </div>
-  <mat-paginator
-    [pageSizeOptions]="[5, 10, 20, 100]"
-    showFirstLastButtons
-  ></mat-paginator>
+<mat-paginator [pageSizeOptions]="[5, 10, 20, 100]" showFirstLastButtons ></mat-paginator>
 
 }
 <router-outlet></router-outlet>

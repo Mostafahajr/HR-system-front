@@ -152,7 +152,7 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
     this.employeesService.getAllEmployees().subscribe((response: any) => {
       const employees: Employee[] = response.data;
       console.log(employees);
-
+  
       // Group employees by department
       const employeesByDepartment: EmployeesByDepartment = employees.reduce((acc: EmployeesByDepartment, employee: Employee) => {
         const departmentName = employee.department?.name || 'Unassigned';
@@ -161,18 +161,18 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
         }
         acc[departmentName].push({
           Name: employee.name || 'Unknown',
-          ArrivalTime: '',  // Always set to empty string
-          DepartureTime: ''  // Always set to empty string
+          ArrivalTime: 'HH:mm',  // Default placeholder for Arrival Time
+          DepartureTime: 'HH:mm'  // Default placeholder for Departure Time
         });
         return acc;
       }, {} as EmployeesByDepartment);
-
+  
       // Generate Excel files for each department
       Object.entries(employeesByDepartment).forEach(([departmentName, empList]) => {
         const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(empList);
         const workbook: XLSX.WorkBook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, departmentName);
-
+  
         // Create filename with an underscore before the date
         const fileName = `${departmentName}_${this.getCurrentDate()}.xlsx`;  // Add underscore before date
         const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
@@ -180,33 +180,35 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
       });
     });
   }
+  
 
 
   printDepartment(department: any): void {
     this.employeesService.getAllEmployees().subscribe((response: any) => {
       const employees: Employee[] = response.data;
-
+  
       // Filter employees by the selected department
       const filteredEmployees = employees.filter(employee => employee.department?.name === department.department_name);
-
-      // Prepare data for Excel
+  
+      // Prepare data for Excel with default values
       const empList = filteredEmployees.map(employee => ({
         Name: employee.name || 'Unknown',
-        ArrivalTime: '',  // Set to empty or your actual data
-        DepartureTime: ''  // Set to empty or your actual data
+        ArrivalTime: 'HH:mm',  // Default placeholder for Arrival Time
+        DepartureTime: 'HH:mm'  // Default placeholder for Departure Time
       }));
-
+  
       // Create worksheet and workbook
       const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(empList);
       const workbook: XLSX.WorkBook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, department.department_name);
-
+  
       // Create filename with an underscore before the date
       const fileName = `${department.department_name}_${this.getCurrentDate()}.xlsx`;  // Add underscore before date
       const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
       this.saveExcelFile(excelBuffer, fileName);
     });
   }
+  
 
 
 

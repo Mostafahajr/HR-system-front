@@ -31,8 +31,6 @@ export interface UserData {
   arrival_time: string;
   leave_time: string;
   date: string;
-  original_arrival_time: string;
-  original_leave_time: string;
 }
 
 @Component({
@@ -55,10 +53,9 @@ export interface UserData {
     MatFormFieldModule,
     MatIconModule,
     MatNativeDateModule,
-    
   ],
   styleUrls: ['./attendance-reports.component.scss'],
-  providers: [DatePipe,provideNativeDateAdapter()]
+  providers: [DatePipe, provideNativeDateAdapter()]
 })
 export class AttendanceReportsComponent implements OnInit {
   displayedColumns: string[] = [
@@ -88,7 +85,7 @@ export class AttendanceReportsComponent implements OnInit {
     private router: Router,
     private datePipe: DatePipe,
     private attendanceService: AttendanceService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.getAttendanceApi();
@@ -109,11 +106,9 @@ export class AttendanceReportsComponent implements OnInit {
           employee_name: item.employee_name,
           employee_id: item.employee_id,
           department: item.department,
-          arrival_time: this.formatTimeForDisplay(item.arrival_time),
-          leave_time: this.formatTimeForDisplay(item.leave_time),
+          arrival_time: item.arrival_time,
+          leave_time: item.leave_time,
           date: this.formatDate(new Date(item.date)),
-          original_arrival_time: item.arrival_time,
-          original_leave_time: item.leave_time,
         }));
 
         this.dataSource.data = formattedData;
@@ -127,12 +122,10 @@ export class AttendanceReportsComponent implements OnInit {
   }
 
   isAddNewAttendancesRoute(): boolean {
-    // Check if the current route is "attendance-reports"
     return this.router.url === '/attendance-reports';
   }
 
   applyFilter(event: Event) {
-    // Filters table rows based on the input value for employee name
     this.nameFilter = (event.target as HTMLInputElement).value
       .trim()
       .toLowerCase();
@@ -140,7 +133,6 @@ export class AttendanceReportsComponent implements OnInit {
   }
 
   applyDateFilter() {
-    // Filters table rows based on selected start and end dates
     this.applyFilters();
   }
 
@@ -159,46 +151,70 @@ export class AttendanceReportsComponent implements OnInit {
     });
   }
 
-  formatTimeForDisplay(isoString: string): string {
-    const date = new Date(isoString); // ISO string from the server in UTC
-
-    // Convert the date from UTC to Africa/Cairo time zone
-    return date.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true,
-      timeZone: 'Africa/Cairo', // Set to Africa/Cairo explicitly
-    });
-  }
-
-  formatTimeForEdit(isoString: string): string {
-    const date = new Date(isoString);
-    return this.datePipe.transform(date, 'HH:mm') || '';
-  }
-
-  formatTimeForUpdate(time: string): string {
-    const [hours, minutes] = time.split(':');
-    const date = new Date();
-
-    // Set the hours and minutes in the Africa/Cairo time zone
-    date.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
-
-    // Convert the local time to UTC for sending to the backend
-    return new Date(
-      date.getTime() - date.getTimezoneOffset() * 60000
-    ).toISOString();
-  }
-
   editUser(id: number) {
     this.isUpdated = true;
     this.updatedUserId = id;
     const record = this.dataSource.data.find((item) => item.id === id);
     if (record) {
-      this.updateArrival = this.formatTimeForEdit(record.original_arrival_time);
-      this.updateLeave = this.formatTimeForEdit(record.original_leave_time);
+      if (this.isDateMoreThanOneMonthOld(record.date)) {
+        alert('You cannot modify attendance records that are more than one month old.');
+        this.isUpdated = false; // Reset the update state
+        this.updatedUserId = null; // Clear updated user ID
+        return; // Exit the method
+      }
+      // Set the arrival and leave time in local format for the editing UI
+      this.updateArrival = this.formatTimeForEditing(record.arrival_time); 
+      this.updateLeave = this.formatTimeForEditing(record.leave_time);
     }
   }
+  
+  isDateMoreThanOneMonthOld(dateString: string): boolean {
+    const recordDate = new Date(dateString);
+    const currentDate = new Date();
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(currentDate.getMonth() - 1);
+    return recordDate < oneMonthAgo;
+  }
+  
+  // Function to format time for editing (local time display)
+  formatTimeForEditing(timeString: string): string {
+    const date = new Date(timeString); // Parse the incoming ISO date string
+    const hours = String(date.getUTCHours()).padStart(2, '0'); // Pad hours to 2 digits
+    const minutes = String(date.getUTCMinutes()).padStart(2, '0'); // Pad minutes to 2 digits
+    return `${hours}:${minutes}`; // Return in HH:mm format
+  }
+  
+  // Function to combine current date with given HH:mm time string and return a Date object
+  // Function to combine current date with given HH:mm time string and return a Date object
+extractTime(timeString: string): string {
+  const [hours, minutes] = timeString.split(':').map(Number);
+  const date = new Date();
 
+  // Check if hours and minutes are valid numbers
+  if (isNaN(hours) || isNaN(minutes) || hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
+    throw new Error(`Invalid time format: ${timeString}`);
+  }
+
+  // Set the hours and minutes to the local date's time
+  date.setHours(hours, minutes, 0, 0);
+  
+  // Convert local time to UTC string before returning
+  return new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString(); 
+}
+
+  
+  // Time formatting for displayed time in HTML
+  formatTime(isoString: string): string {
+    
+    const date = new Date(isoString);
+    const hours = date.getUTCHours(); // Using UTC hours
+    const minutes = date.getUTCMinutes(); // Using UTC minutes
+    const suffix = hours >= 12 ? 'PM' : 'AM';
+    const formattedHours = hours % 12 || 12; // Convert 0 to 12 for midnight
+    const formattedMinutes = String(minutes).padStart(2, '0'); // Add leading zero for minutes if necessary
+    return `${formattedHours}:${formattedMinutes} ${suffix}`;
+  }
+  
   updateRecord(
     id: number,
     name: string,
@@ -207,17 +223,14 @@ export class AttendanceReportsComponent implements OnInit {
     employee_id: number
   ) {
     if (this.updateArrival && this.updateLeave) {
-      const formattedArrivalTime = this.formatTimeForUpdate(this.updateArrival);
-      const formattedLeaveTime = this.formatTimeForUpdate(this.updateLeave);
-      const formattedDate = this.formatDate(new Date(date));
-
+      // Convert formatted time back to ISO string for saving
       const updateAttendance = {
         employee_id,
-        arrival_time: formattedArrivalTime,
-        leave_time: formattedLeaveTime,
-        date: formattedDate,
+        arrival_time: this.extractTime(this.updateArrival), // Use extractTime for proper formatting
+        leave_time: this.extractTime(this.updateLeave),
+        date: date,
       };
-
+  
       this.attendanceService.updateAttendance(id, updateAttendance).subscribe({
         next: () => {
           const updatedRecord: UserData = {
@@ -225,20 +238,18 @@ export class AttendanceReportsComponent implements OnInit {
             employee_name: name,
             employee_id,
             department,
-            arrival_time: this.formatTimeForDisplay(formattedArrivalTime),
-            leave_time: this.formatTimeForDisplay(formattedLeaveTime),
-            date: formattedDate,
-            original_arrival_time: formattedArrivalTime,
-            original_leave_time: formattedLeaveTime,
+            arrival_time: updateAttendance.arrival_time, // Use updated arrival time
+            leave_time: updateAttendance.leave_time, // Use updated leave time
+            date: date,
           };
-
+  
           const index = this.dataSource.data.findIndex(
             (item) => item.id === id
           );
           if (index !== -1) {
-            this.dataSource.data[index] = updatedRecord;
+            this.dataSource.data[index] = updatedRecord; // Update the data source with the new record
           }
-
+  
           this.applyFilters();
           this.isUpdated = false;
           this.updatedUserId = null;
@@ -249,15 +260,28 @@ export class AttendanceReportsComponent implements OnInit {
       });
     }
   }
+  
+  
+  // Helper function to format time for the update (from HH:mm to a valid date-time string)
+  formatTimeForUpdate(time: string): string {
+    const [hours, minutes] = time.split(':').map(Number);
+    const date = new Date();
+  
+    // Check if hours and minutes are valid numbers
+    if (isNaN(hours) || isNaN(minutes) || hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
+      throw new Error(`Invalid time format: ${time}`);
+    }
+  
+    date.setHours(hours);
+    date.setMinutes(minutes);
+    date.setSeconds(0);
+    return date.toISOString(); // Or format as per your requirement
+  }
+  
+
 
   formatDate(date: Date): string {
-    // Convert the date dynamically to Africa/Cairo time zone
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      timeZone: 'Africa/Cairo', // Set to Africa/Cairo explicitly
-    });
+    return this.datePipe.transform(date, 'dd-MM-yyyy') || '';
   }
 
   closeUpdate() {
@@ -320,8 +344,8 @@ export class AttendanceReportsComponent implements OnInit {
               </thead>
               <tbody>
                 ${this.filteredDataSource.data
-                  .map(
-                    (row, index) => `
+          .map(
+            (row, index) => `
                   <tr>
                     <td>${index + 1}</td>
                     <td>${row.employee_name}</td>
@@ -331,8 +355,8 @@ export class AttendanceReportsComponent implements OnInit {
                     <td>${row.date}</td>
                   </tr>
                 `
-                  )
-                  .join('')}
+          )
+          .join('')}
               </tbody>
             </table>
           </body>
@@ -342,13 +366,12 @@ export class AttendanceReportsComponent implements OnInit {
       printWindow.document.close();
       printWindow.onload = () => {
         printWindow.print();
-        // Optional: Close the window after printing
-        // printWindow.close();
       };
     } else {
       console.error('Unable to open print window');
     }
   }
+
 
   generatePDF() {
     const doc = new jsPDF();

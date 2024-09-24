@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -27,5 +27,10 @@ export class AddAttendanceService {
 
   deleteAttendance(id: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/${id}`);
+  }
+
+  // New method for bulk creation of attendance records
+  bulkCreateAttendance(): Observable<any> {
+    return this.http.post(`${this.baseUrl}/bulk-create`, {}); // Assuming no body needed
   }
 }

@@ -82,7 +82,6 @@ export class AddAttendanceComponent implements OnInit, AfterViewInit {
 
   departments: Department[] = [];
   updatedRecords: Map<number, AttendanceRecord> = new Map();
-  timeZoneOffset: number = new Date().getTimezoneOffset();
 
   constructor(
     private fb: FormBuilder,
@@ -120,38 +119,46 @@ export class AddAttendanceComponent implements OnInit, AfterViewInit {
   handleExcelImport() {
     const excelData = history.state.data;
     if (excelData) {
-      console.log('Excel Data:', excelData);
-      const firstRecord = excelData[0];
-      if (firstRecord) {
-        this.filterForm.patchValue({
-          date: new Date(firstRecord.date),
-          department: firstRecord.departmentName || '',
-        });
-      }
+        console.log('Excel Data:', excelData);
+        const firstRecord = excelData[0];
+        if (firstRecord) {
+            this.filterForm.patchValue({
+                date: new Date(firstRecord.date),
+                department: firstRecord.departmentName || '',
+            });
+        }
 
-      this.dataSource.data = excelData.map((item: any, index: number) => ({
-        id: index + 1,
-        department: item.departmentName,
-        employee_name: item.employeeName,
-        arrival_time: this.parseTime(item.date, item.attendance),
-        leave_time: this.parseTime(item.date, item.departure),
-        date: new Date(item.date),
-      }));
-      this.markAllRecordsForUpdate();
-      this.cdr.markForCheck();
+        // Ensure proper mapping of the data
+        this.dataSource.data = excelData.map((item: any, index: number) => ({
+            id: index + 1,
+            department: item.departmentName || '', // Map department name correctly
+            employee_name: item.employeeName || '', // Map employee name correctly
+            arrival_time: item.attendance || null, // Use correct property for attendance
+            leave_time: item.departure || null, // Use correct property for departure
+            date: new Date(item.date), // Correctly map date
+        }));
+
+        this.markAllRecordsForUpdate();
+        this.cdr.markForCheck(); // Notify Angular to check for changes
     } else {
-      console.log('No Excel data passed.');
-      this.onSearch();
+        console.log('No Excel data passed.');
+        this.onSearch();
     }
-  }
+}
 
-  parseTime(date: string, time: string): Date | null {
-    if (!time) return null;
-    const [hours, minutes] = time.split(':').map(Number);
-    const parsedDate = new Date(date);
-    parsedDate.setHours(hours, minutes);
-    return parsedDate;
+
+  parseTime(time: string | null): string {
+    if (!time) return ''; // Return an empty string if time is null
+    
+    const date = new Date(time);
+    const hours = String(date.getUTCHours()).padStart(2, '0');
+    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+  
+    return `${hours}:${minutes}`; // Return as HH:MM format
   }
+  
+  
+
 
   markAllRecordsForUpdate() {
     this.dataSource.data.forEach((record) => {
@@ -162,34 +169,29 @@ export class AddAttendanceComponent implements OnInit, AfterViewInit {
   onSearch() {
     const { date, department } = this.filterForm.value;
     const formattedDate = this.formatDate(date);
-
+  
     console.log('Searching with:', { formattedDate, department });
-
-    this.addAttendanceService
-      .getAllAttendance(formattedDate, department)
-      .subscribe({
-        next: (data) => {
-          console.log('Received data:', data);
-          this.dataSource.data = data.map((record: any) => ({
-            id: record.id,
-            department: record.department_name,
-            employee_name: record.employee_name,
-            arrival_time: record.arrival_time
-              ? this.adjustToLocalTime(new Date(record.arrival_time))
-              : null,
-            leave_time: record.leave_time
-              ? this.adjustToLocalTime(new Date(record.leave_time))
-              : null,
-            date: new Date(record.date),
-          }));
-          console.log('Mapped data:', this.dataSource.data);
-          this.cdr.markForCheck();
-        },
-        error: (err) => {
-          console.error('Error occurred:', err);
-        },
-      });
+  
+    this.addAttendanceService.getAllAttendance(formattedDate, department).subscribe({
+      next: (data) => {
+        console.log('Received data:', data);
+        this.dataSource.data = data.map((record: any) => ({
+          id: record.id,
+          department: record.department_name,
+          employee_name: record.employee_name,
+          arrival_time: this.parseTime(record.arrival_time), // Use correct property
+          leave_time: this.parseTime(record.leave_time), // Use correct property
+          date: new Date(record.date),
+        }));
+        console.log('Mapped data:', this.dataSource.data);
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        console.error('Error occurred:', err);
+      },
+    });
   }
+  
 
   updateTime(
     element: AttendanceRecord,
@@ -197,33 +199,29 @@ export class AddAttendanceComponent implements OnInit, AfterViewInit {
     event: Event
   ) {
     const input = event.target as HTMLInputElement;
-    const [hours, minutes] = input.value.split(':').map(Number);
-
-    let newDate: Date | null = null;
-    if (!isNaN(hours) && !isNaN(minutes)) {
-      newDate = new Date(element.date);
-      newDate.setHours(hours, minutes);
+    const localTimeValue = input.value; // e.g., "12:00"
+  
+    // Update the field with the local time value directly
+    if (localTimeValue) {
+      element[field] = localTimeValue; // Store the time in HH:mm format
+    } else {
+      element[field] = null; // Set to null if the input is empty
     }
-
-    element[field] = newDate;
+  
     this.updatedRecords.set(element.id, { ...element });
-    this.cdr.markForCheck();
+    this.cdr.markForCheck(); // Trigger change detection
   }
+  
+  
+  
 
   submitUpdates() {
     const updateObservables: Observable<any>[] = [];
 
     this.updatedRecords.forEach((record) => {
-      const updatedArrivalTime = record.arrival_time
-        ? this.adjustToUTC(record.arrival_time).toISOString()
-        : null;
-      const updatedLeaveTime = record.leave_time
-        ? this.adjustToUTC(record.leave_time).toISOString()
-        : null;
-
       const observable = this.addAttendanceService.updateAttendance(record.id, {
-        arrival_time: updatedArrivalTime,
-        leave_time: updatedLeaveTime,
+        arrival_time: record.arrival_time,
+        leave_time: record.leave_time,
       });
 
       updateObservables.push(observable);
@@ -269,29 +267,21 @@ export class AddAttendanceComponent implements OnInit, AfterViewInit {
     return `${day}-${month}-${year}`;
   }
 
-  formatTimeForDisplay(date: Date | null): string {
-    if (!date) return '00:00';
-    return date.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    });
-  }
+  formatTimeForDisplay(time: string | null): string {
+  if (!time) return '00:00'; // Default value if time is not provided
 
-  adjustToLocalTime(date: Date): Date {
-    return new Date(date.getTime() - this.timeZoneOffset * 60000);
-  }
+  // Assuming time is in HH:MM format
+  return time; // Return the time string directly or format it if needed
+}
 
-  adjustToUTC(date: Date): Date {
-    return new Date(date.getTime() + this.timeZoneOffset * 60000);
-  }
+
 }
 
 interface AttendanceRecord {
   id: number;
   department: string;
   employee_name: string;
-  arrival_time: Date | null;
-  leave_time: Date | null;
+  arrival_time: string | null;
+  leave_time: string | null;
   date: Date;
 }

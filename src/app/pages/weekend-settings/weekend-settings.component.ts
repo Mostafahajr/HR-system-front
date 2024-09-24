@@ -84,6 +84,9 @@ export class WeekendSettingsComponent implements OnInit {
   // Update the weekend days
   updateWeekendDays(): void {
     if (this.weekendForm.valid) {
+      if (this.weekendForm.value.weekend1 == this.weekendForm.value.weekend2) {
+        return this.showToast(" Weekend 1 and Weekend 2 cannot be the same.")
+      }
       const updatedWeekendDays = [
         { id: this.vacationDays[0]?.id, weekend_day: this.weekendForm.value.weekend1 },
         { id: this.vacationDays[1]?.id, weekend_day: this.weekendForm.value.weekend2 }

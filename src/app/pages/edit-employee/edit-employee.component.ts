@@ -47,7 +47,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
       this.employeeForm = this.fb.group({
         name: ['', [Validators.required, Validators.maxLength(255)]],
         address: ['', [Validators.required, Validators.maxLength(255)]],
-        phone_number: ['', [Validators.required, Validators.maxLength(15)]],
+        phone_number: ['', [Validators.required, Validators.pattern('^01[0-9]{9}$')]],
         gender: ['', [Validators.required]],
         DOB: ['', [Validators.required, this.dobValidator]],
         nationality: ['', [Validators.required, Validators.maxLength(255)]],

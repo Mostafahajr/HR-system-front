@@ -67,7 +67,7 @@ button.submit-button {
 
 .table-container {
   overflow: auto;
-  height: 50.6vh;
+  max-height: 50.6vh;
   .mat-elevation-z8 {
     box-shadow: none !important;
   }

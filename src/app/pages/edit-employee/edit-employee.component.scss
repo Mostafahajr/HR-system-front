@@ -39,9 +39,13 @@ button
     padding-top: 10px;
     scroll-behavior: inherit;
     overflow:auto;
-    height: 70vh;
+    max-height: 70vh;
     max-width: 100%;
 }
 .custom-snackbar {
     padding-bottom: 50px; /* Adds space below the Snackbar content */
+}
+.btn-padding{
+    margin-bottom:10px;
+    padding-bottom:10px;
 }

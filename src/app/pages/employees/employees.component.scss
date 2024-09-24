@@ -64,7 +64,7 @@ mat-paginator {
 
 .wrapper {
   overflow: auto;
-  height: 59.3vh;
+  max-height: 59.3vh;
 }
 //styling filters
 .filter-fields{
