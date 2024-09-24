@@ -1,3 +1,4 @@
+import { EmployeeService } from './../../services/employee-excelsheet/employee.service';
 
 import { DepartmentsService } from './../../services/departments/departments.service';
 import { catchError, switchMap, throwError } from 'rxjs';
@@ -29,7 +30,7 @@ import { Employee, EmployeesByDepartment } from '../../models/iEmployee';
   styleUrls: ['./departments.component.scss']
 })
 export class DepartmentsComponent implements OnInit, AfterViewInit {
-
+  
   constructor(private departmenServices: DepartmentsService, private router: Router, private snackBar: MatSnackBar, private employeeService: EmployeesService) { }
   employees: Employee[] = [];
 
@@ -150,7 +151,7 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
 
 
   generateExcelFiles(): void {
-    this.employeeService.getAllEmployees().subscribe((response: any) => {
+    this.employeesService.getAllEmployees().subscribe((response: any) => {
       const employees: Employee[] = response.data;
       console.log(employees);
       
@@ -182,27 +183,32 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
   }
   
   printDepartment(department: any): void {
-    this.employeeService.getAllEmployees().subscribe((response: any) => {
-      const employees: Employee[] = response.data;
-  
-      // Filter employees by the selected department
-      const filteredEmployees = employees.filter(employee => employee.department?.name === department.department_name);
-  
-      // Prepare data for Excel
-      const empList = filteredEmployees.map(employee => ({
-        Name: employee.name || 'Unknown',
-        ArrivalTime: '',  // Always set to empty string
-        DepartureTime: ''  // Always set to empty string
-      }));
-  
-      // Create worksheet and workbook
-      const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(empList);
-      const workbook: XLSX.WorkBook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, department.department_name);
-  
-      const fileName = `${department.department_name.replace(/\s+/g, '_')}_${this.getCurrentDate()}.xlsx`;
-      const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-      this.saveExcelFile(excelBuffer, fileName);
+    this.employeesService.getAllEmployees().subscribe((response: any) => {
+        const employees: Employee[] = response.data;
+
+        // Filter employees by the selected department
+        const filteredEmployees = employees.filter(employee => employee.department?.name === department.department_name);
+
+        // Prepare data for Excel
+        const empList = filteredEmployees.map(employee => ({
+            Name: employee.name || 'Unknown',
+            ArrivalTime: '',  // Set to empty or your actual data
+            DepartureTime: ''  // Set to empty or your actual data
+        }));
+
+        // Get today's date
+        const today = new Date();
+        const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+        // Create worksheet and workbook
+        const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(empList);
+        const workbook: XLSX.WorkBook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, department.department_name);
+
+        // Create a file name for the department using today's date
+        const fileName = `${department.department_name.replace(/\s+/g, '_')}_${formattedDate}.xlsx`;
+        const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+        this.saveExcelFile(excelBuffer, fileName);
     });
   }
   
