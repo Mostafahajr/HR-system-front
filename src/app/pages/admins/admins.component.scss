@@ -92,8 +92,9 @@
   margin: 0 0.5rem;
 }
 
-.actions-header {
+.actions-col {
   text-align: center;
+  width: 150px;
 }
 .mat-paginator {
   padding-top: 20px;
@@ -103,4 +104,15 @@ th {
   background-color:   #2a2f4b !important; 
   color: #ffffff; 
 }
-
+.id-col
+{
+  width: 80px;
+}
+.mid-col
+{
+  width: 170px;
+}
+.name-col
+{
+  width: 300px;
+}

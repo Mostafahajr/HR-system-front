@@ -12,6 +12,8 @@ import { CommonModule } from '@angular/common';
 import { BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { EmployeesService } from '../../services/employees/employees.service';
 import { Subscription } from 'rxjs';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar'; // Import MatSnackBar
+import { MatProgressSpinner, MatSpinner } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-employees',
@@ -28,14 +30,17 @@ import { Subscription } from 'rxjs';
     RouterLink,
     MatFormFieldModule,
     MatSelectModule,
-    MatInputModule
+    MatInputModule,
+    MatSnackBarModule,
+    MatProgressSpinner,
+    // Add MatSnackBarModule
   ],
   templateUrl: './employees.component.html',
   styleUrls: ['./employees.component.scss'],
 })
 export class EmployeesComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-
+  loading: boolean = true;
   employees: any[] = [];
   showForm = false;
   selectedEmployee: any = null;
@@ -48,8 +53,12 @@ export class EmployeesComponent implements OnInit, AfterViewInit, OnDestroy {
   departments: string[] = [];
   private routerSubscription: Subscription;
 
-  constructor(private employeesService: EmployeesService, private router: Router) {
-    this.routerSubscription = this.router.events.subscribe(event => {
+  constructor(
+    private employeesService: EmployeesService,
+    private router: Router,
+    private snackBar: MatSnackBar // Inject MatSnackBar here
+  ) {
+    this.routerSubscription = this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         if (this.router.url === '/employees') {
           this.getEmployees();
@@ -74,18 +83,21 @@ export class EmployeesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getEmployees(): void {
-    this.employeesService.getAllEmployees().subscribe(response => {
-      this.employees = response.data.map((employee: any) => ({
-        ...employee,
-        department_name: employee.department ? employee.department.name : 'N/A'
-      }));
-      this.dataSource.data = this.employees;
-      this.extractDepartments();
-      // Reassign the paginator after updating the data source to fix problem of pagination after edit add
-      this.dataSource.paginator = this.paginator;
-    }, error => {
-      console.error('Error fetching employee data', error);
-    });
+    this.employeesService.getAllEmployees().subscribe(
+      (response) => {
+        this.employees = response.data.map((employee: any) => ({
+          ...employee,
+          department_name: employee.department ? employee.department.name : 'N/A',
+        }));
+        this.dataSource.data = this.employees;
+        this.extractDepartments();
+        // Reassign the paginator after updating the data source
+        this.dataSource.paginator = this.paginator;
+      },
+      (error) => {
+        console.error('Error fetching employee data', error);
+      }
+    );
   }
 
   setupFilters(): void {
@@ -103,7 +115,7 @@ export class EmployeesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   extractDepartments(): void {
-    this.departments = [...new Set(this.employees.map(e => e.department_name))];
+    this.departments = [...new Set(this.employees.map((e) => e.department_name))];
   }
 
   showDetails(employeeId: number): void {
@@ -115,13 +127,31 @@ export class EmployeesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteEmployee(employeeId: any) {
-    this.employeesService.deleteEmployee(employeeId).subscribe(() => {
-      this.getEmployees(); // Refresh the employee list
-    }, error => {
-      console.error('Error deleting employee', error);
+    this.employeesService.deleteEmployee(employeeId).subscribe(
+      () => {
+        this.getEmployees(); // Refresh the employee list
+
+        // Show success toast
+        this.showToast('Employee deleted successfully'); // Show success toast
+      },
+      (error) => {
+        console.error('Error deleting employee', error);
+
+        // Show error toast
+        this.showToast('Error of deleting employee '); // Show success toast
+
+      }
+    );
+  }
+  showToast(message: string): void {
+    this.snackBar.open(message, 'Close', {
+      duration: 3000,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+      panelClass: ['custom-snackbar'] // You can style this in your CSS
     });
   }
-
+    
   navigate(route: string) {
     this.router.navigate([route]);
   }

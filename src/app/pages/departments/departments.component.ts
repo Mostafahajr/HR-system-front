@@ -30,7 +30,8 @@ import { Employee, EmployeesByDepartment } from '../../models/iEmployee';
   styleUrls: ['./departments.component.scss']
 })
 export class DepartmentsComponent implements OnInit, AfterViewInit {
-  constructor(private departmenServices: DepartmentsService, private router: Router, private employeesService : EmployeesService,private snackBar: MatSnackBar) { }
+  
+  constructor(private departmenServices: DepartmentsService, private router: Router, private snackBar: MatSnackBar, private employeeService: EmployeesService) { }
   employees: Employee[] = [];
 
   departments: Department[] = [];
@@ -79,7 +80,6 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
         });
     }
   }
-
   department(e: any): void {
     e.preventDefault();
     if (this.addNewDepartmentForm.valid && this.hasNonEmptyFields()) {
@@ -91,8 +91,9 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
         next: (response) => {
           console.log('Response from adding department:', response);
           this.showToast('Department added successfully');
-          this.addNewDepartmentForm.reset();
-          this.fetchDepartments();
+          // this.addNewDepartmentForm.reset();
+          // this.fetchDepartments();
+          window.location.reload()
         },
         error: (err) => {
           console.error('Error adding department:', err);
@@ -152,35 +153,35 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
   generateExcelFiles(): void {
     this.employeesService.getAllEmployees().subscribe((response: any) => {
       const employees: Employee[] = response.data;
-
+      console.log(employees);
+      
       // Group employees by department
       const employeesByDepartment: EmployeesByDepartment = employees.reduce((acc: EmployeesByDepartment, employee: Employee) => {
-        const departmentName = employee.department?.name || 'Unassigned'; // Handle null department
+        const departmentName = employee.department?.name || 'Unassigned';
         if (!acc[departmentName]) {
           acc[departmentName] = [];
         }
         acc[departmentName].push({
           Name: employee.name || 'Unknown',
-          ArrivalTime: employee.arrival_time ? new Date(employee.arrival_time).toLocaleString() : '',
-          DepartureTime: employee.leave_time ? new Date(employee.leave_time).toLocaleString() : ''
+          ArrivalTime: '',  // Always set to empty string
+          DepartureTime: ''  // Always set to empty string
         });
         return acc;
-      }, {} as EmployeesByDepartment); // Explicitly typing the accumulator
-
+      }, {} as EmployeesByDepartment);
+  
       // Generate Excel files for each department
-      for (const [departmentName, empList] of Object.entries(employeesByDepartment)) {
+      Object.entries(employeesByDepartment).forEach(([departmentName, empList]) => {
         const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(empList);
         const workbook: XLSX.WorkBook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, departmentName);
-
-        // Create a file name for each department
-        const fileName = `${departmentName.replace(/\s+/g, '_')}_Employees_2024-09-06.xlsx`;
+  
+        const fileName = `${departmentName.replace(/\s+/g, '_')}_Employees_${this.getCurrentDate()}.xlsx`;
         const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
         this.saveExcelFile(excelBuffer, fileName);
-      }
+      });
     });
   }
-
+  
   printDepartment(department: any): void {
     this.employeesService.getAllEmployees().subscribe((response: any) => {
         const employees: Employee[] = response.data;
@@ -209,19 +210,14 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
         const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
         this.saveExcelFile(excelBuffer, fileName);
     });
-}
-
-
-
-  formatTime(dateTime: string): string {
-    const date = new Date(dateTime);
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${hours}:${minutes}`;
   }
-
-  saveExcelFile(buffer: any, fileName: string): void {
-    const data: Blob = new Blob([buffer], { type: 'application/octet-stream' });
+  
+  private getCurrentDate(): string {
+    return new Date().toISOString().split('T')[0]; // Returns date in YYYY-MM-DD format
+  }
+  
+  private saveExcelFile(buffer: any, fileName: string): void {
+    const data: Blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     saveAs(data, fileName);
   }
 }

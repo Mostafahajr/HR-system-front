@@ -4,7 +4,7 @@ h1 {
 }
 
 .example-card {
-  width: 525px;
+  // width: 525px;
   margin-bottom: 8px;
 }
 
@@ -19,35 +19,31 @@ h1 {
   margin-top: 10px;
 }
 
-.d-around {
-  display: flex;
-  justify-content: space-around;
+// .d-around {
+//   display: flex;
+//   justify-content: space-around;
 
-  margin: 10px auto;
-  width: 100%;
-  margin-top: 20px;
-}
+//   margin: 10px auto;
+//   width: 100%;
+//   margin-top: 20px;
+// }
 
-.w-100 {
-  width: 50%;
-  margin-bottom: 17px;
-  margin: auto;
-}
+
 
 .salary-card {
-  width: 715px;
+  // width: 715px;
 }
 
 table {
-  width: 100%;
-  margin-top: 10px;
+  // width: 100%;
+  // margin-top: 10px;
 }
 
-.d-gap {
-  display: grid;
-  gap: 23px;
-  margin-right: 10px;
-}
+// .d-gap {
+//   display: grid;
+//   gap: 23px;
+//   margin-right: 10px;
+// }
 
 .d-start {
   display: flex;
@@ -66,22 +62,48 @@ table {
   margin-bottom: 124px;
 }
 
-.department-container{
-  display: flex;
-  justify-content: start;
-  padding-bottom: 15px;
-}
-.department-card{
-  margin-top:15px;
-  width: 100%;
-  margin-bottom: 15px;
-}
-.main {
-  height: 76vh;
-  overflow: auto;
-  scroll-behavior: smooth;
-  padding: 0 10px 10px 10px;
-}
+// .department-container{
+//   display: flex;
+//   justify-content: start;
+//   padding-bottom: 15px;
+// }
+// .department-card{
+//   margin-top:15px;
+//   // width: 100%;
+//   margin-bottom: 15px;
+// }
+// .main {
+//   height: 76vh;
+//   overflow: auto;
+//   scroll-behavior: smooth;
+//   padding: 0 10px 10px 10px;
+// }
 .start{
 margin-right: 990px;
+}
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr); /* 3 equal columns */
+  gap: 10px; /* Optional: Adds space between grid items */
+  width: 100%; /* Takes up the full width of the parent container */
+}
+
+.grid-item:nth-of-type(1) {
+grid-column: span 3;
+  // padding: 20px;
+  text-align: center;
+
+}
+.grid-item:nth-of-type(2) {
+  grid-column: span 5;
+
+  // padding: 20px;
+  text-align: center;
+
+}.grid-item:nth-of-type(3) {
+  grid-column: span 4;
+
+  // padding: 20px;
+  text-align: center;
+
 }

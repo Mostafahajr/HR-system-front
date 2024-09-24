@@ -1,4 +1,3 @@
-import { Group } from './../../models/iGroup';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -10,13 +9,14 @@ import { MatButton } from '@angular/material/button';
 import { EmployeesService } from '../../services/employees/employees.service';
 import { AdminsService } from '../../services/admins/admins.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';  // Import MatSnackBar
 
 @Component({
   selector: 'app-edit-admin',
   standalone: true,
   imports: [ReactiveFormsModule, MatSelectModule, MatFormFieldModule, MatInputModule, FormsModule, CommonModule, MatIconModule, MatButton],
   templateUrl: './edit-admin.component.html',
-  styleUrl: './edit-admin.component.scss'
+  styleUrls: ['./edit-admin.component.scss']
 })
 export class EditAdminComponent implements OnInit {
 
@@ -27,7 +27,12 @@ export class EditAdminComponent implements OnInit {
   groups: any[] = [];
   showPasswordField = false; // FOR CHANGE PASSWORD BUTTON
 
-  constructor(private userService: AdminsService, private route: ActivatedRoute, private router: Router) {
+  constructor(
+    private userService: AdminsService, 
+    private route: ActivatedRoute, 
+    private router: Router,
+    private snackBar: MatSnackBar  // Inject MatSnackBar
+  ) {
     this.adminId = this.route.snapshot.params['id'];
 
     // Fetch admin data without preloading password
@@ -41,12 +46,11 @@ export class EditAdminComponent implements OnInit {
       }
     });
   }
+
   ngOnInit(): void {
     this.userService.getGroups().subscribe({
       next: (response) => {
-
         console.log(response.data);
-
         this.groups = response.data;
       }
     })
@@ -54,25 +58,30 @@ export class EditAdminComponent implements OnInit {
 
   updateAdminForm = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(20), Validators.pattern(/^[A-Za-z ]{3,}$/)]),
-    username: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z0-9 (.|*|&|^|%|@)]{3,}$/)]), email: new FormControl('', [Validators.required, Validators.email]),
+    username: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z0-9 (.|*|&|^|%|@)]{3,}$/)]), 
+    email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [Validators.pattern(/^[A-Za-z0-9(@|#|$|%)]{8,}$/)]),
     group_type_id: new FormControl('', [Validators.required])
   });
 
   get getFullName() {
-    return this.updateAdminForm.controls['name']
+    return this.updateAdminForm.controls['name'];
   }
+
   get getUsername() {
-    return this.updateAdminForm.controls['username']
+    return this.updateAdminForm.controls['username'];
   }
+
   get getEmail() {
-    return this.updateAdminForm.controls['email']
+    return this.updateAdminForm.controls['email'];
   }
+
   get getPassword() {
-    return this.updateAdminForm.controls['password']
+    return this.updateAdminForm.controls['password'];
   }
+
   get getPermission() {
-    return this.updateAdminForm.controls['group_type_id']
+    return this.updateAdminForm.controls['group_type_id'];
   }
 
   admin(e: any) {
@@ -90,15 +99,24 @@ export class EditAdminComponent implements OnInit {
           console.log(response);
           // Navigate back to the AdminsComponent
           this.router.navigate(['/admins']);
-
+          // Show success toast
+        this.showToast('Admin updated successfully')
         },
         error: (error) => {
           console.log(error);
+        this.showToast('Faild to update')
         }
       });
     }
   }
-
+  showToast(message: string) {
+    this.snackBar.open(message, 'Close', {
+      duration: 5000,  // Duration in milliseconds
+      horizontalPosition: 'center',  // Position to the right
+      verticalPosition: 'bottom', 
+      panelClass: ['custom-snackbar'], // Position at the top
+    });
+  }
   // Function to toggle the password field visibility
   togglePasswordField() {
     this.showPasswordField = !this.showPasswordField;
@@ -111,6 +129,4 @@ export class EditAdminComponent implements OnInit {
     const formValues = this.updateAdminForm.value;
     return Object.values(formValues).some(value => value !== '' && value !== null);
   }
-
-
 }

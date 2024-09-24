@@ -1,3 +1,4 @@
+import { MatButton } from '@angular/material/button';
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -27,7 +28,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     MatTableModule,
     MatPaginatorModule,
     ReactiveFormsModule,
-    BreadcrumbsComponent
+    BreadcrumbsComponent,
+    MatButton
   ],
   templateUrl: './official-holidays.component.html',
   styleUrls: ['./official-holidays.component.scss']

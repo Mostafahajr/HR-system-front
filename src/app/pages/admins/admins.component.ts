@@ -9,6 +9,7 @@ import { BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.c
 import { Observable, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { MatSort } from '@angular/material/sort';
+import { MatSnackBar } from '@angular/material/snack-bar'; // Import MatSnackBar
 
 @Component({
   selector: 'app-admins',
@@ -33,7 +34,7 @@ export class AdminsComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private router: Router, private userServices: AdminsService) {
+  constructor(private router: Router, private userServices: AdminsService, private snackBar: MatSnackBar) { // Inject MatSnackBar
     // Subscribe to router events to refresh data on navigation
     this.routerSubscription = this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
@@ -93,14 +94,32 @@ export class AdminsComponent implements AfterViewInit, OnInit, OnDestroy {
       next: (response) => {
         console.log(response);
         this.getUsers(); // Refresh the list after deletion
+
+        // Call the reusable showToast function on successful deletion
+        this.showToast('Admin deleted successfully!');
       },
       error: (error) => {
         console.log(error);
+
+        // Call the reusable showToast function on error
+        this.showToast('Failed to delete admin');
       }
     });
+
+    // Optionally filter out the deleted user from the data source immediately for visual feedback
     this.dataSource.data = this.dataSource.data.filter(user => user.id != id);
   }
-  
+
+  // Reusable toast function
+  showToast(message: string) {
+    this.snackBar.open(message, 'Close', {
+      duration: 5000,  // Duration in milliseconds
+      horizontalPosition: 'center',  // Position to the right
+      verticalPosition: 'bottom', 
+      panelClass: ['custom-snackbar'], // Position at the top
+    });
+  }
+
   isAddNewAdminRoute(): boolean {
     return this.router.url === '/admins';
   }

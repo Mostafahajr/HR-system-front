@@ -1,4 +1,4 @@
- import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -8,8 +8,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { EmployeesService } from '../../services/employees/employees.service';
 import { MatIconModule } from '@angular/material/icon';
-import { Department, DepartmentsService } from '../../services/departments/departments.service';
+import { DepartmentsService} from '../../services/departments/departments.service';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { Department } from '../../models/iDepartment';
 
 
 @Component({

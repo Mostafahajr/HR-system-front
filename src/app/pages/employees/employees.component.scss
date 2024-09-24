@@ -48,12 +48,13 @@
 }
 
 /* Center the Actions heading */
-.actions-header {
+.actions-col {
   text-align: center;
+  width: 160px;
 }
 .button-container {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 2px; 
 }
 mat-paginator {
@@ -63,7 +64,7 @@ mat-paginator {
 
 .wrapper {
   overflow: auto;
-  height: 60vh;
+  max-height: 60vh;
 }
 //styling filters
 .filter-fields{
@@ -77,4 +78,8 @@ mat-paginator {
 th {
   background-color:   #2a2f4b !important; 
   color: #ffffff; 
+}
+.time-col
+{
+  text-align: center;
 }

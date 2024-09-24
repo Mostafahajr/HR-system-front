@@ -1,7 +1,7 @@
 <app-breadcrumbs></app-breadcrumbs>
-<div class="main">
-  <div class="d-around">
-    <div class="d-gap">
+<div class="grid-container">
+   <div class="grid-item">
+  
       <!-- Employee Card -->
       <mat-card class="example-card p-3" appearance="outlined">
         <mat-card-header>
@@ -48,49 +48,51 @@
       </mat-card>
     </div>
 
+
     <!-- Salary Card -->
-    <mat-card class="w-100 salary-card" appearance="outlined">
-      <mat-card-header>
-        <mat-card-title-group>
-          <mat-card-title>Total Salaries</mat-card-title>
-          <p *ngIf="!salaryLoading">{{ salaryData?.sumOfSalaries | number: '1.2-2' }} EGP</p>
-        </mat-card-title-group>
-      </mat-card-header>
-      <mat-card-content class="text-center">
-        <mat-card-subtitle>Top Employees Salary</mat-card-subtitle>
-
-        <!-- Spinner for salary card -->
-        <div class="spinner-container" *ngIf="salaryLoading">
-          <mat-spinner class="salary-spinner"></mat-spinner>
-        </div>
-
-        <table mat-table [dataSource]="salaryData?.topSalaries" class="mat-elevation-z8"
-          style="background-color: transparent;" *ngIf="!salaryLoading">
-          <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef> Name </th>
-            <td mat-cell *matCellDef="let element"> {{ element.name }} </td>
-          </ng-container>
-
-          <ng-container matColumnDef="department">
-            <th mat-header-cell *matHeaderCellDef> Department </th>
-            <td mat-cell *matCellDef="let element"> {{ element.department }} </td>
-          </ng-container>
-
-          <ng-container matColumnDef="salary">
-            <th mat-header-cell *matHeaderCellDef> Salary </th>
-            <td mat-cell *matCellDef="let element"> {{ element.salary }} EGP </td>
-          </ng-container>
-
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
-      </mat-card-content>
-    </mat-card>
-  </div>
+    <div class="grid-item">
+      <mat-card class="w-100 salary-card" appearance="outlined">
+        <mat-card-header>
+          <mat-card-title-group>
+            <mat-card-title>Total Salaries</mat-card-title>
+            <p *ngIf="!salaryLoading">{{ salaryData?.sumOfSalaries | number: '1.2-2' }} EGP</p>
+          </mat-card-title-group>
+        </mat-card-header>
+        <mat-card-content class="text-center">
+          <mat-card-subtitle>Top Employees Salary</mat-card-subtitle>
+  
+          <!-- Spinner for salary card -->
+          <div class="spinner-container" *ngIf="salaryLoading">
+            <mat-spinner class="salary-spinner"></mat-spinner>
+          </div>
+  
+          <table mat-table [dataSource]="salaryData?.topSalaries"
+            style="background-color: transparent;" *ngIf="!salaryLoading">
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef> Name </th>
+              <td mat-cell *matCellDef="let element"> {{ element.name }} </td>
+            </ng-container>
+  
+            <ng-container matColumnDef="department">
+              <th mat-header-cell *matHeaderCellDef> Department </th>
+              <td mat-cell *matCellDef="let element"> {{ element.department }} </td>
+            </ng-container>
+  
+            <ng-container matColumnDef="salary">
+              <th mat-header-cell *matHeaderCellDef> Salary </th>
+              <td mat-cell *matCellDef="let element"> {{ element.salary }} EGP </td>
+            </ng-container>
+  
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+    </div>
 
 
   <!-- Department Table -->
-  <div class="department-container">
+  <div class="grid-item">
     <mat-card appearance="outlined" class="department-card">
       <mat-card-header>
         <mat-card-title-group>
@@ -107,7 +109,7 @@
         <div class="spinner-container" *ngIf="departmentLoading">
           <mat-spinner class="salary-spinner"></mat-spinner>
         </div>
-        <table mat-table [dataSource]="departmentData?.departments" class="mat-elevation-z8" *ngIf="!departmentLoading">
+        <table mat-table [dataSource]="departmentData?.departments"  *ngIf="!departmentLoading">
           <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef> Department Name </th>
             <td mat-cell *matCellDef="let element"> {{element.name}} </td>
@@ -122,5 +124,4 @@
       </mat-card-content>
     </mat-card>
   </div>
-  
 </div>

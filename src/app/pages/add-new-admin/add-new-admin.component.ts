@@ -16,6 +16,7 @@ import { MatButton } from '@angular/material/button';
 import { EmployeesService } from '../../services/employees/employees.service';
 import { AdminsService } from '../../services/admins/admins.service';
 import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar'; // Import MatSnackBar
 
 @Component({
   selector: 'app-add-new-admin',
@@ -34,49 +35,78 @@ import { Router } from '@angular/router';
   styleUrls: ['./add-new-admin.component.scss'],
 })
 export class AddNewAdminComponent {
-  admins:any;
-  groups:any;
+  admins: any;
+  groups: any;
   hide = true;
-  addNewAdminForm =new FormGroup({
-    name: new FormControl('',[Validators.required,Validators.minLength(3),Validators.maxLength(20),Validators.pattern(/^[A-Za-z ]{3,}$/)]),
-    username: new FormControl('',[Validators.required,Validators.minLength(3),Validators.maxLength(20),Validators.pattern(/^[A-Za-z ]{3,}$/)]),
-    email: new FormControl('',[Validators.required,Validators.email]),
-    password: new FormControl('',[Validators.required]),
-    group_type_id: new FormControl('',[Validators.required])
-});
-constructor(private userService:AdminsService,private router: Router){
-}
-ngOnInit(): void {
-  this.userService.getGroups().subscribe({
-    next:(response)=>{
 
-      console.log(response.data);
+  addNewAdminForm = new FormGroup({
+    name: new FormControl('', [
+      Validators.required,
+      Validators.minLength(3),
+      Validators.maxLength(20),
+      Validators.pattern(/^[A-Za-z ]{3,}$/),
+    ]),
+    username: new FormControl('', [
+      Validators.required,
+      Validators.minLength(3),
+      Validators.maxLength(20),
+      Validators.pattern(/^[A-Za-z ]{3,}$/),
+    ]),
+    email: new FormControl('', [Validators.required, Validators.email]),
+    password: new FormControl('', [Validators.required]),
+    group_type_id: new FormControl('', [Validators.required]),
+  });
 
-      this.groups = response.data;
-    }
-  })
-}
-admin(e: any) {
-  // e.preventDefault();
-  if (this.addNewAdminForm.valid) {
-    this.userService.recordUser(this.addNewAdminForm.value).subscribe({
-      next:(response)=>{
-        console.log(response);
-        this.router.navigate([`admins`]);
+  constructor(
+    private userService: AdminsService,
+    private router: Router,
+    private snackBar: MatSnackBar // Inject MatSnackBar
+  ) {}
+
+  ngOnInit(): void {
+    this.userService.getGroups().subscribe({
+      next: (response) => {
+        console.log(response.data);
+        this.groups = response.data;
       },
-      error:(error)=>{
-        console.log(error);
-
-      }
-    })
+    });
   }
 
-}
+  admin(e: any) {
+    if (this.addNewAdminForm.valid) {
+      this.userService.recordUser(this.addNewAdminForm.value).subscribe({
+        next: (response) => {
+          console.log(response);
+          
+          this.showToast('Admin added successfully!'); // toast add
 
-private hasNonEmptyFields(): boolean {
-  const formValues = this.addNewAdminForm.value;
-  return Object.values(formValues).some(
-    (value) => value !== '' && value !== null
-  );
-}
+          // Redirect to admins page
+          this.router.navigate([`admins`]);
+        },
+        error: (error) => {
+          console.log(error);
+
+          // Call the reusable showToast function on error
+          this.showToast('Failed to add admin');
+        },
+      });
+    }
+  }
+
+  // Reusable toast function
+  showToast(message: string) {
+    this.snackBar.open(message, 'Close', {
+      duration: 5000,  // Duration in milliseconds
+      horizontalPosition: 'center',  // Position to the right
+      verticalPosition: 'bottom', 
+      panelClass: ['custom-snackbar'], // Position at the top
+    });
+  }
+
+  private hasNonEmptyFields(): boolean {
+    const formValues = this.addNewAdminForm.value;
+    return Object.values(formValues).some(
+      (value) => value !== '' && value !== null
+    );
+  }
 }
