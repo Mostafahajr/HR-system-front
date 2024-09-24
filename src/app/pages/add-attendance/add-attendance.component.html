@@ -3,29 +3,16 @@
     <div class="controls">
       <mat-form-field appearance="outline">
         <mat-label>Choose a date</mat-label>
-        <input
-          matInput
-          [matDatepicker]="picker"
-          formControlName="date"
-          placeholder="Select date"
-          aria-label="Date picker"
-        />
+        <input matInput [matDatepicker]="picker" formControlName="date" placeholder="Select date"
+          aria-label="Date picker" />
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Choose a department</mat-label>
-        <mat-select
-          formControlName="department"
-          placeholder="Select department"
-          aria-label="Department select"
-        >
-          <mat-option
-            *ngFor="let dept of departments"
-            [value]="dept.department_name"
-            >{{ dept.department_name }}</mat-option
-          >
+        <mat-select formControlName="department" placeholder="Select department" aria-label="Department select">
+          <mat-option *ngFor="let dept of departments" [value]="dept.department_name">{{ dept.department_name}}</mat-option>
         </mat-select>
       </mat-form-field>
     </div>
@@ -55,13 +42,8 @@
         <th mat-header-cell *matHeaderCellDef>Arrival Time</th>
         <td mat-cell *matCellDef="let element">
           <mat-form-field appearance="outline" class="time-input">
-            <input
-              matInput
-              type="time"
-              [value]="element.arrival_time | date : 'HH:mm'"
-              (change)="updateTime(element, 'arrival_time', $event)"
-              title="Arrival Time"
-            />
+            <input matInput type="time" [value]="element.arrival_time | date : 'HH:mm'"
+              (change)="updateTime(element, 'arrival_time', $event)" title="Arrival Time" />
           </mat-form-field>
         </td>
       </ng-container>
@@ -70,13 +52,8 @@
         <th mat-header-cell *matHeaderCellDef>Leave Time</th>
         <td mat-cell *matCellDef="let element">
           <mat-form-field appearance="outline" class="time-input">
-            <input
-              matInput
-              type="time"
-              [value]="element.leave_time | date : 'HH:mm'"
-              (change)="updateTime(element, 'leave_time', $event)"
-              title="Leave Time"
-            />
+            <input matInput type="time" [value]="element.leave_time | date : 'HH:mm'"
+              (change)="updateTime(element, 'leave_time', $event)" title="Leave Time" />
           </mat-form-field>
         </td>
       </ng-container>
@@ -89,35 +66,24 @@
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef>Actions</th>
         <td mat-cell *matCellDef="let element">
-          <button
-            mat-button
-            color="warn"
-            (click)="deleteAttendance(element.id)"
-          >
+          <button mat-button color="warn" (click)="deleteAttendance(element.id)">
             Delete
           </button>
         </td>
       </ng-container>
 
-      <tr
-        mat-header-row
-        *matHeaderRowDef="displayedColumns; sticky: true"
-        class="header"
-      ></tr>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true" class="header"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
 
-    <mat-paginator
-      [length]="dataSource.data.length"
-      [pageSize]="3"
-      [pageSizeOptions]="[4, 10, 20]"
-      aria-label="Select page"
-    ></mat-paginator>
-  </section>
 
-  <div class="submit-button">
+  </section>
+  <div class="submit-button-section">
     <button mat-raised-button color="primary" (click)="submitUpdates()">
       Submit Updates
     </button>
+    <mat-paginator [length]="dataSource.data.length" [pageSize]="5" [pageSizeOptions]="[5, 10, 20, 100]" showFirstLastButtons
+    aria-label="Select page"></mat-paginator>
   </div>
+
 </div>

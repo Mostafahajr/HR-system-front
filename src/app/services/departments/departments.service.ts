@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Employee } from '../../models/iEmployee';
+import { Employee } from '../employees/employees.service';
+
 
 export interface Department {
   id: number;

@@ -68,24 +68,29 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy {
     this.errorMessage = '';
 
     if (file) {
-      this.fileName = file.name;
+        this.fileName = file.name;
 
-      const nameParts = file.name.split('_');
-      this.sectionName = nameParts[0] || '';
-      this.date = nameParts[1]?.split('.')[0] || '';
+        const nameParts = file.name.split('_');
+        this.sectionName = nameParts[0] || '';
 
-      const dialogRef = this.dialog.open(ImportDialogComponent, {
-        width: '400px',
-        data: { sectionName: this.sectionName, date: this.date, fileName: this.fileName }
-      });
+        // Extract the date and ignore any trailing characters like (1)
+        const datePart = nameParts[1]?.split('.')[0] || '';
+        const dateMatch = datePart.match(/(\d{4}-\d{1,2}-\d{1,2})/); // Match format YYYY-MM-DD
+        this.date = dateMatch ? dateMatch[0] : ''; // Extract the date if matched
 
-      dialogRef.afterClosed().subscribe(result => {
-        if (result?.confirmed) {
-          this.processExcelFile(file);
-        }
-      });
+        const dialogRef = this.dialog.open(ImportDialogComponent, {
+            width: '400px',
+            data: { sectionName: this.sectionName, date: this.date, fileName: this.fileName }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result?.confirmed) {
+                this.processExcelFile(file);
+            }
+        });
     }
-  }
+}
+
 
   processExcelFile(file: File): void {
     const reader = new FileReader();

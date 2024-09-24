@@ -1,6 +1,6 @@
 <div class="main">
     <div>
-        <h1>{{ breadcrumbs[breadcrumbs.length - 1]?.label }}</h1>
+        <h1>{{ breadcrumbs[breadcrumbs.length - 1].label }}</h1>
         <nav class="breadcrumb">
             <a [routerLink]="['']" class="home-link">
                 <mat-icon fontIcon="home">home</mat-icon>
@@ -19,7 +19,7 @@
     </div>
 
     <!-- Switch Case for Buttons -->
-    <ng-container [ngSwitch]="breadcrumbs[breadcrumbs.length - 1]?.label">
+    <ng-container [ngSwitch]="breadcrumbs[breadcrumbs.length - 1].label">
         <ng-container *ngSwitchCase="'Groups and Permissions'">
             <button mat-button (click)="navigate('groups-and-permissions/create')">
         Add New Group

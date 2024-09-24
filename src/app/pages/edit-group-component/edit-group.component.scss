@@ -1,6 +1,6 @@
 form {
-  padding-bottom: 16px;
-  padding-top: 16px;
+  padding-bottom: 12px;
+  padding-top: 12px;
 }
 
 .top_bar {
@@ -8,7 +8,7 @@ form {
   justify-content: space-between;
 }
 .table-wrapper {
-  height: 50vh;
+  height: 53.7vh;
   overflow: auto;
 }
 
@@ -16,4 +16,11 @@ form {
   height: 56px;
   border-radius: 10px;
   border: 0;
+}
+th {
+  background-color:   #2a2f4b !important; 
+  color: #ffffff; 
+  input{
+    background-color: #f1f4f6 !important;
+  }
 }

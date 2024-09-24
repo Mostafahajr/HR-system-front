@@ -43,7 +43,7 @@
     </div>
 
     <div class="action-buttons">
-      <button mat-raised-button (click)="generatePDF()" class="btn">
+      <button mat-raised-button (click)="generatePDF()" class="btn btn-margin">
         Download PDF
       </button>
       <button mat-raised-button (click)="printReport()" class="btn">
@@ -153,7 +153,7 @@
   </table>
 </div>
   <mat-paginator
-    [pageSizeOptions]="[5, 10, 25]"
+    [pageSizeOptions]="[5, 10, 20, 100]"
     showFirstLastButtons
   ></mat-paginator>
 

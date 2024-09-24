@@ -56,13 +56,12 @@
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
         </table>
-
-        <!-- Paginator -->
-        <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
-            aria-label="Select page of periodic elements">
-        </mat-paginator>
     </div>
 </div>
+<!-- Paginator -->
+<mat-paginator [pageSizeOptions]="[5, 10, 20, 100]" showFirstLastButtons
+aria-label="Select page of periodic elements">
+</mat-paginator>
 }
 <!-- Child routes (e.g., Add New Group) will load here -->
 <router-outlet></router-outlet>

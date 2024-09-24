@@ -1,5 +1,4 @@
-import { EmployeeService } from './../../services/employee-excelsheet/employee.service';
-
+import { EmployeesService } from './../../services/employees/employees.service';
 import { DepartmentsService } from './../../services/departments/departments.service';
 import { catchError, switchMap, throwError } from 'rxjs';
 import { Department } from '../../models/iDepartment';
@@ -18,7 +17,6 @@ import { MatButton } from '@angular/material/button';
 import { MatCommonModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { EmployeesService } from '../../services/employees/employees.service';
 import { Employee, EmployeesByDepartment } from '../../models/iEmployee';
 
 
@@ -30,8 +28,8 @@ import { Employee, EmployeesByDepartment } from '../../models/iEmployee';
   styleUrls: ['./departments.component.scss']
 })
 export class DepartmentsComponent implements OnInit, AfterViewInit {
-  
-  constructor(private departmenServices: DepartmentsService, private router: Router, private snackBar: MatSnackBar, private employeeService: EmployeesService) { }
+
+  constructor(private departmenServices: DepartmentsService, private router: Router, private snackBar: MatSnackBar, private employeesService: EmployeesService) { }
   employees: Employee[] = [];
 
   departments: Department[] = [];
@@ -86,7 +84,7 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
 
       const departmentNameValue = this.addNewDepartmentForm.value.department_name;
       const newDepartment: Partial<Department> = { department_name: departmentNameValue ?? '' };
-  
+
       this.departmenServices.addNewDepartment(newDepartment).subscribe({
         next: (response) => {
           console.log('Response from adding department:', response);
@@ -103,7 +101,7 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
     } else {
       this.showToast('Please fill in the required fields.'); // Notify if form is invalid
     }
-  }  
+  }
 
 
   private hasNonEmptyFields(): boolean {
@@ -133,13 +131,13 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
       }
     });
   }
-//toast function
+  //toast function
   showToast(message: string): void {
     this.snackBar.open(message, 'Close', {
       duration: 5000,
       horizontalPosition: 'center',
       verticalPosition: 'bottom',
-      panelClass:['custom-snackbar']
+      panelClass: ['custom-snackbar']
     });
   }
 
@@ -154,7 +152,7 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
     this.employeesService.getAllEmployees().subscribe((response: any) => {
       const employees: Employee[] = response.data;
       console.log(employees);
-      
+
       // Group employees by department
       const employeesByDepartment: EmployeesByDepartment = employees.reduce((acc: EmployeesByDepartment, employee: Employee) => {
         const departmentName = employee.department?.name || 'Unassigned';
@@ -168,54 +166,54 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
         });
         return acc;
       }, {} as EmployeesByDepartment);
-  
+
       // Generate Excel files for each department
       Object.entries(employeesByDepartment).forEach(([departmentName, empList]) => {
         const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(empList);
         const workbook: XLSX.WorkBook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, departmentName);
-  
-        const fileName = `${departmentName.replace(/\s+/g, '_')}_Employees_${this.getCurrentDate()}.xlsx`;
+
+        // Create filename with an underscore before the date
+        const fileName = `${departmentName}_${this.getCurrentDate()}.xlsx`;  // Add underscore before date
         const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
         this.saveExcelFile(excelBuffer, fileName);
       });
     });
   }
-  
+
+
   printDepartment(department: any): void {
     this.employeesService.getAllEmployees().subscribe((response: any) => {
-        const employees: Employee[] = response.data;
+      const employees: Employee[] = response.data;
 
-        // Filter employees by the selected department
-        const filteredEmployees = employees.filter(employee => employee.department?.name === department.department_name);
+      // Filter employees by the selected department
+      const filteredEmployees = employees.filter(employee => employee.department?.name === department.department_name);
 
-        // Prepare data for Excel
-        const empList = filteredEmployees.map(employee => ({
-            Name: employee.name || 'Unknown',
-            ArrivalTime: '',  // Set to empty or your actual data
-            DepartureTime: ''  // Set to empty or your actual data
-        }));
+      // Prepare data for Excel
+      const empList = filteredEmployees.map(employee => ({
+        Name: employee.name || 'Unknown',
+        ArrivalTime: '',  // Set to empty or your actual data
+        DepartureTime: ''  // Set to empty or your actual data
+      }));
 
-        // Get today's date
-        const today = new Date();
-        const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+      // Create worksheet and workbook
+      const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(empList);
+      const workbook: XLSX.WorkBook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, department.department_name);
 
-        // Create worksheet and workbook
-        const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(empList);
-        const workbook: XLSX.WorkBook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, department.department_name);
-
-        // Create a file name for the department using today's date
-        const fileName = `${department.department_name.replace(/\s+/g, '_')}_${formattedDate}.xlsx`;
-        const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-        this.saveExcelFile(excelBuffer, fileName);
+      // Create filename with an underscore before the date
+      const fileName = `${department.department_name}_${this.getCurrentDate()}.xlsx`;  // Add underscore before date
+      const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+      this.saveExcelFile(excelBuffer, fileName);
     });
   }
-  
+
+
+
   private getCurrentDate(): string {
     return new Date().toISOString().split('T')[0]; // Returns date in YYYY-MM-DD format
   }
-  
+
   private saveExcelFile(buffer: any, fileName: string): void {
     const data: Blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     saveAs(data, fileName);

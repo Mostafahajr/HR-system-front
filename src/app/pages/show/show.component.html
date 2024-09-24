@@ -2,7 +2,7 @@
     <div *ngFor="let employee of dataSource.data" class="employee-card">
     <div class="employee-header">
         <h1>{{ employee.name }}</h1>
-        <h2>{{ employee.department?.name || 'N/A' }}</h2>
+        <h2>{{ employee.department.name || 'N/A' }}</h2>
     </div>
 
     <div class="employee-details-grid">

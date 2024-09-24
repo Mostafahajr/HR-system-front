@@ -146,7 +146,7 @@ th {
 }
 .table-scroll
 {
-  max-height: 55vh;
+  height: 50.6vh;
   overflow: auto;
 }
 .time-col
@@ -163,4 +163,7 @@ th {
 .dep-col
 {
   width: 200px;
+}
+.btn-margin{
+  margin-right: 10px;
 }

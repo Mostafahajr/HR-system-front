@@ -37,9 +37,24 @@ table {
 
 .mat-elevation-z8 {
   box-shadow: none !important;
+  height: 50.5vh;
+  overflow:auto;
 }
 
 .date-col {
   width: 140px; // for cells that have expected width (not all columns need to have a fixed width, leave at least one)
   text-align: center; // optional
+}
+.submit-button-section{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1%;
+}
+th {
+  background-color:   #2a2f4b !important; 
+  color: #ffffff; 
+  input{
+    background-color: #f1f4f6 !important;
+  }
 }

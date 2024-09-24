@@ -6,12 +6,13 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
 
 
 @Component({
   selector: 'app-import-dialog',
   standalone: true,
-  imports: [FormsModule, MatFormFieldModule, MatInputModule ,MatSelectModule ,MatDialogModule ,ReactiveFormsModule ],
+  imports: [FormsModule, MatFormFieldModule, MatInputModule ,MatSelectModule ,MatDialogModule ,ReactiveFormsModule ,MatButton],
   templateUrl: './import-dialog.component.html',
   styleUrls: ['./import-dialog.component.scss']
 })

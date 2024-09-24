@@ -77,7 +77,8 @@
 .content-container {
   display: flex;
   flex-direction: column;
-  height: 60vh;
+  height: 62vh;
+  overflow: auto;
 }
 
 .full-width-table {
