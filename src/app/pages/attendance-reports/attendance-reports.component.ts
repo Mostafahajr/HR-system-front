@@ -58,7 +58,6 @@ export interface UserData {
     
   ],
   styleUrls: ['./attendance-reports.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [DatePipe,provideNativeDateAdapter()]
 })
 export class AttendanceReportsComponent implements OnInit {
