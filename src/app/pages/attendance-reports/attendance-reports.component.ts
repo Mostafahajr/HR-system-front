@@ -22,6 +22,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatNativeDateModule } from '@angular/material/core';
 import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export interface UserData {
   id: number;
@@ -84,7 +85,8 @@ export class AttendanceReportsComponent implements OnInit {
   constructor(
     private router: Router,
     private datePipe: DatePipe,
-    private attendanceService: AttendanceService
+    private attendanceService: AttendanceService,
+    private snackBar: MatSnackBar
   ) { }
 
   ngOnInit() {
@@ -150,24 +152,37 @@ export class AttendanceReportsComponent implements OnInit {
       return matchesDate && matchesName;
     });
   }
-
+  showToast(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000, // Toast will be visible for 3 seconds
+      horizontalPosition: 'center', // 'start', 'center', 'end', 'left', or 'right'
+      verticalPosition: 'bottom', // 'top' or 'bottom'
+    });
+  }
+  
   editUser(id: number) {
     this.isUpdated = true;
     this.updatedUserId = id;
     const record = this.dataSource.data.find((item) => item.id === id);
     if (record) {
-      if (this.isDateMoreThanOneMonthOld(record.date)) {
-        alert('You cannot modify attendance records that are more than one month old.');
-        this.isUpdated = false; // Reset the update state
-        this.updatedUserId = null; // Clear updated user ID
-        return; // Exit the method
-      }
-      // Set the arrival and leave time in local format for the editing UI
-      this.updateArrival = this.formatTimeForEditing(record.arrival_time); 
-      this.updateLeave = this.formatTimeForEditing(record.leave_time);
+        // Check if the date is more than one month old
+        if (this.isDateMoreThanOneMonthOld(record.date)) {
+            alert('You cannot modify attendance records that are more than one month old.');
+            this.isUpdated = false; 
+            this.updatedUserId = null; 
+            return; 
+        }
+
+        this.updateArrival = this.formatTimeForEditing(record.arrival_time); 
+        this.updateLeave = this.formatTimeForEditing(record.leave_time);
+        
+        this.showToast('Attendance record is ready for editing.', 'Close');
+    } else {
+        // If no record is found, show an error toast
+        this.showToast('Attendance record not found.', 'Close');
     }
-  }
-  
+}
+
   isDateMoreThanOneMonthOld(dateString: string): boolean {
     const recordDate = new Date(dateString);
     const currentDate = new Date();
@@ -223,10 +238,9 @@ extractTime(timeString: string): string {
     employee_id: number
   ) {
     if (this.updateArrival && this.updateLeave) {
-      // Convert formatted time back to ISO string for saving
       const updateAttendance = {
         employee_id,
-        arrival_time: this.extractTime(this.updateArrival), // Use extractTime for proper formatting
+        arrival_time: this.extractTime(this.updateArrival),
         leave_time: this.extractTime(this.updateLeave),
         date: date,
       };
@@ -238,8 +252,8 @@ extractTime(timeString: string): string {
             employee_name: name,
             employee_id,
             department,
-            arrival_time: updateAttendance.arrival_time, // Use updated arrival time
-            leave_time: updateAttendance.leave_time, // Use updated leave time
+            arrival_time: updateAttendance.arrival_time,
+            leave_time: updateAttendance.leave_time,
             date: date,
           };
   
@@ -247,12 +261,15 @@ extractTime(timeString: string): string {
             (item) => item.id === id
           );
           if (index !== -1) {
-            this.dataSource.data[index] = updatedRecord; // Update the data source with the new record
+            this.dataSource.data[index] = updatedRecord;
           }
   
           this.applyFilters();
           this.isUpdated = false;
           this.updatedUserId = null;
+  
+          // Show toast notification for successful edit
+          this.showToast('Attendance record updated successfully!', 'Close');
         },
         error: (error) => {
           console.error('Error updating attendance:', error);
@@ -260,7 +277,6 @@ extractTime(timeString: string): string {
       });
     }
   }
-  
   
   // Helper function to format time for the update (from HH:mm to a valid date-time string)
   formatTimeForUpdate(time: string): string {
@@ -295,12 +311,17 @@ extractTime(timeString: string): string {
         this.filteredDataSource.data = this.filteredDataSource.data.filter(
           (emp) => emp.id !== element.id
         );
+  
+        // Show toast notification for successful deletion
+        this.showToast('Attendance record deleted successfully!', 'Close');
       },
       error: (error) => {
-        console.error(error);
+        console.error('Error deleting attendance record:', error);
+        this.showToast('Error deleting attendance record. Please try again.', 'Close');
       },
     });
   }
+  
 
   printReport() {
     const startDateFormatted = this.startDate
@@ -418,3 +439,49 @@ extractTime(timeString: string): string {
     doc.save(fileName);
   }
 }
+
+  // updateRecord(
+  //   id: number,
+  //   name: string,
+  //   department: string,
+  //   date: string,
+  //   employee_id: number
+  // ) {
+  //   if (this.updateArrival && this.updateLeave) {
+  //     // Convert formatted time back to ISO string for saving
+  //     const updateAttendance = {
+  //       employee_id,
+  //       arrival_time: this.extractTime(this.updateArrival), // Use extractTime for proper formatting
+  //       leave_time: this.extractTime(this.updateLeave),
+  //       date: date,
+  //     };
+  
+  //     this.attendanceService.updateAttendance(id, updateAttendance).subscribe({
+  //       next: () => {
+  //         const updatedRecord: UserData = {
+  //           id,
+  //           employee_name: name,
+  //           employee_id,
+  //           department,
+  //           arrival_time: updateAttendance.arrival_time, // Use updated arrival time
+  //           leave_time: updateAttendance.leave_time, // Use updated leave time
+  //           date: date,
+  //         };
+  
+  //         const index = this.dataSource.data.findIndex(
+  //           (item) => item.id === id
+  //         );
+  //         if (index !== -1) {
+  //           this.dataSource.data[index] = updatedRecord; // Update the data source with the new record
+  //         }
+  
+  //         this.applyFilters();
+  //         this.isUpdated = false;
+  //         this.updatedUserId = null;
+  //       },
+  //       error: (error) => {
+  //         console.error('Error updating attendance:', error);
+  //       },
+  //     });
+  //   }
+  // }

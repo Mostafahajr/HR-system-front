@@ -37,6 +37,7 @@ import { CommonModule } from '@angular/common';
 import { MatInput, MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-add-attendance',
@@ -87,7 +88,8 @@ export class AddAttendanceComponent implements OnInit, AfterViewInit {
     private fb: FormBuilder,
     private addAttendanceService: AddAttendanceService,
     private cdr: ChangeDetectorRef,
-    private departmentsService: DepartmentsService
+    private departmentsService: DepartmentsService,
+    private snackBar: MatSnackBar
   ) {
     this.filterForm = this.fb.group({
       date: [new Date()],
@@ -215,49 +217,71 @@ export class AddAttendanceComponent implements OnInit, AfterViewInit {
   
   
 
+  showToast(
+    message: string, 
+    action: string = 'Close', 
+    duration: number = 3000, 
+    horizontalPosition: MatSnackBarHorizontalPosition = 'center', 
+    verticalPosition: MatSnackBarVerticalPosition = 'bottom'
+  ): void {
+    this.snackBar.open(message, action, {
+      duration: duration,
+      horizontalPosition: horizontalPosition,
+      verticalPosition: verticalPosition
+    });
+  }
+  
+  // Example Usage in submitUpdates
   submitUpdates() {
     const updateObservables: Observable<any>[] = [];
-
+  
     this.updatedRecords.forEach((record) => {
       const observable = this.addAttendanceService.updateAttendance(record.id, {
         arrival_time: record.arrival_time,
         leave_time: record.leave_time,
       });
-
       updateObservables.push(observable);
     });
-
+  
     if (updateObservables.length > 0) {
       forkJoin(updateObservables).subscribe({
         next: () => {
-          console.log('All updates submitted successfully');
+          this.showToast('Attendance updated successfully', 'Close', 3000, 'center', 'bottom');
           this.updatedRecords.clear();
           this.onSearch();
-          alert('Attendance updated successfully');
         },
         error: (err) => {
           console.error('Error occurred during update:', err);
+          this.showToast('Failed to update attendance', 'Close', 3000, 'center', 'bottom');
         },
       });
     } else {
-      console.log('No updates to submit');
+      this.showToast('No updates to submit', 'Close', 3000, 'center', 'bottom');
     }
   }
-
+  
   deleteAttendance(id: number) {
     this.addAttendanceService.deleteAttendance(id).subscribe({
       next: () => {
+        // Filter out the deleted record from the data source
         this.dataSource.data = this.dataSource.data.filter(
           (record) => record.id !== id
         );
         this.updatedRecords.delete(id);
         this.cdr.markForCheck();
+  
+        // Show success toast notification
+        this.showToast('Attendance deleted successfully', 'Close', 3000, 'right', 'top');
       },
       error: (err) => {
         console.error('Error deleting attendance:', err);
+  
+        // Show error toast notification
+        this.showToast('Failed to delete attendance', 'Close', 3000, 'right', 'top');
       },
     });
   }
+  
 
   private formatDate(date: Date): string {
     const d = new Date(date);

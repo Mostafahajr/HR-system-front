@@ -1,18 +1,18 @@
 <app-breadcrumbs></app-breadcrumbs>
 <div class="grid-container">
-   <div class="grid-item">
+    <div class="grid-item">
   
       <!-- Employee Card -->
       <mat-card class="example-card p-3" appearance="outlined">
         <mat-card-header>
-          <mat-card-title-group>
+          <mat-card-title-group class="emp-col">
             <mat-card-title>Employee</mat-card-title>
             <mat-card-subtitle>No.</mat-card-subtitle>
             <h2 *ngIf="!employeeLoading">{{ employeeData?.employeeCount }}</h2>
           </mat-card-title-group>
         </mat-card-header>
         <mat-card-content class="text-center">
-          <mat-card-subtitle>Today's Attendance Rate</mat-card-subtitle>
+          <mat-card-subtitle class="sub-col">Today's Attendance Rate</mat-card-subtitle>
           <div *ngIf="!employeeLoading">
             {{ employeeData?.attendanceRate }}
           </div>
@@ -27,14 +27,14 @@
       <!-- Holiday Card -->
       <mat-card class="example-card" appearance="outlined">
         <mat-card-header>
-          <mat-card-title-group>
+          <mat-card-title-group class="emp-col">
             <mat-card-title>Holiday</mat-card-title>
             <mat-card-subtitle>No.</mat-card-subtitle>
             <h2 *ngIf="!holidayLoading">{{ holidayData?.numberOfHolidays }}</h2>
           </mat-card-title-group>
         </mat-card-header>
         <mat-card-content class="text-center">
-          <p>Upcoming Holiday</p>
+          <p class="sub-col">Upcoming Holiday</p>
           <div class="d-flex" *ngIf="!holidayLoading">
             <p>{{ holidayData?.upcomingHoliday?.description }}</p>
             <p>{{ holidayData?.upcomingHoliday?.date }}</p>
@@ -53,13 +53,13 @@
     <div class="grid-item">
       <mat-card class="w-100 salary-card" appearance="outlined">
         <mat-card-header>
-          <mat-card-title-group>
+          <mat-card-title-group class="title-col">
             <mat-card-title>Total Salaries</mat-card-title>
             <p *ngIf="!salaryLoading">{{ salaryData?.sumOfSalaries | number: '1.2-2' }} EGP</p>
           </mat-card-title-group>
         </mat-card-header>
         <mat-card-content class="text-center">
-          <mat-card-subtitle>Top Employees Salary</mat-card-subtitle>
+          <mat-card-subtitle class="sub-col">Top Employees Salary</mat-card-subtitle>
   
           <!-- Spinner for salary card -->
           <div class="spinner-container" *ngIf="salaryLoading">
@@ -89,20 +89,18 @@
         </mat-card-content>
       </mat-card>
     </div>
-
-
   <!-- Department Table -->
   <div class="grid-item">
     <mat-card appearance="outlined" class="department-card">
       <mat-card-header>
-        <mat-card-title-group>
+        <mat-card-title-group class="dep-col">
           <mat-card-title>Departments</mat-card-title>
           <mat-card-subtitle>No.</mat-card-subtitle>
           <h2 class="start">{{ departmentData?.totalDepartments }}</h2>
         </mat-card-title-group>
       </mat-card-header>
       <mat-card-header>
-        <mat-card-title>Departments Details</mat-card-title>
+        <mat-card-title class="sub-col">Departments Details</mat-card-title>
       </mat-card-header>
       <mat-card-content>
         <!-- Spinner for department card -->
@@ -114,11 +112,12 @@
             <th mat-header-cell *matHeaderCellDef> Department Name </th>
             <td mat-cell *matCellDef="let element"> {{element.name}} </td>
           </ng-container>
-          <ng-container matColumnDef="employeeCount">
-            <th mat-header-cell *matHeaderCellDef> Employee Count </th>
-            <td mat-cell *matCellDef="let element"> {{element.employeeCount}} </td>
+          <ng-container matColumnDef="employeeCount" class="employeeCount">
+            <th mat-header-cell *matHeaderCellDef class="count-col"> Employee Count </th>
+            <td mat-cell *matCellDef="let element" class="count-col"> {{element.employeeCount}} </td>
           </ng-container>
-          <tr mat-header-row *matHeaderRowDef="departmentColumns"></tr>
+      <tr mat-header-row *matHeaderRowDef="departmentColumns; sticky: true"></tr>
+
           <tr mat-row *matRowDef="let row; columns: departmentColumns;"></tr>
         </table>
       </mat-card-content>
