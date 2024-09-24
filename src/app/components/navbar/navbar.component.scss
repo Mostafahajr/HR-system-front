@@ -17,3 +17,16 @@ mat-toolbar {
   object-fit: cover;
   object-position: center center;
 }
+.side {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: gray;
+}
+
+.name {
+  margin-bottom: 0;
+}

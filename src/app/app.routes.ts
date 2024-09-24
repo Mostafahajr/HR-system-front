@@ -206,6 +206,8 @@ export const routes: Routes = [
     canActivate: [authGuard],
     data: {
       breadcrumb: 'Departments',
+      pageName: 'Departments',
+      operation: 'read',
     },
   },
   {
