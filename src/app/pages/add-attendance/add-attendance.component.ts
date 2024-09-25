@@ -124,33 +124,48 @@ export class AddAttendanceComponent implements OnInit, AfterViewInit {
 
   handleExcelImport() {
     const excelData = history.state.data;
+  
     if (excelData) {
       console.log('Excel Data:', excelData);
       const firstRecord = excelData[0];
+
+//       if (firstRecord) {
+//         this.filterForm.patchValue({
+//           date: new Date(firstRecord.date),
+//           department: firstRecord.departmentName || '',
+//         });
+//       }
+
+//       // Ensure proper mapping of the data
+//       this.dataSource.data = excelData.map((item: any, index: number) => ({
+//         id: index + 1,
+//         department: item.departmentName || '', // Map department name correctly
+//         employee_name: item.employeeName || '', // Map employee name correctly
+//         arrival_time: item.attendance || null, // Use correct property for attendance
+//         leave_time: item.departure || null, // Use correct property for departure
+//         date: new Date(item.date), // Correctly map date
+//       }));
+
+//       this.markAllRecordsForUpdate();
+//       this.cdr.markForCheck(); // Notify Angular to check for changes
+
+      
       if (firstRecord) {
         this.filterForm.patchValue({
-          date: new Date(firstRecord.date),
+          date: new Date(firstRecord.date), // Assuming the date is consistent
           department: firstRecord.departmentName || '',
         });
       }
+  
+      // Fetch today's attendance records by date and department
+      this.onSearch(excelData); // Pass Excel data to onSearch
 
-      // Ensure proper mapping of the data
-      this.dataSource.data = excelData.map((item: any, index: number) => ({
-        id: index + 1,
-        department: item.departmentName || '', // Map department name correctly
-        employee_name: item.employeeName || '', // Map employee name correctly
-        arrival_time: item.attendance || null, // Use correct property for attendance
-        leave_time: item.departure || null, // Use correct property for departure
-        date: new Date(item.date), // Correctly map date
-      }));
-
-      this.markAllRecordsForUpdate();
-      this.cdr.markForCheck(); // Notify Angular to check for changes
     } else {
       console.log('No Excel data passed.');
       this.onSearch();
     }
   }
+
 
   parseTime(time: string | null): string {
     if (!time) return ''; // Return an empty string if time is null
@@ -168,33 +183,127 @@ export class AddAttendanceComponent implements OnInit, AfterViewInit {
     });
   }
 
-  onSearch() {
+  onSearch(excelData?: any[]) {
     const { date, department } = this.filterForm.value;
     const formattedDate = this.formatDate(date);
 
     console.log('Searching with:', { formattedDate, department });
 
-    this.addAttendanceService
-      .getAllAttendance(formattedDate, department)
-      .subscribe({
-        next: (data) => {
-          console.log('Received data:', data);
-          this.dataSource.data = data.map((record: any) => ({
+
+//     this.addAttendanceService
+//       .getAllAttendance(formattedDate, department)
+//       .subscribe({
+//         next: (data) => {
+//           console.log('Received data:', data);
+//           this.dataSource.data = data.map((record: any) => ({
+//             id: record.id,
+//             department: record.department_name,
+//             employee_name: record.employee_name,
+//             arrival_time: this.parseTime(record.arrival_time), // Use correct property
+//             leave_time: this.parseTime(record.leave_time), // Use correct property
+//             date: new Date(record.date),
+//           }));
+//           console.log('Mapped data:', this.dataSource.data);
+//           this.cdr.markForCheck();
+//         },
+//         error: (err) => {
+//           console.error('Error occurred:', err);
+//         },
+//       });
+//   }
+
+  
+    // Fetch today's attendance records by date and department
+    this.addAttendanceService.getAllAttendance(formattedDate, department).subscribe({
+      next: (attendanceData) => {
+        console.log('Received attendance data:', attendanceData);
+        
+        if (excelData) {
+          // Map Excel data to attendance data based on employee ID
+          this.mapExcelToAttendanceAndUpdate(excelData, attendanceData);
+        } else {
+          // Standard search (no excel data)
+          this.dataSource.data = attendanceData.map((record: any) => ({
             id: record.id,
             department: record.department_name,
             employee_name: record.employee_name,
-            arrival_time: this.parseTime(record.arrival_time), // Use correct property
-            leave_time: this.parseTime(record.leave_time), // Use correct property
+            arrival_time: this.parseTime(record.arrival_time), // Parse time
+            leave_time: this.parseTime(record.leave_time),
             date: new Date(record.date),
           }));
-          console.log('Mapped data:', this.dataSource.data);
-          this.cdr.markForCheck();
+        }
+  
+        this.cdr.markForCheck(); // Trigger change detection
+      },
+      error: (err) => {
+        console.error('Error occurred:', err);
+      },
+    });
+  }
+  mapExcelToAttendanceAndUpdate(excelData: any[], attendanceData: any[]) {
+    console.log(excelData);
+    console.log(attendanceData);
+    const updateObservables: Observable<any>[] = [];
+  
+    // Loop through the Excel data and find matching attendance records by employee ID
+    excelData.forEach((excelRecord) => {
+      const matchingAttendance = attendanceData.find(
+        (attendanceRecord: any) => attendanceRecord.employee_id === excelRecord.employeeId
+      );
+  
+      if (matchingAttendance) {
+        const attendanceId = matchingAttendance.id;
+  
+        // Handle Excel data null or "HH:MM" format scenario
+        const isArrivalTimeValid = this.isValidTime(excelRecord.attendance);
+        const isLeaveTimeValid = this.isValidTime(excelRecord.departure);
+  
+        // Only update fields that are valid and different from the existing attendance data
+        const updatedRecord: Partial<AttendanceRecord> = {};
+  
+        if (isArrivalTimeValid && excelRecord.attendance !== matchingAttendance.arrival_time) {
+          updatedRecord.arrival_time = excelRecord.attendance;
+        }
+  
+        if (isLeaveTimeValid && excelRecord.departure !== matchingAttendance.leave_time) {
+          updatedRecord.leave_time = excelRecord.departure;
+        }
+  
+        // Only push update if there are changes to be made
+        if (Object.keys(updatedRecord).length > 0) {
+          const updateObservable = this.addAttendanceService.updateAttendance(attendanceId, updatedRecord);
+          updateObservables.push(updateObservable);
+        }
+      }
+    });
+  
+    // Send patch requests to update attendance
+    if (updateObservables.length > 0) {
+      forkJoin(updateObservables).subscribe({
+        next: () => {
+          this.showToast('Attendance updated successfully', 'Close', 3000, 'center', 'bottom');
+          this.onSearch(); // Reload updated data
         },
         error: (err) => {
-          console.error('Error occurred:', err);
+          console.error('Error occurred during update:', err);
+          this.showToast('Failed to update attendance', 'Close', 3000, 'center', 'bottom');
         },
       });
+    } else {
+      this.showToast('No matching records to update', 'Close', 3000, 'center', 'bottom');
+    }
   }
+  isValidTime(time: string | null): boolean {
+    if (!time) return false; // If null or empty, not valid
+  
+    // Check if time matches HH:MM format using regex
+    const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/; // Matches 00:00 to 23:59
+    return timeRegex.test(time);
+  }
+  
+  
+  
+
 
   updateTime(
     element: AttendanceRecord,

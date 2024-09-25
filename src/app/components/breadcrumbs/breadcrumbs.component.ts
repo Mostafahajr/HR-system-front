@@ -70,22 +70,30 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy {
     if (file) {
       this.fileName = file.name;
 
-      const nameParts = file.name.split('_');
-      this.sectionName = nameParts[0] || '';
-      this.date = nameParts[1]?.split('.')[0] || '';
+      // Regex to match the desired format and extract section name and date
+      const regex = /^(.*)_(\d{4}-\d{2}-\d{2})/;
+      const matches = this.fileName.match(regex);
 
-      const dialogRef = this.dialog.open(ImportDialogComponent, {
-        width: '400px',
-        data: { sectionName: this.sectionName, date: this.date, fileName: this.fileName }
-      });
+      if (matches) {
+        this.sectionName = matches[1].trim(); // Extract section name and trim spaces
+        this.date = matches[2]; // Extract date
 
-      dialogRef.afterClosed().subscribe(result => {
-        if (result?.confirmed) {
-          this.processExcelFile(file);
-        }
-      });
+        const dialogRef = this.dialog.open(ImportDialogComponent, {
+          width: '400px',
+          data: { sectionName: this.sectionName, date: this.date, fileName: this.fileName }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+          if (result?.confirmed) {
+            this.processExcelFile(file);
+          }
+        });
+      } else {
+        this.errorMessage = 'Invalid file name format. Please ensure it follows the correct naming convention.';
+      }
     }
   }
+
 
   processExcelFile(file: File): void {
     const reader = new FileReader();
@@ -95,30 +103,27 @@ export class BreadcrumbsComponent implements OnInit, OnDestroy {
       const firstSheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[firstSheetName];
       const jsonData: any[] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-  
-      // Check if the input file has any data
+
       if (jsonData.length > 1) {
-        // Convert data to required JSON format
         const formattedData = jsonData.slice(1).map((row: any[]) => {
-          const employeeName = row[0]; // Adjust based on actual column
-          const attendance = this.parseTime(row[1]) || '00:00'; // Default to '00:00' if not provided
-          const departure = this.parseTime(row[2]) || '12:00'; // Default to '12:00' if not provided
-  
+          const attendanceId = row[0] || null; // New column for attendance ID
+          const employeeName = row[1];
+          const attendance = this.parseTime(row[2]) || '00:00';
+          const departure = this.parseTime(row[3]) || '12:00';
+
           return {
+            employeeId: attendanceId, // Include attendance ID
             departmentName: this.sectionName,
             date: this.date,
-            employeeName: employeeName || 'Unknown', // Ensure fallback
+            employeeName: employeeName || 'Unknown',
             attendance: attendance,
             departure: departure
           };
         });
-  
-        // Navigate to the Add Attendance page with the formatted data
+
         this.router.navigate(['attendance-reports/create'], { state: { data: formattedData } });
       } else {
-        // Handle the case when the input file is empty
         this.errorMessage = 'The input file is empty.';
-        // You can also add additional logic here, such as displaying an error message to the user
       }
     };
     reader.readAsArrayBuffer(file);
