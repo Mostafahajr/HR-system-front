@@ -5,7 +5,7 @@
 .bar {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   margin-top: 16px;
 }
 mat-form-field {
@@ -38,23 +38,25 @@ table {
 .mat-elevation-z8 {
   box-shadow: none !important;
   max-height: 50.5vh;
-  overflow:auto;
+  overflow: auto;
 }
 
 .date-col {
   width: 140px; // for cells that have expected width (not all columns need to have a fixed width, leave at least one)
   text-align: center; // optional
 }
-.submit-button-section{
+.submit-button-section {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: flex-end;
   padding-bottom: 1%;
 }
 th {
-  background-color:   #2a2f4b !important; 
-  color: #ffffff; 
-  input{
+  background-color: #2a2f4b !important;
+  color: #ffffff;
+  input {
     background-color: #f1f4f6 !important;
   }
+}
+.submit-button-section button {
+  display: none;
 }
