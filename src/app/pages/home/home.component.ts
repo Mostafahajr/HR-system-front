@@ -12,7 +12,7 @@ import { forkJoin } from 'rxjs';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [BreadcrumbsComponent, AddNewGroupComponent, CommonModule, MatCardModule, MatTableModule, MatProgressSpinnerModule],
+  imports: [BreadcrumbsComponent, AddNewGroupComponent, CommonModule, MatCardModule, MatTableModule, MatProgressSpinnerModule,CommonModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
@@ -96,5 +96,14 @@ export class HomeComponent implements OnInit {
         this.departmentLoading = false;
       }
     });
+  }
+
+  getRoundedAttendanceRate(): string {
+    if (this.employeeData?.attendanceRate !== undefined) {
+      // Convert to number and round to two decimal places
+      const roundedRate = Math.round(parseFloat(this.employeeData.attendanceRate) * 100) / 100;
+      return roundedRate.toFixed(2)+"%"; // Format as string with two decimal places
+    }
+    return "0.00"; // Return a default value if attendanceRate is undefined
   }
 }

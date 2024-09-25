@@ -14,9 +14,8 @@
         <mat-card-content class="text-center">
           <mat-card-subtitle class="sub-col">Today's Attendance Rate</mat-card-subtitle>
           <div *ngIf="!employeeLoading">
-            {{ employeeData?.attendanceRate }}
+            {{ getRoundedAttendanceRate()  }}
           </div>
-
           <!-- Single spinner for employee card -->
           <div *ngIf="employeeLoading" class="spinner-container">
             <mat-spinner diameter="30"></mat-spinner>

@@ -151,10 +151,11 @@ export class SalariesComponent implements AfterViewInit {
     this.dataSource.filter = filterValue;
   }
 
-  //method to round to two decimal points
+  //method to round to two decimal points and ensure the salary is not negative
   roundNumber(value: number | undefined): string {
-    return value ? value.toFixed(2) : '0.00';
+    return value && value > 0 ? value.toFixed(2) : '0.00';
   }
+
   //method for formatting bonus and overtime in HH:MM format
   formatMinutesToHHMM(totalMinutes: number | undefined): string {
     if (totalMinutes === undefined || totalMinutes === null) {

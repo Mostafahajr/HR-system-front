@@ -19,5 +19,5 @@ export interface Employee {
 }
 
 export interface EmployeesByDepartment {
-  [departmentName: string]: { Name: string; ArrivalTime: string; DepartureTime: string }[];
+  [departmentName: string]: { employeeId: number ; Name: string; ArrivalTime: string; DepartureTime: string }[];
 }

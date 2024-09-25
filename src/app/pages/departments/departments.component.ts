@@ -152,7 +152,7 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
     this.employeesService.getAllEmployees().subscribe((response: any) => {
       const employees: Employee[] = response.data;
       console.log(employees);
-  
+
       // Group employees by department
       const employeesByDepartment: EmployeesByDepartment = employees.reduce((acc: EmployeesByDepartment, employee: Employee) => {
         const departmentName = employee.department?.name || 'Unassigned';
@@ -160,28 +160,26 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
           acc[departmentName] = [];
         }
         acc[departmentName].push({
+          employeeId: employee.id,  // Changed from ID to AttendanceID
           Name: employee.name || 'Unknown',
-          ArrivalTime: 'HH:mm',  // Default placeholder for Arrival Time
-          DepartureTime: 'HH:mm'  // Default placeholder for Departure Time
+          ArrivalTime: 'HH:mm',
+          DepartureTime: 'HH:mm'
         });
         return acc;
       }, {} as EmployeesByDepartment);
-  
+
       // Generate Excel files for each department
       Object.entries(employeesByDepartment).forEach(([departmentName, empList]) => {
         const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(empList);
         const workbook: XLSX.WorkBook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, departmentName);
-  
-        // Create filename with an underscore before the date
-        const fileName = `${departmentName}_${this.getCurrentDate()}.xlsx`;  // Add underscore before date
+
+        const fileName = `${departmentName}_${this.getCurrentDateGMT3()}.xlsx`;
         const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
         this.saveExcelFile(excelBuffer, fileName);
       });
     });
   }
-  
-
 
   printDepartment(department: any): void {
     this.employeesService.getAllEmployees().subscribe((response: any) => {
@@ -190,11 +188,12 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
       // Filter employees by the selected department
       const filteredEmployees = employees.filter(employee => employee.department?.name === department.department_name);
   
-      // Prepare data for Excel with default values
+      // Prepare data for Excel with default values and ID
       const empList = filteredEmployees.map(employee => ({
+        ID: employee.id || 'N/A',  // Add the employee ID
         Name: employee.name || 'Unknown',
-        ArrivalTime: 'HH:mm',  // Default placeholder for Arrival Time
-        DepartureTime: 'HH:mm'  // Default placeholder for Departure Time
+        ArrivalTime: 'HH:MM',
+        DepartureTime: 'HH:MM'
       }));
   
       // Create worksheet and workbook
@@ -202,8 +201,7 @@ export class DepartmentsComponent implements OnInit, AfterViewInit {
       const workbook: XLSX.WorkBook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, department.department_name);
   
-      // Create filename with an underscore before the date
-      const fileName = `${department.department_name}_${this.getCurrentDateGMT3()}.xlsx`;  // Add underscore before date
+      const fileName = `${department.department_name}_${this.getCurrentDateGMT3()}.xlsx`;
       const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
       this.saveExcelFile(excelBuffer, fileName);
     });
