@@ -43,7 +43,7 @@ export class AddNewAdminComponent {
     name: new FormControl('', [
       Validators.required,
       Validators.minLength(3),
-      Validators.maxLength(20),
+      Validators.maxLength(40),
       Validators.pattern(/^[A-Za-z ]{3,}$/),
     ]),
     username: new FormControl('', [
@@ -77,7 +77,7 @@ export class AddNewAdminComponent {
       this.userService.recordUser(this.addNewAdminForm.value).subscribe({
         next: (response) => {
           console.log(response);
-          
+
           this.showToast('Admin added successfully!'); // toast add
 
           // Redirect to admins page
@@ -96,9 +96,9 @@ export class AddNewAdminComponent {
   // Reusable toast function
   showToast(message: string) {
     this.snackBar.open(message, 'Close', {
-      duration: 5000,  // Duration in milliseconds
-      horizontalPosition: 'center',  // Position to the right
-      verticalPosition: 'bottom', 
+      duration: 5000, // Duration in milliseconds
+      horizontalPosition: 'center', // Position to the right
+      verticalPosition: 'bottom',
       panelClass: ['custom-snackbar'], // Position at the top
     });
   }

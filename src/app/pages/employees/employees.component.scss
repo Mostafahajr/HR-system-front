@@ -55,31 +55,30 @@
 .button-container {
   display: flex;
   justify-content: center;
-  gap: 2px; 
+  gap: 2px;
 }
 mat-paginator {
   padding-top: 20px;
   padding-bottom: 40px;
 }
 
-.wrapper {
+.table-scroll {
   overflow: auto;
-  max-height: 59.3vh;
+  max-height: 48vh;
 }
 //styling filters
-.filter-fields{
+.filter-fields {
   display: flex;
   gap: 10px;
 }
-.filter-fields mat-form-field{
-  margin-top: 10px;;
+.filter-fields mat-form-field {
+  margin-top: 10px;
   width: 25%;
 }
 th {
-  background-color:   #2a2f4b !important; 
-  color: #ffffff; 
+  background-color: #2a2f4b !important;
+  color: #ffffff;
 }
-.time-col
-{
+.time-col {
   text-align: center;
 }
