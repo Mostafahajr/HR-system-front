@@ -1,41 +1,46 @@
 <div class="employee-card-container">
-    <div *ngFor="let employee of dataSource.data" class="employee-card">
+  <div *ngFor="let employee of dataSource.data" class="employee-card">
     <div class="employee-header">
-        <h1>{{ employee.name }}</h1>
-        <h2>{{ employee.department.name || 'N/A' }}</h2>
+      <h1>{{ employee.name }}</h1>
+      <h2>{{ employee.department.name || "N/A" }}</h2>
     </div>
 
     <div class="employee-details-grid">
-        <div class="employee-detail">
+      <div class="employee-detail">
         <strong>National ID :</strong> {{ employee.national_id }}
-        </div>
-        <div class="employee-detail">
-            <strong>Nationality :</strong> {{ employee.nationality }}
-            </div>
-        <div class="employee-detail">
+      </div>
+      <div class="employee-detail">
+        <strong>Nationality :</strong> {{ employee.nationality }}
+      </div>
+      <div class="employee-detail">
         <strong>Phone :</strong> {{ employee.phone_number }}
-        </div>
-        <div class="employee-detail">
-            <strong>Address :</strong> {{ employee.address }}
-            </div>
-        <div class="employee-detail">
-                <strong>Gender :</strong> {{ employee.gender}}
-                </div>
-        <div class="employee-detail">
-            <strong>Date of Birth :</strong> {{ employee.DOB | date: 'mediumDate' }}
-            </div>
-        <div class="employee-detail">
-            <strong>Contract Date :</strong> {{ employee.date_of_contract | date: 'mediumDate' }}
-            </div>
-        <div class="employee-detail">
-            <strong>Arrival Time:</strong> {{ formatTimeToHHMMAMPM(employee.arrival_time) }}
-            </div>
-        <div class="employee-detail">
-            <strong>Leave Time:</strong> {{ formatTimeToHHMMAMPM(employee.leave_time) }}
-            </div>
-        <div class="employee-detail">
-            <strong>Salary:</strong> {{ employee.salary | currency: 'EGP': 'symbol' }}
-            </div>
+      </div>
+      <div class="employee-detail">
+        <strong>Address :</strong> {{ employee.address }}
+      </div>
+      <div class="employee-detail">
+        <strong>Gender :</strong> {{ employee.gender }}
+      </div>
+      <div class="employee-detail">
+        <strong>Date of Birth :</strong>
+        {{ employee.DOB | date : "mediumDate" }}
+      </div>
+      <div class="employee-detail">
+        <strong>Contract Date :</strong>
+        {{ employee.date_of_contract | date : "mediumDate" }}
+      </div>
+      <div class="employee-detail">
+        <strong>Arrival Time:</strong>
+        {{ formatTimeToHHMMAMPM(employee.arrival_time) }}
+      </div>
+      <div class="employee-detail">
+        <strong>Leave Time:</strong>
+        {{ formatTimeToHHMMAMPM(employee.leave_time) }}
+      </div>
+      <div class="employee-detail">
+        <strong>Salary:</strong>
+        {{ employee.salary | currency : "EGP" : "symbol" }}
+      </div>
     </div>
-    </div>
+  </div>
 </div>

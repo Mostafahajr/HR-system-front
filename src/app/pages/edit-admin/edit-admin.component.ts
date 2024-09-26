@@ -1,5 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -9,17 +16,25 @@ import { MatButton } from '@angular/material/button';
 import { EmployeesService } from '../../services/employees/employees.service';
 import { AdminsService } from '../../services/admins/admins.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';  // Import MatSnackBar
+import { MatSnackBar } from '@angular/material/snack-bar'; // Import MatSnackBar
 
 @Component({
   selector: 'app-edit-admin',
   standalone: true,
-  imports: [ReactiveFormsModule, MatSelectModule, MatFormFieldModule, MatInputModule, FormsModule, CommonModule, MatIconModule, MatButton],
+  imports: [
+    ReactiveFormsModule,
+    MatSelectModule,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    CommonModule,
+    MatIconModule,
+    MatButton,
+  ],
   templateUrl: './edit-admin.component.html',
-  styleUrls: ['./edit-admin.component.scss']
+  styleUrls: ['./edit-admin.component.scss'],
 })
 export class EditAdminComponent implements OnInit {
-
   selectedValue: string = '';
   admins: any;
   hide = true;
@@ -28,10 +43,10 @@ export class EditAdminComponent implements OnInit {
   showPasswordField = false; // FOR CHANGE PASSWORD BUTTON
 
   constructor(
-    private userService: AdminsService, 
-    private route: ActivatedRoute, 
+    private userService: AdminsService,
+    private route: ActivatedRoute,
     private router: Router,
-    private snackBar: MatSnackBar  // Inject MatSnackBar
+    private snackBar: MatSnackBar // Inject MatSnackBar
   ) {
     this.adminId = this.route.snapshot.params['id'];
 
@@ -43,7 +58,7 @@ export class EditAdminComponent implements OnInit {
         this.getEmail.setValue(response.data.email);
         // Do not set password
         this.getPermission.setValue(response.data.group_type_id);
-      }
+      },
     });
   }
 
@@ -52,16 +67,26 @@ export class EditAdminComponent implements OnInit {
       next: (response) => {
         console.log(response.data);
         this.groups = response.data;
-      }
-    })
+      },
+    });
   }
 
   updateAdminForm = new FormGroup({
-    name: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(20), Validators.pattern(/^[A-Za-z ]{3,}$/)]),
-    username: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z0-9 (.|*|&|^|%|@)]{3,}$/)]), 
+    name: new FormControl('', [
+      Validators.required,
+      Validators.minLength(3),
+      Validators.maxLength(40),
+      Validators.pattern(/^[A-Za-z ]{3,}$/),
+    ]),
+    username: new FormControl('', [
+      Validators.required,
+      Validators.pattern(/^[A-Za-z0-9 (.|*|&|^|%|@)]{3,}$/),
+    ]),
     email: new FormControl('', [Validators.required, Validators.email]),
-    password: new FormControl('', [Validators.pattern(/^[A-Za-z0-9(@|#|$|%)]{8,}$/)]),
-    group_type_id: new FormControl('', [Validators.required])
+    password: new FormControl('', [
+      Validators.pattern(/^[A-Za-z0-9(@|#|$|%*)]{8,}$/),
+    ]),
+    group_type_id: new FormControl('', [Validators.required]),
   });
 
   get getFullName() {
@@ -93,6 +118,8 @@ export class EditAdminComponent implements OnInit {
       if (!formData.password) {
         delete formData.password;
       }
+      console.log(formData);
+
       // Update admin with form data
       this.userService.updateuser(this.adminId, formData).subscribe({
         next: (response) => {
@@ -100,20 +127,20 @@ export class EditAdminComponent implements OnInit {
           // Navigate back to the AdminsComponent
           this.router.navigate(['/admins']);
           // Show success toast
-        this.showToast('Admin updated successfully')
+          this.showToast('Admin updated successfully');
         },
         error: (error) => {
           console.log(error);
-        this.showToast('Faild to update')
-        }
+          this.showToast('Faild to update');
+        },
       });
     }
   }
   showToast(message: string) {
     this.snackBar.open(message, 'Close', {
-      duration: 5000,  // Duration in milliseconds
-      horizontalPosition: 'center',  // Position to the right
-      verticalPosition: 'bottom', 
+      duration: 5000, // Duration in milliseconds
+      horizontalPosition: 'center', // Position to the right
+      verticalPosition: 'bottom',
       panelClass: ['custom-snackbar'], // Position at the top
     });
   }
@@ -121,12 +148,14 @@ export class EditAdminComponent implements OnInit {
   togglePasswordField() {
     this.showPasswordField = !this.showPasswordField;
     if (!this.showPasswordField) {
-      this.getPassword.reset();  // Reset the password if the user hides the field again
+      this.getPassword.reset(); // Reset the password if the user hides the field again
     }
   }
 
   private hasNonEmptyFields(): boolean {
     const formValues = this.updateAdminForm.value;
-    return Object.values(formValues).some(value => value !== '' && value !== null);
+    return Object.values(formValues).some(
+      (value) => value !== '' && value !== null
+    );
   }
 }

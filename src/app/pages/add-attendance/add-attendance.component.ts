@@ -124,10 +124,12 @@ export class AddAttendanceComponent implements OnInit, AfterViewInit {
 
   handleExcelImport() {
     const excelData = history.state.data;
-  
+
     if (excelData) {
       console.log('Excel Data:', excelData);
       const firstRecord = excelData[0];
+
+
 
 //       if (firstRecord) {
 //         this.filterForm.patchValue({
@@ -156,7 +158,7 @@ export class AddAttendanceComponent implements OnInit, AfterViewInit {
           department: firstRecord.departmentName || '',
         });
       }
-  
+
       // Fetch today's attendance records by date and department
       this.onSearch(excelData); // Pass Excel data to onSearch
 
@@ -190,6 +192,7 @@ export class AddAttendanceComponent implements OnInit, AfterViewInit {
     console.log('Searching with:', { formattedDate, department });
 
 
+
 //     this.addAttendanceService
 //       .getAllAttendance(formattedDate, department)
 //       .subscribe({
@@ -212,97 +215,123 @@ export class AddAttendanceComponent implements OnInit, AfterViewInit {
 //       });
 //   }
 
-  
     // Fetch today's attendance records by date and department
-    this.addAttendanceService.getAllAttendance(formattedDate, department).subscribe({
-      next: (attendanceData) => {
-        console.log('Received attendance data:', attendanceData);
-        
-        if (excelData) {
-          // Map Excel data to attendance data based on employee ID
-          this.mapExcelToAttendanceAndUpdate(excelData, attendanceData);
-        } else {
-          // Standard search (no excel data)
-          this.dataSource.data = attendanceData.map((record: any) => ({
-            id: record.id,
-            department: record.department_name,
-            employee_name: record.employee_name,
-            arrival_time: this.parseTime(record.arrival_time), // Parse time
-            leave_time: this.parseTime(record.leave_time),
-            date: new Date(record.date),
-          }));
-        }
-  
-        this.cdr.markForCheck(); // Trigger change detection
-      },
-      error: (err) => {
-        console.error('Error occurred:', err);
-      },
-    });
+    this.addAttendanceService
+      .getAllAttendance(formattedDate, department)
+      .subscribe({
+        next: (attendanceData) => {
+          console.log('Received attendance data:', attendanceData);
+
+          if (excelData) {
+            // Map Excel data to attendance data based on employee ID
+            this.mapExcelToAttendanceAndUpdate(excelData, attendanceData);
+          } else {
+            // Standard search (no excel data)
+            this.dataSource.data = attendanceData.map((record: any) => ({
+              id: record.id,
+              department: record.department_name,
+              employee_name: record.employee_name,
+              arrival_time: this.parseTime(record.arrival_time), // Parse time
+              leave_time: this.parseTime(record.leave_time),
+              date: new Date(record.date),
+            }));
+          }
+
+          this.cdr.markForCheck(); // Trigger change detection
+        },
+        error: (err) => {
+          console.error('Error occurred:', err);
+        },
+      });
   }
   mapExcelToAttendanceAndUpdate(excelData: any[], attendanceData: any[]) {
     console.log(excelData);
     console.log(attendanceData);
     const updateObservables: Observable<any>[] = [];
-  
+
     // Loop through the Excel data and find matching attendance records by employee ID
     excelData.forEach((excelRecord) => {
       const matchingAttendance = attendanceData.find(
-        (attendanceRecord: any) => attendanceRecord.employee_id === excelRecord.employeeId
+        (attendanceRecord: any) =>
+          attendanceRecord.employee_id === excelRecord.employeeId
       );
-  
+
       if (matchingAttendance) {
         const attendanceId = matchingAttendance.id;
-  
+
         // Handle Excel data null or "HH:MM" format scenario
         const isArrivalTimeValid = this.isValidTime(excelRecord.attendance);
         const isLeaveTimeValid = this.isValidTime(excelRecord.departure);
-  
+
         // Only update fields that are valid and different from the existing attendance data
         const updatedRecord: Partial<AttendanceRecord> = {};
-  
-        if (isArrivalTimeValid && excelRecord.attendance !== matchingAttendance.arrival_time) {
+
+        if (
+          isArrivalTimeValid &&
+          excelRecord.attendance !== matchingAttendance.arrival_time
+        ) {
           updatedRecord.arrival_time = excelRecord.attendance;
         }
-  
-        if (isLeaveTimeValid && excelRecord.departure !== matchingAttendance.leave_time) {
+
+        if (
+          isLeaveTimeValid &&
+          excelRecord.departure !== matchingAttendance.leave_time
+        ) {
           updatedRecord.leave_time = excelRecord.departure;
         }
-  
+
         // Only push update if there are changes to be made
         if (Object.keys(updatedRecord).length > 0) {
-          const updateObservable = this.addAttendanceService.updateAttendance(attendanceId, updatedRecord);
+          const updateObservable = this.addAttendanceService.updateAttendance(
+            attendanceId,
+            updatedRecord
+          );
           updateObservables.push(updateObservable);
         }
       }
     });
-  
+
     // Send patch requests to update attendance
     if (updateObservables.length > 0) {
       forkJoin(updateObservables).subscribe({
         next: () => {
-          this.showToast('Attendance updated successfully', 'Close', 3000, 'center', 'bottom');
+          this.showToast(
+            'Attendance updated successfully',
+            'Close',
+            3000,
+            'center',
+            'bottom'
+          );
           this.onSearch(); // Reload updated data
         },
         error: (err) => {
           console.error('Error occurred during update:', err);
-          this.showToast('Failed to update attendance', 'Close', 3000, 'center', 'bottom');
+          this.showToast(
+            'Failed to update attendance',
+            'Close',
+            3000,
+            'center',
+            'bottom'
+          );
         },
       });
     } else {
-      this.showToast('No matching records to update', 'Close', 3000, 'center', 'bottom');
+      this.showToast(
+        'No matching records to update',
+        'Close',
+        3000,
+        'center',
+        'bottom'
+      );
     }
   }
   isValidTime(time: string | null): boolean {
     if (!time) return false; // If null or empty, not valid
-  
+
     // Check if time matches HH:MM format using regex
     const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/; // Matches 00:00 to 23:59
     return timeRegex.test(time);
   }
-  
-  
-  
 
 
   updateTime(
@@ -423,7 +452,6 @@ export class AddAttendanceComponent implements OnInit, AfterViewInit {
 
   formatTimeForDisplay(time: string | null): string {
     if (!time) return '00:00'; // Default value if time is not provided
-
     // Assuming time is in HH:MM format
     return time; // Return the time string directly or format it if needed
   }

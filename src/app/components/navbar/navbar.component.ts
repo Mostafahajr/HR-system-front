@@ -62,4 +62,8 @@ export class NavbarComponent implements OnInit {
     localStorage.removeItem('token'); // Remove the token
     this.router.navigate(['/login']); // Navigate to the login page
   }
+
+  checklogin() {
+    return localStorage.getItem('token');
+  }
 }
