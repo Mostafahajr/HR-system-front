@@ -92,34 +92,27 @@ export class OfficialHolidaysComponent implements OnInit, AfterViewInit {
     }
   
     const formValues = this.holidayForm.value;
+    console.log('Form values:', formValues);
+  
+    let formattedDate: string;
+    if (formValues.date instanceof Date) {
+      // Format the date in local timezone
+      formattedDate = `${formValues.date.getFullYear()}-${String(formValues.date.getMonth() + 1).padStart(2, '0')}-${String(formValues.date.getDate()).padStart(2, '0')}`;
+    } else {
+      formattedDate = formValues.date;
+    }
+  
     const holidayData: IHoliday = {
       id: this.selectedHolidayId || this.generateId(),
       name: formValues.name,
       description: formValues.name,
-      date: formValues.date, // Updated function
+      date: formattedDate,
     };
   
+    console.log('Holiday data before sending:', holidayData);
+  
     if (this.selectedHolidayId) {
-      this.holidaysService.updateHoliday(this.selectedHolidayId, holidayData).subscribe({
-        next: (response: any) => {
-          const updatedHoliday = response.data;
-          const index = this.holidays.findIndex(h => h.id === updatedHoliday.id);
-          if (index !== -1) {
-            this.holidays[index] = {
-              id: updatedHoliday.id,
-              name: updatedHoliday.description, 
-              description: updatedHoliday.description,
-              date: formValues.date // Display in a normalized format
-            };
-            this.dataSource.data = [...this.holidays]; // Refresh dataSource with updated holidays
-          }
-          this.resetForm();
-          this.snackBar.open('Holiday updated successfully!', 'Close', { duration: 3000 });
-        },
-        error: (error: any) => {
-          this.snackBar.open('Failed to update holiday', 'Close', { duration: 3000 });
-        }
-      });
+      this.updateHoliday(holidayData);
     } else {
       this.addHoliday(holidayData);
     }
@@ -128,30 +121,51 @@ export class OfficialHolidaysComponent implements OnInit, AfterViewInit {
   
   updateHoliday(holidayData: IHoliday): void {
     this.holidaysService.updateHoliday(this.selectedHolidayId!, holidayData).subscribe({
-      next: (updatedHoliday: IHoliday) => {
+      next: (response: any) => {
+        // Ensure we are getting the correct updated data
+        const updatedHoliday = response.data;
+  
         const index = this.holidays.findIndex(h => h.id === this.selectedHolidayId);
         if (index > -1) {
-          this.holidays[index] = updatedHoliday;
+          // Update only the necessary fields
+          const updatedHolidayObject: IHoliday = {
+            id: updatedHoliday.id || this.holidays[index].id,  // Retain the ID
+            name: updatedHoliday.description || this.holidays[index].name,  // Retain original name if not provided
+            description: updatedHoliday.description || this.holidays[index].description,  // Retain original description if not provided
+            date: updatedHoliday.date ? new Date(updatedHoliday.date).toISOString().split('T')[0] : this.holidays[index].date // Retain original date if not provided
+          };
+          
+          // Replace the updated object in the holidays array
+          this.holidays[index] = updatedHolidayObject;
+  
+          // Update the table data source
           this.dataSource.data = [...this.holidays];
+  
+          // Reset the form after updating
           this.resetForm();
           this.snackBar.open('Holiday updated successfully!', 'Close', { duration: 3000 });
         }
       },
       error: (error: any) => {
+        console.error('Error updating holiday:', error);
         this.snackBar.open('Failed to update holiday', 'Close', { duration: 3000 });
       }
     });
   }
+  
 
   addHoliday(holidayData: IHoliday): void {
+    console.log('Sending holiday data:', holidayData);
+  
     this.holidaysService.addHoliday(holidayData).subscribe({
       next: (response: any) => {
+        console.log('Response from server:', response);
         const newHoliday: IHoliday = {
           id: response.data.id,
-          name: response.data.description, // Use the description as the name
+          name: response.data.description,
           description: response.data.description,
-          date: new Date(response.data.date).toISOString().split('T')[0], // Convert Date to string (YYYY-MM-DD)
-          };
+          date: holidayData.date,
+        };
   
         this.holidays.push(newHoliday);
         this.dataSource.data = [...this.holidays];
@@ -159,6 +173,7 @@ export class OfficialHolidaysComponent implements OnInit, AfterViewInit {
         this.snackBar.open('Holiday added successfully!', 'Close', { duration: 3000 });
       },
       error: (error: any) => {
+        console.error('Error adding holiday:', error);
         this.snackBar.open('Failed to add holiday', 'Close', { duration: 3000 });
       }
     });
