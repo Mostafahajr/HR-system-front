@@ -47,8 +47,7 @@ table {
 }
 .submit-button-section {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: flex-end;
   padding-bottom: 1%;
 }
 th {
@@ -57,8 +56,9 @@ th {
   input {
     background-color: #f1f4f6 !important;
   }
-}
+
 
 .hidden {
+
   display: none;
 }

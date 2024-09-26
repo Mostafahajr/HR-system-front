@@ -129,6 +129,29 @@ export class AddAttendanceComponent implements OnInit, AfterViewInit {
       console.log('Excel Data:', excelData);
       const firstRecord = excelData[0];
 
+
+
+//       if (firstRecord) {
+//         this.filterForm.patchValue({
+//           date: new Date(firstRecord.date),
+//           department: firstRecord.departmentName || '',
+//         });
+//       }
+
+//       // Ensure proper mapping of the data
+//       this.dataSource.data = excelData.map((item: any, index: number) => ({
+//         id: index + 1,
+//         department: item.departmentName || '', // Map department name correctly
+//         employee_name: item.employeeName || '', // Map employee name correctly
+//         arrival_time: item.attendance || null, // Use correct property for attendance
+//         leave_time: item.departure || null, // Use correct property for departure
+//         date: new Date(item.date), // Correctly map date
+//       }));
+
+//       this.markAllRecordsForUpdate();
+//       this.cdr.markForCheck(); // Notify Angular to check for changes
+
+      
       if (firstRecord) {
         this.filterForm.patchValue({
           date: new Date(firstRecord.date), // Assuming the date is consistent
@@ -138,11 +161,13 @@ export class AddAttendanceComponent implements OnInit, AfterViewInit {
 
       // Fetch today's attendance records by date and department
       this.onSearch(excelData); // Pass Excel data to onSearch
+
     } else {
       console.log('No Excel data passed.');
       this.onSearch();
     }
   }
+
 
   parseTime(time: string | null): string {
     if (!time) return ''; // Return an empty string if time is null
@@ -165,6 +190,30 @@ export class AddAttendanceComponent implements OnInit, AfterViewInit {
     const formattedDate = this.formatDate(date);
 
     console.log('Searching with:', { formattedDate, department });
+
+
+
+//     this.addAttendanceService
+//       .getAllAttendance(formattedDate, department)
+//       .subscribe({
+//         next: (data) => {
+//           console.log('Received data:', data);
+//           this.dataSource.data = data.map((record: any) => ({
+//             id: record.id,
+//             department: record.department_name,
+//             employee_name: record.employee_name,
+//             arrival_time: this.parseTime(record.arrival_time), // Use correct property
+//             leave_time: this.parseTime(record.leave_time), // Use correct property
+//             date: new Date(record.date),
+//           }));
+//           console.log('Mapped data:', this.dataSource.data);
+//           this.cdr.markForCheck();
+//         },
+//         error: (err) => {
+//           console.error('Error occurred:', err);
+//         },
+//       });
+//   }
 
     // Fetch today's attendance records by date and department
     this.addAttendanceService
@@ -284,6 +333,7 @@ export class AddAttendanceComponent implements OnInit, AfterViewInit {
     return timeRegex.test(time);
   }
 
+
   updateTime(
     element: AttendanceRecord,
     field: 'arrival_time' | 'leave_time',
@@ -402,11 +452,9 @@ export class AddAttendanceComponent implements OnInit, AfterViewInit {
 
   formatTimeForDisplay(time: string | null): string {
     if (!time) return '00:00'; // Default value if time is not provided
-
     // Assuming time is in HH:MM format
     return time; // Return the time string directly or format it if needed
   }
-
   submitForm(): void {
     // Get the first form using its ID
     const btn = document.getElementById('submit-button') as HTMLElement;

@@ -8,7 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { EmployeesService } from '../../services/employees/employees.service';
 import { MatIconModule } from '@angular/material/icon';
-import { DepartmentsService} from '../../services/departments/departments.service';
+import { DepartmentsService } from '../../services/departments/departments.service';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Department } from '../../models/iDepartment';
 
@@ -60,7 +60,7 @@ export class AddNewEmployeeComponent implements OnInit {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private snackBar: MatSnackBar
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadDepartments();  // Load departments on page initialization
@@ -90,14 +90,14 @@ export class AddNewEmployeeComponent implements OnInit {
 
   employee(e: any) {
     e.preventDefault();
-  
+
     if (this.addNewemployeeForm.valid && this.hasNonEmptyFields()) {
       let formData = { ...this.addNewemployeeForm.value };
-  
+
       formData = this.cleanFormData(formData);
       formData.arrival_time = this.formatTimeForSubmission(formData.arrival_time);
       formData.leave_time = this.formatTimeForSubmission(formData.leave_time);
-  
+
       if (this.employeeId) {
         this.employeesService.updateEmployee(this.employeeId, formData).subscribe(() => {
           this.showToast('Employee updated successfully!');
@@ -117,11 +117,11 @@ export class AddNewEmployeeComponent implements OnInit {
     this.snackBar.open(message, 'Close', {
       duration: 5000,  // Duration in milliseconds
       horizontalPosition: 'center',  // Position to the right
-      verticalPosition: 'bottom', 
+      verticalPosition: 'bottom',
       panelClass: ['custom-snackbar'], // Position at the top
     });
   }
-    
+
   private cleanFormData(formData: any): any {
     Object.keys(formData).forEach(key => {
       formData[key] = formData[key] ?? '';  // Replace undefined or null with an empty string
@@ -132,7 +132,7 @@ export class AddNewEmployeeComponent implements OnInit {
   private formatTimeForSubmission(time: string | null | undefined): string {
     if (time) {
       const parts = time.split(':');
-      return parts.length === 2 ?` ${time}:00` : time;  // Ensure HH:mm:ss format
+      return parts.length === 2 ? ` ${time}:00` : time;  // Ensure HH:mm:ss format
     }
     return '00:00:00'; // Default to '00:00:00' if time is null or undefined
   }
@@ -152,13 +152,14 @@ export class AddNewEmployeeComponent implements OnInit {
 
   private ageValidator(control: any) {
     const birthDate = new Date(control.value);
-    const ageAtStartDate = this.calculateAge(birthDate, this.companyStartDate);
+    const currentAge = this.calculateAge(birthDate);  // Calculate current age
 
-    if (ageAtStartDate < 20) {
+    if (currentAge < 20) {
       return { underAge: true };
     }
     return null;
   }
+
 
   private leaveTimeValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -172,20 +173,24 @@ export class AddNewEmployeeComponent implements OnInit {
     };
   }
 
-  private calculateAge(birthDate: Date, referenceDate: Date): number {
+  private calculateAge(birthDate: Date): number {
+    const today = new Date();  // Current date
     const birthYear = birthDate.getFullYear();
     const birthMonth = birthDate.getMonth();
     const birthDay = birthDate.getDate();
 
-    const referenceYear = referenceDate.getFullYear();
-    const referenceMonth = referenceDate.getMonth();
-    const referenceDay = referenceDate.getDate();
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth();
+    const currentDay = today.getDate();
 
-    let age = referenceYear - birthYear;
+    let age = currentYear - birthYear;
 
-    if (referenceMonth < birthMonth || (referenceMonth === birthMonth && referenceDay < birthDay)) {
+    // Adjust the age if the current date hasn't yet reached the birthdate for the current year
+    if (currentMonth < birthMonth || (currentMonth === birthMonth && currentDay < birthDay)) {
       age--;
     }
+
     return age;
   }
+
 }
