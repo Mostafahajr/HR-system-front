@@ -66,15 +66,24 @@ export class OfficialHolidaysComponent implements OnInit, AfterViewInit {
     this.holidaysService.getHolidays().subscribe({
       next: (response: any) => {
         if (response && response.data && Array.isArray(response.data)) {
-          this.holidays = response.data.map((holiday: any) => ({
-            id: holiday.id,
-            name: holiday.description,
-            description: holiday.description,
-            date: new Date(holiday.date), // Convert to Date
-            type: holiday.off_day_types.length
-              ? holiday.off_day_types[0].name
-              : 'holiday', // Safeguard against empty off_day_types
-          }));
+          // Filter out holidays with description "Regular weekend days (Friday, Saturday)"
+          this.holidays = response.data
+            .filter((holiday: any) => {
+              // Exclude holidays where off_day_types description matches "Regular weekend days (Friday, Saturday)"
+              return !(
+                holiday.off_day_types.length &&
+                holiday.off_day_types[0].description === 'Regular weekend days (Friday, Saturday)'
+              );
+            })
+            .map((holiday: any) => ({
+              id: holiday.id,
+              name: holiday.description,
+              description: holiday.description,
+              date: new Date(holiday.date), // Convert date string to Date object
+              type: holiday.off_day_types.length ? holiday.off_day_types[0].name : 'holiday', // Safeguard against empty off_day_types
+            }));
+
+          // Assign filtered holidays to dataSource for displaying in the table
           this.dataSource.data = this.holidays;
         } else {
           console.error('Unexpected response format:', response);
@@ -82,9 +91,10 @@ export class OfficialHolidaysComponent implements OnInit, AfterViewInit {
       },
       error: (error: any) => {
         console.error('Failed to load holidays:', error);
-      },
+      }
     });
   }
+
 
   addOrUpdateHoliday(): void {
     if (this.holidayForm.invalid) {
